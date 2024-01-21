@@ -1,19 +1,6 @@
-import React, { useState } from "react";
-import OTPInput from "react-otp-input";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
 
-import { handleVertifi } from "../../firebase/firebaseService";
-export default function LoginBySMS() {
-  const history = useNavigate();
-  var [phone, setPhone] = useState("84346676956");
-  var [contentButton, setContentButton] = useState("Gửi");
-  var [language, setLanguage] = useState("vn");
-  var [otpVertifi, setOtpVertifi] = useState();
-
-  var [isVertifi, setVertifi] = useState(false);
-  var [otp, setOtp] = useState("");
+export default function ForgotPassword() {
   return (
     <div
       className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative"
@@ -85,7 +72,7 @@ export default function LoginBySMS() {
         <button
           onClick={async () => {
             if (!isVertifi) {
-                await handleVertifi("+" + phone, "recaptcha").then((e) => {
+              await handleVertifi("+" + phone, "recaptcha").then((e) => {
                 setOtpVertifi(e);
                 setVertifi(true);
                 setContentButton("Xác thực SMS");
@@ -97,7 +84,10 @@ export default function LoginBySMS() {
                   .then((result) => {
                     console.log(result.user.uid);
                     console.log(result.user.phoneNumber);
-                  }).catch((e)=> {console.log(e)})
+                  })
+                  .catch((e) => {
+                    console.log(e);
+                  });
               } else {
                 console.log("a");
               }

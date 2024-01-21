@@ -4,3 +4,5 @@
     - npx tailwindcss init
 
     - npm install react-icons --save
+    
+    - npm i react-otp-input

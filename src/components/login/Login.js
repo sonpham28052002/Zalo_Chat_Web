@@ -1,9 +1,5 @@
 import BackgroundImage from "./asset/backgroud.png";
 import "react-phone-input-2/lib/style.css";
-import LoginByNumberPhone from "./LoginByNumberPhone";
-import { Route, Routes } from "react-router-dom";
-import LoginByQRCode from "./LoginByQRCode";
-import LoginBySMS from "./LoginBySMS";
 import {LoginRouter} from "../../router/router";
 
 function Login() {
