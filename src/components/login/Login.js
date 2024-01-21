@@ -4,6 +4,7 @@ import LoginByNumberPhone from "./LoginByNumberPhone";
 import { Route, Routes } from "react-router-dom";
 import LoginByQRCode from "./LoginByQRCode";
 import LoginBySMS from "./LoginBySMS";
+import {LoginRouter} from "../../router/router";
 
 function Login() {
   // var [content, setContent] = useState([
@@ -25,12 +26,7 @@ function Login() {
       }}
     >
       <div className="shadow-2xl rounded-lg  h-2/3 w-3/6 flex flex-row bg-[#fff]	">
-        <Routes>
-          <Route element={<LoginByNumberPhone />} path="/"></Route>
-          <Route element={<LoginByQRCode />} path="/qr"></Route>
-          <Route element={<LoginBySMS />} path="/SMS"></Route>
-
-        </Routes>
+       <LoginRouter/>
         <div
           className="h-full w-1/2 ml-1 bg-slate-800 m-0 rounded-r-lg flex  justify-center items-end "
           style={{

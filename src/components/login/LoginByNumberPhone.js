@@ -7,7 +7,13 @@ export default function LoginByNumberPhone() {
   const history = useNavigate();
   var [phone, setPhone] = useState(undefined);
   var [password, setPassword] = useState(undefined);
-  var [language, setLanguage] = useState("US");
+  var [language, setLanguage] = useState("vn");
+
+  var handleLoginWithPhoneAnhPassword = (phone, password) => {
+    phone = "+"+phone
+    console.log(phone);
+    console.log(password);
+  };
 
   return (
     <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative">
@@ -74,8 +80,7 @@ export default function LoginByNumberPhone() {
         </div>
         <button
           onClick={() => {
-            console.log(phone);
-            console.log(password);
+            handleLoginWithPhoneAnhPassword(phone, password);
           }}
           type="button"
           className="min-h-10 w-full rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
