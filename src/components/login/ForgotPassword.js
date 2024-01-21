@@ -1,28 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
+import OTPInput from "react-otp-input";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { VscArrowLeft } from "react-icons/vsc";
+
+import { Link } from "react-router-dom";
+import { handleVertifi } from "../../firebase/firebaseService";
 
 export default function ForgotPassword() {
+  var [phone, setPhone] = useState("84346676956");
+  var [contentButton, setContentButton] = useState("Gửi");
+  var [otpVertifi, setOtpVertifi] = useState();
+
+  var [isVertifi, setVertifi] = useState(false);
+  var [otp, setOtp] = useState("");
   return (
     <div
       className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative"
       style={{ WebkitUserSelect: "none" }}
     >
-      <select
-        id="underline_select"
-        value={language}
-        onChange={setLanguage}
-        className="font-medium absolute top-0 right-0 py-2.5 px-0 min-w-fit h-10  text-sm text-gray-500 bg-transparent focus:outline-none border-b"
-      >
-        <option value="vn">Tiếng Việt</option>
-        <option value="US">English</option>
-      </select>
       <img
         src={require("./asset/snapedit_1705786829845.png")}
         className="h-36"
         alt="/"
       ></img>
-      <h1 className="font-bold text-3xl">ĐĂNG NHẬP VỚI OPT</h1>
-      <h4 className="text-gray-400 text-base font-medium">
-        Chào mừng bạn đến với chúng tôi.
+      <h1 className="font-bold text-3xl">QUÊN MẬT KHẨU</h1>
+      <h4 className="text-gray-400 text-center text-base font-medium">
+        Hãy cung cấp cho chúng tôi số điện thoại đã đăng ký tài khoản.
       </h4>
       <form className="h-full w-full flex flex-col justify-start mt-5">
         <label className="ml-2 font-medium">Số điện thoại:</label>
@@ -98,31 +102,10 @@ export default function ForgotPassword() {
         >
           {contentButton}
         </button>
-        <p className="mb-5 text-center text-sm font-medium text-slate-500">
-          Chưa có tài khoản nào trước đây.
-          <Link to="/" className="hover:text-blue-700">
-            Đăng ký ngay!
-          </Link>
-        </p>
-
-        <button
-          onClick={() => {
-            history("/");
-          }}
-          type="button"
-          className=" min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold"
-        >
-          Đăng nhập bằng mật khẩu
-        </button>
-        <button
-          onClick={() => {
-            history("/qr");
-          }}
-          type="button"
-          className="min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold"
-        >
-          Đăng nhập bằng mã QR
-        </button>
+        <Link to={-1} className="flex flex-row pl-1 items-center ">
+          <VscArrowLeft className="text-xl mr-1" />
+          <p className="font-medium">Quay lại</p>
+        </Link>
       </form>
     </div>
   );

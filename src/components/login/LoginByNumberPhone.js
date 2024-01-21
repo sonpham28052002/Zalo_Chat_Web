@@ -7,25 +7,15 @@ export default function LoginByNumberPhone() {
   const history = useNavigate();
   var [phone, setPhone] = useState(undefined);
   var [password, setPassword] = useState(undefined);
-  var [language, setLanguage] = useState("vn");
 
   var handleLoginWithPhoneAnhPassword = (phone, password) => {
-    phone = "+"+phone
+    phone = "+" + phone;
     console.log(phone);
     console.log(password);
   };
 
   return (
     <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative">
-      <select
-        id="underline_select"
-        value={language}
-        onChange={setLanguage}
-        className="font-medium absolute top-0 right-0 py-2.5 px-0 min-w-fit h-10  text-sm text-gray-500 bg-transparent focus:outline-none border-b"
-      >
-        <option value="vn">Tiếng Việt</option>
-        <option value="US">English</option>
-      </select>
       <img
         src={require("./asset/snapedit_1705786829845.png")}
         className="h-36"
@@ -73,7 +63,7 @@ export default function LoginByNumberPhone() {
         <div className="flex flex-row justify-end items-center h-8 px-2">
           <Link
             className="text-sm font-medium text-slate-400 hover:decoration-solid hover:border-slate-400 border-b border-white hover:text-blue-700"
-            to="/"
+            to="/forgot"
           >
             Quên mật khẩu?
           </Link>
@@ -87,9 +77,9 @@ export default function LoginByNumberPhone() {
         >
           Đăng nhập
         </button>
-        <p className="mb-5 text-center text-sm font-medium text-slate-500">
+        <p className="mb-5 text-center text-sm font-medium text-slate-500 mr-1">
           Chưa có tài khoản nào trước đây.{" "}
-          <Link to="/" className="hover:text-blue-700">
+          <Link to="/signup" className="hover:text-blue-700">
             Đăng ký ngay!
           </Link>
         </p>

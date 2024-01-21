@@ -3,31 +3,18 @@ import OTPInput from "react-otp-input";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Link, useNavigate } from "react-router-dom";
-
 import { handleVertifi } from "../../firebase/firebaseService";
-export default function LoginBySMS() {
+export default function ForgotPassword() {
   const history = useNavigate();
   var [phone, setPhone] = useState("84346676956");
   var [contentButton, setContentButton] = useState("Gửi");
-  var [language, setLanguage] = useState("vn");
   var [otpVertifi, setOtpVertifi] = useState();
 
   var [isVertifi, setVertifi] = useState(false);
   var [otp, setOtp] = useState("");
+
   return (
-    <div
-      className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative"
-      style={{ WebkitUserSelect: "none" }}
-    >
-      <select
-        id="underline_select"
-        value={language}
-        onChange={setLanguage}
-        className="font-medium absolute top-0 right-0 py-2.5 px-0 min-w-fit h-10  text-sm text-gray-500 bg-transparent focus:outline-none border-b"
-      >
-        <option value="vn">Tiếng Việt</option>
-        <option value="US">English</option>
-      </select>
+    <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative">
       <img
         src={require("./asset/snapedit_1705786829845.png")}
         className="h-36"
@@ -85,7 +72,7 @@ export default function LoginBySMS() {
         <button
           onClick={async () => {
             if (!isVertifi) {
-                await handleVertifi("+" + phone, "recaptcha").then((e) => {
+              await handleVertifi("+" + phone, "recaptcha").then((e) => {
                 setOtpVertifi(e);
                 setVertifi(true);
                 setContentButton("Xác thực SMS");
@@ -97,7 +84,10 @@ export default function LoginBySMS() {
                   .then((result) => {
                     console.log(result.user.uid);
                     console.log(result.user.phoneNumber);
-                  }).catch((e)=> {console.log(e)})
+                  })
+                  .catch((e) => {
+                    console.log(e);
+                  });
               } else {
                 console.log("a");
               }
@@ -108,9 +98,9 @@ export default function LoginBySMS() {
         >
           {contentButton}
         </button>
-        <p className="mb-5 text-center text-sm font-medium text-slate-500">
+        <p className="mb-5 text-center text-sm font-medium text-slate-500 mr-1">
           Chưa có tài khoản nào trước đây.
-          <Link to="/" className="hover:text-blue-700">
+          <Link to="/signup" className="hover:text-blue-700">
             Đăng ký ngay!
           </Link>
         </p>

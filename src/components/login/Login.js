@@ -1,6 +1,6 @@
 import BackgroundImage from "./asset/backgroud.png";
 import "react-phone-input-2/lib/style.css";
-import {LoginRouter} from "../../router/router";
+import { LoginRouter } from "../../router/router";
 
 function Login() {
   // var [content, setContent] = useState([
@@ -19,10 +19,11 @@ function Login() {
       style={{
         backgroundImage: `url(${BackgroundImage})`,
         height: "100vh",
+        WebkitUserSelect: "none",
       }}
     >
       <div className="shadow-2xl rounded-lg  h-2/3 w-3/6 flex flex-row bg-[#fff]	">
-       <LoginRouter/>
+        <LoginRouter />
         <div
           className="h-full w-1/2 ml-1 bg-slate-800 m-0 rounded-r-lg flex  justify-center items-end "
           style={{
