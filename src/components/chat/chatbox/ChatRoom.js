@@ -7,13 +7,14 @@ export default function ChatRom() {
   return (
     <div className="w-full h-full flex flex-row">
       <div className="h-full w-2/12 p-3">
-        <div className="h-16 bg-slate-500 flex flex-col justify-between">
+        <div className="h-16 flex flex-col justify-between">
           <div className="flex flex-row justify-evenly items-center">
             <div className="w-5/6 relative">
               <input
                 type="text"
                 placeholder="Tìm kiếm"
-                disabled
+                maxLength={0}
+                readOnly
                 className=" w-full  h-7 border p-1 text-xs rounded pl-7 bg-[#eaedf0] focus:outline-none"
                 onClick={() => {
                   console.log("con");
