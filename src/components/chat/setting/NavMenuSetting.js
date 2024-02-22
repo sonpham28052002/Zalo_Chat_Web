@@ -6,9 +6,11 @@ import { GoDatabase } from "react-icons/go";
 import { HiOutlineWrench } from "react-icons/hi2";
 import { TbWorld, TbExclamationCircle } from "react-icons/tb";
 import UserInfoModal from "../infoUser/UserInfoModal";
+import ModalSetting from "./ModalSetting";
 
 export default function NavMenuSetting() {
   const [isOpenUserInfoModal, setIsOpenUserInfoModal] = useState(false);
+  const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
 
   var dataNav = [
     {
@@ -23,7 +25,7 @@ export default function NavMenuSetting() {
       title: "Cài đặt",
       icon: <CiSettings className="text-2xl" />,
       idEml: "setting",
-      onclick: () => setIsOpenUserInfoModal(true),
+      onclick: () => setIsOpenSettingModal(true),
     },
     {
       id: 3,
@@ -95,6 +97,7 @@ export default function NavMenuSetting() {
         </Transition>
       </Menu>
       <UserInfoModal isOpen={isOpenUserInfoModal} setIsOpen={setIsOpenUserInfoModal} />
+      <ModalSetting isOpen={isOpenSettingModal} setIsOpen={setIsOpenSettingModal}/>
     </>
   );
 }

@@ -1,30 +1,31 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { CiCamera, CiEdit } from "react-icons/ci";
+import { IoMdClose } from "react-icons/io";
 
 const UserInfoModal = ({ isOpen, setIsOpen }) => {
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
           onClick={() => setIsOpen(false)}
           className="bg-slate-900/20 backdrop-blur p-8 fixed inset-0 z-50 grid place-items-center overflow-y-scroll cursor-pointer "
         >
           <motion.div
-            initial={{ scale: 0, rotate: "12.5deg" }}
+            initial={{ scale: 0, rotate: "45.5deg" }}
             animate={{ scale: 1, rotate: "0deg" }}
-            exit={{ scale: 0, rotate: "0deg" }}
+            exit={{ scale: 0, rotate: "-180deg" }}
             onClick={(e) => e.stopPropagation()}
             className="bg-slate-300  rounded-lg w-full max-w-fit shadow-xl cursor-default relative overflow-hidden text-black"
           >
             <div className="z-10">
               <div className="pl-6 h-9 bg-white flex flex-row items-center justify-between ">
                 <h1 className="font-medium">Thông tin tài khoản</h1>
-                <h1 className="text-xl font-medium mr-2 hover:text-red-600" onClick={()=>{
-                  setIsOpen(!isOpen)
-                }}>X</h1>
+                <IoMdClose
+                  className="text-xl font-medium mr-2 hover:text-red-600"
+                  onClick={() => {
+                    setIsOpen(!isOpen);
+                  }}
+                />
               </div>
               <div className="m-0 h-52">
                 <img
@@ -53,24 +54,34 @@ const UserInfoModal = ({ isOpen, setIsOpen }) => {
                 <div className="bg-white w-full mt-2 text-black px-4  ">
                   <h1 className="font-semibold">Thông tin tài khoản</h1>
                   <div className="h-8 px-1  flex flex-row items-center">
-                    <p className="w-28 text-sm font-sans  font-medium text-gray-400">Bio</p>
+                    <p className="w-28 text-sm font-sans  font-medium text-gray-400">
+                      Bio
+                    </p>
                     <p className="w-28 font-sans">Leon</p>
                   </div>
                   <div className="h-8 px-1  flex flex-row items-center">
-                    <p className="w-28 text-sm font-sans  font-medium text-gray-400">Giới tính</p>
+                    <p className="w-28 text-sm font-sans  font-medium text-gray-400">
+                      Giới tính
+                    </p>
                     <p className="w-28 font-sans">Nam</p>
                   </div>
                   <div className="h-8 px-1  flex flex-row items-center">
-                    <p className="w-28 text-sm font-sans  font-medium text-gray-400">Ngày sinh</p>
+                    <p className="w-28 text-sm font-sans  font-medium text-gray-400">
+                      Ngày sinh
+                    </p>
                     <p className="w-28 font-sans">28-05-2002</p>
                   </div>
                   <div className="h-8 px-1  flex flex-row items-center border-b border-gray-300 pb-6">
-                    <p className="w-28 text-sm font-sans  font-medium text-gray-400">Điện thoại</p>
+                    <p className="w-28 text-sm font-sans  font-medium text-gray-400">
+                      Điện thoại
+                    </p>
                     <p className="w-32 font-sans">+84 346 676 956</p>
                   </div>
                 </div>
                 <div className="w-full bg-white py-2 px-4">
-                  <button className="w-full h-8 rounded-md hover:bg-slate-200 flex flex-row items-center justify-center font-medium"><CiEdit className="text-xl mr-1" /> Cập Nhật</button>
+                  <button className="w-full h-8 rounded-md hover:bg-slate-200 flex flex-row items-center justify-center font-medium">
+                    <CiEdit className="text-xl mr-1" /> Cập Nhật
+                  </button>
                 </div>
               </div>
             </div>
