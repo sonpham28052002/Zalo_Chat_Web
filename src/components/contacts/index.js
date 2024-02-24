@@ -5,10 +5,10 @@ import ViewListGroup from "./ViewListGroup";
 import ViewFriendRequests from "./ViewFriendRequests";
 
 function Contacts() {
-    const [activeButton, setActiveButton] = useState(1);
+    const [active, setActive] = useState(1);
 
     const handleButtonClick = (buttonId) => {
-        setActiveButton(buttonId);
+        setActive(buttonId);
     };
 
     return (
@@ -25,7 +25,7 @@ function Contacts() {
                 <div className="flex-1  ">
                     <button className="flex flex-row h-16 w-full items-center"
                         onClick={() => handleButtonClick(1)}
-                        style={{ backgroundColor: activeButton === 1 ? "#e5efff" : "white" }}
+                        style={{ backgroundColor: active === 1 ? "#e5efff" : "white" }}
                     >
                         <div className="w-16">
                             <IoPersonAddOutline className="w-7 h-7 mx-auto" />
@@ -37,7 +37,7 @@ function Contacts() {
 
                     <button className="flex flex-row h-16 w-full items-center"
                         onClick={() => handleButtonClick(2)}
-                        style={{ backgroundColor: activeButton === 2 ? "#e5efff" : "white" }}
+                        style={{ backgroundColor: active === 2 ? "#e5efff" : "white" }}
                     >
                         <div className="w-16">
                             <IoPersonAddOutline className="w-7 h-7 mx-auto" />
@@ -49,7 +49,7 @@ function Contacts() {
 
                     <button className="flex flex-row h-16 w-full items-center"
                         onClick={() => handleButtonClick(3)}
-                        style={{ backgroundColor: activeButton === 3 ? "#e5efff" : "white" }}
+                        style={{ backgroundColor: active === 3 ? "#e5efff" : "white" }}
                     >
                         <div className="w-16">
                             <IoPersonAddOutline className="w-7 h-7 mx-auto" />
@@ -61,9 +61,9 @@ function Contacts() {
                 </div>
             </div>
 
-            {activeButton === 1 && <ViewListFriend />}
-            {activeButton === 2 && <ViewListGroup />}
-            {activeButton === 3 && <ViewFriendRequests />}
+            {active === 1 && <ViewListFriend />}
+            {active === 2 && <ViewListGroup />}
+            {active === 3 && <ViewFriendRequests />}
 
         </div>
     )

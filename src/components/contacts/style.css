@@ -1,0 +1,30 @@
+/* ViewListFriend */
+.img-avatar {
+    width: 50px;
+    height: 50px;
+}
+
+.scrollable-div {
+    max-height: calc(100vh - 65px);
+    overflow-y: auto;
+}
+
+.view-bg {
+    width: calc(100% - 40px);
+    height: 100%;
+}
+
+.txt-contacts {
+    width: calc(100% - 40px);
+    margin: 20px;
+}
+
+.blur-item-light:hover {
+    background-color: #F3F4F6;
+}
+
+.blur-item-dark:hover {
+        background-color: #e8e8e8;
+        border-radius: 10%;
+}
+
