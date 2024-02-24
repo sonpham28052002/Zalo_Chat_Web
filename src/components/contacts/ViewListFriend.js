@@ -27,7 +27,7 @@ function ViewListFriend() {
     function ListContact({ list }) {
         return (
             <div className="bg-white view-bg self-center p-4">
-                <div className="flex flex-row w-full h-12 items-center flex-wrap">
+                <div className="flex flex-row w-full h-12 items-center flex-wrap mb-3">
                     <div className="flex items-center border-[1px] rounded border-gray-300 h-8 w-full lg:w-1/3 lg:max-w-96 mr-2 ">
                         <IoSearch className="w-4 h-4 m-1" color="gray" />
                         <input type="text" placeholder="Tìm bạn" className="focus:outline-none w-full" />
