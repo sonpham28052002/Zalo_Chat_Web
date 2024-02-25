@@ -5,8 +5,14 @@ import { PiTagSimpleFill } from "react-icons/pi";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import { LuSticker } from "react-icons/lu";
 import { IoImageOutline } from "react-icons/io5";
-import { MdAttachFile, MdOutlineEmojiEmotions } from "react-icons/md";
+import {
+  MdAttachFile,
+  MdOutlineEmojiEmotions,
+  MdOutlineKeyboardVoice,
+} from "react-icons/md";
 import { FaRegFolder } from "react-icons/fa";
+import Sticker from "../custom/Sticker";
+import Emoji from "../custom/Emoji";
 
 export default function ChatRoom(props) {
   var data = {
@@ -41,13 +47,13 @@ export default function ChatRoom(props) {
           </div>
         </div>
         <div className="flex flex-row justify-center items-center">
-          <div className="hover:bg-slate-400 h-8 w-8 rounded-md mx-2 flex flex-row items-center justify-center">
+          <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
             <IoIosSearch className="text-2xl " />
           </div>
-          <div className="hover:bg-slate-400 h-8 w-8 rounded-md mx-2 flex flex-row items-center justify-center">
+          <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
             <BsCameraVideo className="text-xl " />
           </div>
-          <div className="hover:bg-slate-400 h-8 w-8 rounded-md mx-2 flex flex-row items-center justify-center">
+          <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
             <VscLayoutSidebarRightOff className="text-xl " />
           </div>
         </div>
@@ -57,13 +63,11 @@ export default function ChatRoom(props) {
           class="bg-image bg-cover bg-center relative h-[765px] w-full"
           style={{ backgroundImage: `url(${data.image})` }}
         >
-          <div class="absolute inset-0 opacity-65 bg-white"></div>
+          <div class="absolute inset-0 opacity-65 bg-white flex flex-col justify-end p-10">a</div>
         </div>
         <div className="flex flex-col h-28 ">
           <div className=" h-12 p-1 flex flex-row items-center justify-start border-b">
-            <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
-              <LuSticker className="text-2xl" />
-            </div>
+            <Sticker />
             <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
               <label for="dropzone-image">
                 <input
@@ -94,15 +98,20 @@ export default function ChatRoom(props) {
               </label>
             </div>
           </div>
-          <div className="h-16 bg-red-400 flex flex-row items-center">
+          <div className="h-16 flex flex-row items-center">
             <textarea
               placeholder={`Nhập tin nhắn gửi tới ${data.name}`}
               type="text"
-              className="h-full w-10/12 text-wrap resize-none focus:outline-none p-2"
+              className="h-full w-11/12 text-wrap resize-none focus:outline-none p-2"
             />
-            <div className="flex flex-row items-center">
-              <MdOutlineEmojiEmotions  className="text-2xl mx-1" />
-              <BsFillSendFill  className="text-2xl mx-1"/>
+            <div className="flex flex-row justify-center items-start h-full pt-3 px-3">
+              <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
+                <MdOutlineKeyboardVoice className="text-2xl" />
+              </div>
+              <Emoji />
+              <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2 hover:text-blue-600">
+                <BsFillSendFill className="text-2xl" />
+              </div>
             </div>
           </div>
         </div>
