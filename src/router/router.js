@@ -4,7 +4,7 @@ import LoginByNumberPhone from "../components/login/LoginByNumberPhone";
 import ForgotPassword from "../components/login/ForgotPassword";
 import LoginBySMS from "../components/login/LoginBySMS";
 import SignUp from "../components/login/SignUp";
-import ChatRoom from "../components/chat/chatbox/ChatRoom";
+import Chat from "../components/chat/chatbox/Chat";
 import Contact from "../components/chat/contact/Contact";
 import Todo from "../components/chat/todo/Todo";
 
@@ -22,7 +22,7 @@ export function LoginRouter() {
 export function HomeRouter() {
   return (
     <Routes>
-      <Route element={<ChatRoom />} path="/ChatRom"></Route>
+      <Route element={<Chat />} path="/ChatRom"></Route>
       <Route element={<Contact />} path="/Contact"></Route>
       <Route element={<Todo />} path="/Todos"></Route>
     </Routes>

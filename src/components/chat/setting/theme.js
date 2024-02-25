@@ -17,7 +17,7 @@ export default function Theme() {
           </div>
         </div>
         <div className="flex flex-row items-center">
-          <input type="checkbox" checked={isCheck} onChange={()=>{setIsCheck(!isCheck)}} className="accent-blue-600 h-4 w-10" />
+          <input type="checkbox" checked={isCheck} onChange={()=>{setIsCheck(!isCheck)}} className="accent-blue-600 h-4 w-10 " />
           <label>Mặc định</label>
         </div>
       </div>
