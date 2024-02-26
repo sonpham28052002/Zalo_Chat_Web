@@ -8,7 +8,7 @@ export default function Emoji(props) {
     <>
       <Menu as="div" className="relative">
         <div>
-        <Menu.Button className="h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
+          <Menu.Button className="h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
             <MdOutlineEmojiEmotions className="text-2xl" />
           </Menu.Button>
         </div>
@@ -23,7 +23,9 @@ export default function Emoji(props) {
           leaveTo="transform opacity-0 scale-95"
         >
           <Menu.Items className="absolute p-3 bottom-10 right-0 z-10 w-fit">
-            <EmojiPicker />
+            <Menu.Item>
+              <EmojiPicker />
+            </Menu.Item>
           </Menu.Items>
         </Transition>
       </Menu>

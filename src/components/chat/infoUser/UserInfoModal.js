@@ -51,8 +51,8 @@ const UserInfoModal = ({ isOpen, setIsOpen }) => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-white w-full mt-2 text-black px-4  ">
-                  <h1 className="font-semibold">Thông tin tài khoản</h1>
+                <div className="bg-white w-full mt-1 text-black px-4 pb-12 border-b border-gray-300">
+                  <h1 className="font-semibold text-lg">Thông tin tài khoản</h1>
                   <div className="h-8 px-1  flex flex-row items-center">
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
                       Bio
@@ -71,7 +71,7 @@ const UserInfoModal = ({ isOpen, setIsOpen }) => {
                     </p>
                     <p className="w-28 font-sans">28-05-2002</p>
                   </div>
-                  <div className="h-8 px-1  flex flex-row items-center border-b border-gray-300 pb-6">
+                  <div className="h-8 px-1  flex flex-row items-center  ">
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
                       Điện thoại
                     </p>

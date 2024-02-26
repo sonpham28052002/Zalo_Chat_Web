@@ -15,7 +15,7 @@ export default function InfoUser() {
         className="relative flex flex-col items-center justify-center text-left w-full h-16"
       >
         <div>
-          <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ">
+          <Menu.Button className="inline-flex w-full justify-center ">
             <img
               className="rounded-full h-12 mb-4 border border-white"
               alt="#"
