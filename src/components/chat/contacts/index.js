@@ -13,8 +13,8 @@ function Contacts() {
   };
 
   return (
-    <div className="flex flex-row h-screen ">
-      <div className="w-96 border-r-2 border-gray-200">
+    <div className="flex flex-row h-full  ">
+      <div className="w-2/12 border-r-2 border-gray-200">
         <HeaderNavChat />
         <div className="flex-1  ">
           <button

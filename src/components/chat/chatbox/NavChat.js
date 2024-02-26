@@ -3,7 +3,7 @@ import HeaderNavChat from "./headerNavChat";
 
 export default function NavChat() {
   return (
-    <div className="h-full  w-1/5  border-r">
+    <div className="h-full  w-2/12  border-r">
       <HeaderNavChat/>
     </div>
   );
