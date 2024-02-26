@@ -1,0 +1,11 @@
+    - npm install react-router-dom
+    
+    - npm install -D tailwindcss
+    - npx tailwindcss init
+
+    - npm install react-icons --save
+    
+    - npm i react-otp-input
+
+    - npm install --save stipop-react-sdk
+    - npm install emoji-picker-react
