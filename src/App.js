@@ -1,9 +1,7 @@
 // import Login from "./components/login/Login";
-import Contacts from "./components/contacts";
-
+import Home from "./components/chat/home"
 function App() {
   // return <Login />;
-  return <Contacts />;
+  return <Home />;
 }
-
 export default App;
