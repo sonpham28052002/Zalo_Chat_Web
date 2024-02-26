@@ -4,8 +4,8 @@ import { FaChevronDown } from "react-icons/fa6";
 import { LuFilter } from "react-icons/lu";
 import { MdOutlineMoreHoriz } from "react-icons/md";
 import { FaUserFriends } from "react-icons/fa";
-
-
+import React, {useState } from "react";
+import { Menu } from '@headlessui/react'
 
 function ViewListGroup() {
     const groups = [
@@ -21,6 +21,7 @@ function ViewListGroup() {
         { id: 10, name: 'Group 10', path: require('./asset/avatar10.png'), countMember: 12 }
     ];
 
+    const [selectedOptionSortGroup, setSelectedOptionSortGroup] = useState(3);
 
     function ListGroup({ list }) {
         return (
@@ -32,19 +33,80 @@ function ViewListGroup() {
 
                     </div>
 
-                    <div className="flex flex-row h-full justify-between items-center w-full lg:w-1/2 ">
-                        <button className="flex items-center rounded bg-gray-200 h-8 w-1/2 mr-2">
-                            <TbArrowsSort className="w-4 h-4 m-1" style={{ color: '#808080' }} />
-                            <p className="text-xs font-semibold text-black-00">Hoạt động (mới - cũ)</p>
-                            <FaChevronDown className="w-4 h-4 m-1 ml-auto" color="gray" />
-                        </button>
+                    <div className="flex flex-row h-full justify-between items-center w-full lg:w-1/2">
+                        <Menu as="div" className="relative inline-block text-left w-1/2 mr-2">
+                            <div>
+                                <Menu.Button className="flex items-center rounded bg-gray-200 h-8 w-full mr-2">
+                                    <TbArrowsSort className="w-4 h-4 m-1" style={{ color: '#808080' }} />
+                                    <p className="text-xs font-semibold text-black">{selectedOptionSortGroup === 1 ? 'Hoạt động (mới - cũ)' : 'Hoạt động (cũ - mới)'}</p>
+                                    <FaChevronDown className="w-4 h-4 m-1 ml-auto" style={{ color: 'gray' }} />
+                                </Menu.Button>
+                            </div>
+                            <Menu.Items className="absolute right-0 z-10 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none w-full">
+                                <div className="px-1 py-1">
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <button
+                                                className={`${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                                                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                                onClick={() => {
+                                                    setSelectedOptionSortGroup(1)
+                                                }}
+                                            >
+                                                Tên (A-Z)
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <button
+                                                className={`${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                                                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                                onClick={() => {
+                                                    setSelectedOptionSortGroup(2)
+                                                }}
+                                            >
+                                                Tên (Z-A)
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <button
+                                                className={`${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                                                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                                onClick={() => {
+                                                    setSelectedOptionSortGroup(3)
+                                                }}
+                                            >
+                                                Hoạt động (mới - cũ)
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <button
+                                                className={`${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                                                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                                onClick={() => {
+                                                    setSelectedOptionSortGroup(3)
+                                                }}
+                                            >
+                                                Hoạt động (cũ - mới)
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                </div>
+                            </Menu.Items>
+                        </Menu>       
+
+
+                                         
 
                         <button className="flex items-center rounded bg-gray-200 h-8 w-1/2">
                             <LuFilter className="w-4 h-4 m-1" color="gray" />
                             <p className="text-xs font-semibold " >Tất cả</p>
                             <FaChevronDown className="w-4 h-4 m-1 ml-auto" color="gray" />
-
-
                         </button>
                     </div>
                 </div>
@@ -86,9 +148,6 @@ function ViewListGroup() {
         )
     }
 
-
-
-
     return (
         <div className="flex flex-1 flex-col">
             <div className="flex flex-row h-16 items-center">
@@ -102,7 +161,7 @@ function ViewListGroup() {
             <hr></hr>
             <div className="flex flex-1  bg-gray-100 scrollable-div flex-col" >
                 <div className="txt-contacts items-center " >
-                    <p className="text-base font-semibold ">Nhóm ({groups.length})</p>
+                    <p className="text-sm font-semibold ">Nhóm ({groups.length})</p>
                 </div>
                 <ListGroup list={groups} />
             </div>
