@@ -5,7 +5,7 @@ import ForgotPassword from "../components/login/ForgotPassword";
 import LoginBySMS from "../components/login/LoginBySMS";
 import SignUp from "../components/login/SignUp";
 import Chat from "../components/chat/chatbox/Chat";
-import Contact from "../components/chat/contact/Contact";
+import Contact from "../components/chat/contacts/index";
 import Todo from "../components/chat/todo/Todo";
 
 export function LoginRouter() {
