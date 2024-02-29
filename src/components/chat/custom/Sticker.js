@@ -1,17 +1,14 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { LuSticker } from "react-icons/lu";
 import { Menu, Transition } from "@headlessui/react";
-import { PickerComponent} from "stipop-react-sdk";
+import { PickerComponent } from "stipop-react-sdk";
 
-export default function Sticker(props) {
-  const [isOpen, setIsOpen] = useState(false);
+import { v4 as uuidv4 } from "uuid";
 
+export default function Sticker({ setMessage, message }) {
   return (
     <>
-      <Menu
-        as="div"
-        className="relative"
-      >
+      <Menu as="div" className="relative">
         <div>
           <Menu.Button className="h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
             <LuSticker className="text-2xl" />
@@ -28,13 +25,23 @@ export default function Sticker(props) {
           leaveTo="transform opacity-0 scale-95"
         >
           <Menu.Items className="absolute p-3 bottom-12 left-3 z-10 mt-2 w-fit">
-            <PickerComponent 
+            <PickerComponent
               params={{
                 apikey: "aca479289a446a42a376ad930c5a2206",
                 userId: "472930424623749023489270",
               }}
               storeClick={(click) => console.log(click)}
-              stickerClick={(url) => console.log(url)}
+              stickerClick={(url) => {
+                let newText = {
+                  id: uuidv4(),
+                  src: url.url,
+                  type: "image/Sticker",
+                  createDateTime: new Date(),
+                  sender: "tran",
+                };
+                console.log(newText);
+                setMessage([...message,newText]);
+              }}
             />
           </Menu.Items>
         </Transition>
