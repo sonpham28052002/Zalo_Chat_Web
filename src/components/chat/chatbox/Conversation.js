@@ -62,19 +62,13 @@ export default function Conversation({ messages }) {
     <div className="p-5 h-fit">
       {messages.map((item) => {
         if (item.type === "text/content") {
-          return <ContentText message={item} />;
+          return <ContentText key={item.id} message={item} />;
         } else if (item.type.startsWith("application/")) {
-          return <ContentFile file={item} />;
-        } else if (item.type === "image/png" || item.type === "image/png") {
-          return null;
+          return <ContentFile key={item.id} file={item} />;
         } else if (item.type === "image/Sticker") {
-          return <ContentSticker sticker={item} />;
-        } else if (item.type === "video/mp4") {
-          return null;
-        } else if (item.type === "application/pdf") {
-          return null;
+          return <ContentSticker key={item.id} sticker={item} />;
         }
-        return null;
+        return <div key={"21212"}></div>;
       })}
     </div>
   );

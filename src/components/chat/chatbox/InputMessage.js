@@ -23,7 +23,7 @@ export default function InputMessage({ message, setMessage }) {
   return (
     <div className="flex flex-col h-28 ">
       <div className=" h-12 p-1 flex flex-row items-center justify-start border-b">
-        <Sticker setMessage={setMessage} message={message}/>
+        <Sticker setMessage={setMessage} message={message} />
         <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
           <label htmlFor="dropzone-image">
             <input
@@ -78,7 +78,6 @@ export default function InputMessage({ message, setMessage }) {
             if (e.keyCode === 13 && text.trim() === "") {
               e.preventDefault();
             } else if (e.key === "Enter" && text.trim() !== "") {
-              console.log(text);
               let content = {
                 id: uuidv4(),
                 type: "text/content",

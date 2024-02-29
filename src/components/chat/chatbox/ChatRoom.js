@@ -6,6 +6,7 @@ import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import "../../../style/scrollBar.css";
 import Conversation from "./Conversation";
 import InputMessage from "./InputMessage";
+import { v4 as uuidv4 } from "uuid";
 
 export default function ChatRoom(props) {
   var data = {
@@ -19,7 +20,7 @@ export default function ChatRoom(props) {
 
   var [message, setMessage] = useState([
     {
-      id: 1,
+      id: uuidv4(),
       type: "text/content",
       content:
         "You can let the app developer know that this app doesn't comply with one or more Google validation rules.Tìm hiểu thêm về lỗi này Nếu bạn là nhà phát triển của Nike, hãy xem",
@@ -27,7 +28,7 @@ export default function ChatRoom(props) {
       sender: "son",
     },
     {
-      id: 2,
+      id: uuidv4(),
       type: "text/content",
       content:
         "You can let the app developer know that this app doesn't comply with one or more Google validation rules.Tìm hiểu thêm về lỗi này Nếu bạn là nhà phát triển của Nike, hãy xem",

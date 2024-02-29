@@ -39,7 +39,6 @@ export default function Sticker({ setMessage, message }) {
                   createDateTime: new Date(),
                   sender: "tran",
                 };
-                console.log(newText);
                 setMessage([...message,newText]);
               }}
             />
