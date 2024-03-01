@@ -7,11 +7,12 @@ import { HiOutlineWrench } from "react-icons/hi2";
 import { TbWorld, TbExclamationCircle } from "react-icons/tb";
 import UserInfoModal from "../infoUser/UserInfoModal";
 import ModalSetting from "./ModalSetting";
+import { useSelector } from "react-redux";
 
 export default function NavMenuSetting() {
+  var user = useSelector((state) => state.data);
   const [isOpenUserInfoModal, setIsOpenUserInfoModal] = useState(false);
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
-
   var dataNav = [
     {
       id: 1,
@@ -81,7 +82,6 @@ export default function NavMenuSetting() {
                     }`}
                     onClick={item?.onclick}
                   >
-                    
                     {item.icon}
                     <p className="block text-sm ml-2 ">{item.title}</p>
                   </div>
@@ -96,8 +96,15 @@ export default function NavMenuSetting() {
           </Menu.Items>
         </Transition>
       </Menu>
-      <UserInfoModal isOpen={isOpenUserInfoModal} setIsOpen={setIsOpenUserInfoModal} />
-      <ModalSetting isOpen={isOpenSettingModal} setIsOpen={setIsOpenSettingModal}/>
+      <UserInfoModal
+        isOpen={isOpenUserInfoModal}
+        setIsOpen={setIsOpenUserInfoModal}
+        user={user}
+      />
+      <ModalSetting
+        isOpen={isOpenSettingModal}
+        setIsOpen={setIsOpenSettingModal}
+      />
     </>
   );
 }

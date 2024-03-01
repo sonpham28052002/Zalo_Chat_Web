@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CiCamera, CiEdit } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
 
-const UserInfoModal = ({ isOpen, setIsOpen }) => {
+const UserInfoModal = ({ isOpen, setIsOpen, user }) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -31,7 +31,7 @@ const UserInfoModal = ({ isOpen, setIsOpen }) => {
                 <img
                   alt="#"
                   className="h-full min-w-96 bg-cover bg-repeat-x"
-                  src="https://cover-talk.zadn.vn/e/d/7/1/1/fa77be6399bd4028983cfc723dda9494.jpg"
+                  src={user.coverImage}
                 />
               </div>
               <div>
@@ -39,13 +39,13 @@ const UserInfoModal = ({ isOpen, setIsOpen }) => {
                   <img
                     alt="#"
                     className="absolute -top-5 left-3 h-20 w-20 rounded-full border-2"
-                    src="https://zpsocial-f35-org.zadn.vn/fa09cf417b239a7dc332.jpg"
+                    src={user.avt}
                   />
                   <div className="absolute top-8 left-16 w-7 h-7 border flex flex-row items-center rounded-full justify-center bg-slate-300 hover:bg-slate-400">
                     <CiCamera className=" text-xl text-black" />
                   </div>
                   <div className="absolute left-28 top-3 text-xl text-black font-medium flex flex-row items-end">
-                    <h1>Phạm Thanh Sơn</h1>
+                    <h1>{user.name}</h1>
                     <div className=" ml-1 rounded-full h-6 w-6 flex flex-row justify-center items-center hover:bg-slate-300">
                       <CiEdit className="text-xl" />
                     </div>
@@ -57,25 +57,25 @@ const UserInfoModal = ({ isOpen, setIsOpen }) => {
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
                       Bio
                     </p>
-                    <p className="w-28 font-sans">Leon</p>
+                    <p className="w-28 font-sans">{user.Bio}</p>
                   </div>
                   <div className="h-8 px-1  flex flex-row items-center">
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
                       Giới tính
                     </p>
-                    <p className="w-28 font-sans">Nam</p>
+                    <p className="w-28 font-sans">{user.gender}</p>
                   </div>
                   <div className="h-8 px-1  flex flex-row items-center">
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
                       Ngày sinh
                     </p>
-                    <p className="w-28 font-sans">28-05-2002</p>
+                    <p className="w-28 font-sans">{user.DOB}</p>
                   </div>
                   <div className="h-8 px-1  flex flex-row items-center  ">
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
                       Điện thoại
                     </p>
-                    <p className="w-32 font-sans">+84 346 676 956</p>
+                    <p className="w-32 font-sans">{user.phone}</p>
                   </div>
                 </div>
                 <div className="w-full bg-white py-2 px-4">

@@ -8,7 +8,7 @@ import Conversation from "./Conversation";
 import InputMessage from "./InputMessage";
 import { v4 as uuidv4 } from "uuid";
 
-export default function ChatRoom(props) {
+export default function ChatRoom({ conversation }) {
   var data = {
     id: 1,
     name: "Trân",
@@ -26,6 +26,7 @@ export default function ChatRoom(props) {
         "You can let the app developer know that this app doesn't comply with one or more Google validation rules.Tìm hiểu thêm về lỗi này Nếu bạn là nhà phát triển của Nike, hãy xem",
       createDateTime: new Date(),
       sender: "son",
+      interact: "👍",
     },
     {
       id: uuidv4(),
@@ -33,6 +34,7 @@ export default function ChatRoom(props) {
       content:
         "You can let the app developer know that this app doesn't comply with one or more Google validation rules.Tìm hiểu thêm về lỗi này Nếu bạn là nhà phát triển của Nike, hãy xem",
       createDateTime: new Date(),
+      interact: "👍",
       sender: "tran",
     },
   ]);

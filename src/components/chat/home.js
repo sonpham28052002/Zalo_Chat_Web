@@ -7,7 +7,6 @@ import { PiToolboxBold } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { HomeRouter } from "../../router/router";
 
-
 import NavMenuSetting from "./setting/NavMenuSetting";
 import InfoUser from "./infoUser/infoUser";
 export default function Home() {
@@ -17,7 +16,7 @@ export default function Home() {
     <div className="min-w-screen-md  min-h-dvh flex flex-row">
       <div className=" bg-[#3883ac]  w-16 h-svh flex flex-col items-center justify-between">
         <div className="flex flex-col items-center h-96 w-full pt-7 ">
-         <InfoUser/>
+          <InfoUser />
           <div className="w-full flex flex-col items-center">
             <Link
               to="/ChatRom"
@@ -67,8 +66,8 @@ export default function Home() {
           >
             <PiToolboxBold className="text-white text-3xl" />
           </Link>
-         
-            <NavMenuSetting/>
+
+          <NavMenuSetting />
         </div>
       </div>
       <div className="h-svh w-screen">

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Toggle from "../custom/toggle";
-
+import "../../../style/scrollBar.css"
 export default function Message() {
     var [isCheck,setIsCheck] = useState(0)
 
   return (
-    <div className="w-[450px] max-h-[600px] overflow-y-auto ">
+    <div className="w-[450px] max-h-[600px] overflow-y-auto scrollbar-container">
     <div className="">
       <div className="px-4 border-b">
         <div className="flex flex-row justify-between items-center">

@@ -1,12 +1,12 @@
 import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment, useState } from "react";
 import UserInfoModal from "./UserInfoModal";
+import { useSelector } from "react-redux";
+import ModalSetting from "../setting/ModalSetting";
 export default function InfoUser() {
-  var user = {
-    id: 1,
-    name: "Phạm Thanh Sơn",
-  };
-  const [isOpen, setIsOpen] = useState(false);
+  var user = useSelector((state) => state.data);
+  const [isOpenInforUser, setIsOpenInforUser] = useState(false);
+  const [isOpenSetting, setIsOpenSetting] = useState(false);
 
   return (
     <>
@@ -19,7 +19,7 @@ export default function InfoUser() {
             <img
               className="rounded-full h-12 mb-4 border border-white"
               alt="#"
-              src="https://s120-ava-talk.zadn.vn/c/b/f/1/8/120/fa77be6399bd4028983cfc723dda9494.jpg"
+              src={user.avt}
             ></img>
           </Menu.Button>
         </div>
@@ -42,13 +42,16 @@ export default function InfoUser() {
             <Menu.Item>
               <div
                 className="py-1 hover:bg-slate-400 hover:text-white px-2 hover:font-medium"
-                onClick={() => setIsOpen(true)}
+                onClick={() => setIsOpenInforUser(true)}
               >
                 <p>Hồ sơ của bạn</p>
               </div>
             </Menu.Item>
             <Menu.Item>
-              <div className="py-1 hover:bg-slate-400 hover:text-white px-2 hover:font-medium">
+              <div
+                className="py-1 hover:bg-slate-400 hover:text-white px-2 hover:font-medium"
+                onClick={() => setIsOpenSetting(true)}
+              >
                 <p>cài đặt</p>
               </div>
             </Menu.Item>
@@ -60,7 +63,12 @@ export default function InfoUser() {
           </Menu.Items>
         </Transition>
       </Menu>
-      <UserInfoModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <UserInfoModal
+        isOpen={isOpenInforUser}
+        setIsOpen={setIsOpenInforUser}
+        user={user}
+      />
+      <ModalSetting setIsOpen={setIsOpenSetting} isOpen={isOpenSetting} />
     </>
   );
 }

@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { BiSolidFilePdf } from "react-icons/bi";
+import NavIconInteract from "./NavIconInteract";
 
 export default function Conversation({ messages }) {
   function ContentText({ message }) {
+    let [messageLocal,setMessageLocal] = useState(message)
     return (
       <div
-        className="  h-fit w-full  flex flex-col items-end my-3"
+        className=" relative h-fit w-full  flex flex-col items-end my-3"
         key={message.id}
       >
-        <div className="h-full max-w-[50%] w-fit bg-[#e5efff] rounded-md flex flex-row justify-evenly items-center border  shadow-lg p-2">
+        <div className="h-full max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-row justify-start items-center border  shadow-lg p-2">
           <div className=" h-fit flex flex-col items-start justify-around">
             <p className=" ">{message.content}</p>
             <span className="text-[12px] text-gray-400">{`${
@@ -21,6 +23,7 @@ export default function Conversation({ messages }) {
                 : new Date().getMinutes()
             }`}</span>
           </div>
+          <NavIconInteract icon={message.interact} setMessage={setMessageLocal} message={messageLocal}/>
         </div>
       </div>
     );
@@ -47,7 +50,7 @@ export default function Conversation({ messages }) {
   function ContentSticker({ sticker }) {
     return (
       <div
-        className="  h-fit w-full  flex flex-col items-end my-3"
+        className=" relative h-fit w-full  flex flex-col items-end my-3"
         key={sticker.id}
       >
         <div className="h-full max-w-[50%] w-fit  p-2">
