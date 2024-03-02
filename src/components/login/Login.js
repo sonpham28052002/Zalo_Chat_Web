@@ -8,9 +8,8 @@ function Login() {
   var [closeCookie, setCloseCookie] = useState(true);
   var [account, setAccount] = useState(undefined);
   console.log(account);
-
   useEffect(() => {
-    handleGetValueCookie(setAccount, setCloseCookie);
+    handleGetValueCookie("appchat",setAccount, setCloseCookie);
   }, []);
   return (
     <div

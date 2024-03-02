@@ -69,13 +69,13 @@ const UserInfoModal = ({ isOpen, setIsOpen, user }) => {
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
                       Ngày sinh
                     </p>
-                    <p className="w-28 font-sans">{user.DOB}</p>
+                    <p className="w-28 font-sans">{new Date(user.DOB).toLocaleDateString()}</p>
                   </div>
                   <div className="h-8 px-1  flex flex-row items-center  ">
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
                       Điện thoại
                     </p>
-                    <p className="w-32 font-sans">{user.phone}</p>
+                    <p className="w-32 font-sans">+{user.phone}</p>
                   </div>
                 </div>
                 <div className="w-full bg-white py-2 px-4">

@@ -7,6 +7,8 @@ import SignUp from "../components/login/SignUp";
 import Chat from "../components/chat/chatbox/Chat";
 import Contact from "../components/chat/contacts/index";
 import Todo from "../components/chat/todo/Todo";
+import Login from "../components/login/Login";
+import Home from "../components/chat/home";
 
 export function LoginRouter() {
   return (
@@ -22,9 +24,18 @@ export function LoginRouter() {
 export function HomeRouter() {
   return (
     <Routes>
+      <Route element={<Chat />} path="/"></Route>
       <Route element={<Chat />} path="/ChatRom"></Route>
       <Route element={<Contact />} path="/Contact"></Route>
       <Route element={<Todo />} path="/Todos"></Route>
+    </Routes>
+  );
+}
+export function AcceptRouter() {
+  return (
+    <Routes>
+      <Route element={<Login />} path="/"></Route>
+      <Route element={<Home />} path="/home*"></Route>
     </Routes>
   );
 }

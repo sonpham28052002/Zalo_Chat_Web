@@ -6,23 +6,31 @@ import Loader from "../chat/custom/loader.js";
 import { Link, useNavigate } from "react-router-dom";
 import { getAccount } from "../../services/Account_Service.js";
 import { handleSetValueCookie } from "../../services/Cookie_Service.js";
+import { useDispatch, useSelector } from "react-redux";
+import { getAPI } from "../../redux_Toolkit/slices.js";
 
 export default function LoginByNumberPhone() {
   const history = useNavigate();
-  var [phone, setPhone] = useState(undefined);
-  var [password, setPassword] = useState(undefined);
+  var [phone, setPhone] = useState("84987654321");
+  var [password, setPassword] = useState("securepassword1");
   var [isLoading, setIsLoading] = useState(false);
+  var isWaitting = useSelector((state) => state.isWaitting);
+  var dispatch = useDispatch();
 
   var handleLoginWithPhoneAnhPassword = (phone, password) => {
     phone = "+" + phone;
     setIsLoading(true);
-
     getAccount(
-      (data, loading) => {
-        console.log("data");
+      async (data) => {
         console.log(data);
-        handleSetValueCookie(data);
+        handleSetValueCookie("appchat",data);
         setIsLoading(false);
+        if (data) {
+          await dispatch(getAPI(data.id));
+          history("/home");
+        }
+        if (!isWaitting) {
+        }
       },
       phone,
       password
@@ -67,7 +75,7 @@ export default function LoginByNumberPhone() {
             <FaUnlockAlt className="text-lg" />
           </div>
           <input
-            // value={password}
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
             type="password"
             className="bg-white border border-gray-300 text-gray-900 text-sm rounded-md  w-full ps-10 p-2.5 focus:outline-none focus:border-black"

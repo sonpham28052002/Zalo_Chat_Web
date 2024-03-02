@@ -1,14 +1,14 @@
 import Cookies from "js-cookie";
 
-const createCookie = () => {
+const createCookie = (cookieName) => {
   const newCookieValue = {};
-  Cookies.set("appchat", JSON.stringify(newCookieValue), { expires: 7 });
+  Cookies.set(cookieName, JSON.stringify(newCookieValue), { expires: 7 });
 };
-const handleDeleteCookie = () => {
-  Cookies.remove("appchat");
+const handleDeleteCookie = (cookieName) => {
+  Cookies.remove(cookieName);
 };
-const handleGetValueCookie = (callback, setCloseCookie) => {
-  const cookie = Cookies.get("appchat");
+const handleGetValueCookie = (cookieName, callback, setCloseCookie) => {
+  const cookie = Cookies.get(cookieName);
   if (cookie !== undefined) {
     callback(cookie);
     setCloseCookie(false);
@@ -16,10 +16,11 @@ const handleGetValueCookie = (callback, setCloseCookie) => {
     setCloseCookie(true);
   }
 };
-const handleSetValueCookie = (account) => {
-  const cookie = Cookies.get("appchat");
+const handleSetValueCookie = (cookieName, account) => {
+
+  const cookie = Cookies.get(cookieName);
   if (cookie !== undefined) {
-    Cookies.set("appchat", JSON.stringify(account), { expires: 7 });
+    Cookies.set(cookieName, JSON.stringify(account), { expires: 7 });
   }
 };
 export {

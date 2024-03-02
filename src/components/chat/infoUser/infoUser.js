@@ -8,6 +8,7 @@ export default function InfoUser() {
   const [isOpenInforUser, setIsOpenInforUser] = useState(false);
   const [isOpenSetting, setIsOpenSetting] = useState(false);
 
+  
   return (
     <>
       <Menu

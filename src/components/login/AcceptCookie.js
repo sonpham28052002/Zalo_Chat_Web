@@ -29,10 +29,14 @@ export default function AcceptCookie({ setClose }) {
         <button
           className="text-sm bg-gray-800 hover:bg-green-400 text-white py-2 px-4 rounded mx-2"
           onClick={() => {
-            createCookie();
-            handleGetValueCookie((data) => {
-              console.log(JSON.parse(data));
-            }, setClose);
+            createCookie("appchat");
+            handleGetValueCookie(
+              "appchat",
+              (data) => {
+                console.log(JSON.parse(data));
+              },
+              setClose
+            );
           }}
         >
           Đồng ý

@@ -4,11 +4,10 @@ var getAPI = createAsyncThunk(
   "user/getAPI",
   async (arg, { rejectWithValue }) => {
     try {
-      //   const res = await fetch(`http://localhost:8080/user/id=${arg}`);
-      //   var data = await res.json();
-      var data = arg;
-      console.log("data");
-      console.log(data);
+      const res = await fetch(
+        `https://65e300d088c4088649f526ea.mockapi.io/user/${arg}`
+      );
+      var data = await res.json();
       return data;
     } catch (error) {
       rejectWithValue(error.response.data);
@@ -65,34 +64,20 @@ var postAPI = createAsyncThunk(
 var reducer = createSlice({
   name: "user",
   initialState: {
-    data: {
-      id: "65dce7e90d0aa82b91ee72b7",
-      gender: "Nam",
-      name: "Phạm Thanh Sơn",
-      DOB: "2002-05-28",
-      avt: "https://s120-ava-talk.zadn.vn/c/b/f/1/8/120/fa77be6399bd4028983cfc723dda9494.jpg",
-      friends: [],
-      conversations: [],
-      Bio: "Leon",
-      phone: "+84346676956",
-      isOnline: true,
-      coverImage:
-        "https://cover-talk.zadn.vn/e/d/7/1/1/fa77be6399bd4028983cfc723dda9494.jpg",
-      logOutTimeDate: "2016-05-18T16:00:00Z",
-      logInTimeDate: new Date(),
-    },
+    data: undefined,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getAPI.pending, (state, action) => {
-        console.log(state.data);
+      .addCase(getAPI.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.data = action.payload;
       })
       .addCase(putAPI.pending, (state, action) => {
-        console.log(state.data);
+        return action.payload;
       })
       .addCase(postAPI.pending, (state, action) => {
-        console.log(state.data);
+        return action.payload;
       });
   },
 });

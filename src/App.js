@@ -1,7 +1,5 @@
-import Login from "./components/login/Login";
-// import Home from "./components/chat/home";
+import { AcceptRouter } from "./router/router";
 function App() {
-  return <Login />;
-  // return <Home />;
+  return <AcceptRouter />;
 }
 export default App;

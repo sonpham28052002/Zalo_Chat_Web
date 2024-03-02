@@ -11,10 +11,10 @@ export default function NavIconInteract({ icon, setMessage, message }) {
           <span className="text-[16px]" role="img" aria-label="Biểu cảm">
             {iconText || <AiOutlineLike />}
           </span>
-          <div className="absolute -top-10 -left-40 hidden group-hover:block bg-white p-2 rounded-lg shadow-md">
+          <div className={`absolute -top-10 -left-40  group-hover:block bg-white p-2 rounded-lg shadow-md`}>
             <div className="flex flex-row justify-around items-center select-none	">
               <span
-                className="p-1 rounded-md hover:bg-slate-100 hover:text-xl"
+                className="p-1 rounded-md hover:bg-slate-100 hover:text-xl "
                 role="img"
                 aria-label="Biểu cảm"
                 onClick={(e) => {
