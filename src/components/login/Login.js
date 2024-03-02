@@ -1,21 +1,20 @@
 import BackgroundImage from "./asset/backgroud.png";
 import "react-phone-input-2/lib/style.css";
 import { LoginRouter } from "../../router/router";
-
+import AcceptCookie from "./AcceptCookie";
+import { useEffect, useState } from "react";
+import { handleGetValueCookie } from "../../services/Cookie_Service";
 function Login() {
-  // var [content, setContent] = useState([
-  //   "ĐĂNG NHẬP",
-  //   "Số điện thoại",
-  //   "Mật khẩu",
-  //   "Quên mật khẩu",
-  //   "Đăng nhập",
-  //   "Đăng nhập bằng thiết bị di động",
-  //   "Đăng nhập bằng mã QR",
-  // ]);
+  var [closeCookie, setCloseCookie] = useState(true);
+  var [account, setAccount] = useState(undefined);
+  console.log(account);
 
+  useEffect(() => {
+    handleGetValueCookie(setAccount, setCloseCookie);
+  }, []);
   return (
     <div
-      className="App flex items-center justify-center"
+      className="App flex items-center justify-center relative"
       style={{
         backgroundImage: `url(${BackgroundImage})`,
         height: "100vh",
@@ -38,6 +37,7 @@ function Login() {
           ></img>
         </div>
       </div>
+      {closeCookie && <AcceptCookie setClose={setCloseCookie} />}
     </div>
   );
 }

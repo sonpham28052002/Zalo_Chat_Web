@@ -9,3 +9,5 @@
 
     - npm install --save stipop-react-sdk
     - npm install emoji-picker-react
+    - npm install js-cookie
+    
