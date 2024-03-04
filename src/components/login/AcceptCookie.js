@@ -30,13 +30,7 @@ export default function AcceptCookie({ setClose }) {
           className="text-sm bg-gray-800 hover:bg-green-400 text-white py-2 px-4 rounded mx-2"
           onClick={() => {
             createCookie("appchat");
-            handleGetValueCookie(
-              "appchat",
-              (data) => {
-                console.log(JSON.parse(data));
-              },
-              setClose
-            );
+            handleGetValueCookie("appchat", (data) => {}, setClose);
           }}
         >
           Đồng ý

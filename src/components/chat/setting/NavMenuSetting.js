@@ -8,11 +8,15 @@ import { TbWorld, TbExclamationCircle } from "react-icons/tb";
 import UserInfoModal from "../infoUser/UserInfoModal";
 import ModalSetting from "./ModalSetting";
 import { useSelector } from "react-redux";
+import { handleSetValueCookie } from "../../../services/Cookie_Service";
+import { useNavigate } from "react-router-dom";
 
 export default function NavMenuSetting() {
   var user = useSelector((state) => state.data);
   const [isOpenUserInfoModal, setIsOpenUserInfoModal] = useState(false);
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
+  var history = useNavigate();
+
   var dataNav = [
     {
       id: 1,
@@ -88,7 +92,13 @@ export default function NavMenuSetting() {
                 </Menu.Item>
               ))}
               <Menu.Item>
-                <div className="py-2 border-t hover:bg-red-600 text-red-600 hover:font-medium hover:text-white rounded-b-md ">
+                <div
+                  className="py-2 border-t hover:bg-red-600 text-red-600 hover:font-medium hover:text-white rounded-b-md "
+                  onClick={() => {
+                    handleSetValueCookie("appchat", {});
+                    history("/");
+                  }}
+                >
                   <p className="text-center ">Đăng xuất</p>
                 </div>
               </Menu.Item>

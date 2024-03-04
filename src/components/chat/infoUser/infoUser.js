@@ -3,12 +3,13 @@ import React, { Fragment, useState } from "react";
 import UserInfoModal from "./UserInfoModal";
 import { useSelector } from "react-redux";
 import ModalSetting from "../setting/ModalSetting";
+import { useNavigate } from "react-router-dom";
+import { handleSetValueCookie } from "../../../services/Cookie_Service";
 export default function InfoUser() {
   var user = useSelector((state) => state.data);
   const [isOpenInforUser, setIsOpenInforUser] = useState(false);
   const [isOpenSetting, setIsOpenSetting] = useState(false);
-
-  
+  var history = useNavigate();
   return (
     <>
       <Menu
@@ -57,7 +58,13 @@ export default function InfoUser() {
               </div>
             </Menu.Item>
             <Menu.Item className="">
-              <div className="py-1 border-t hover:bg-red-600 text-red-600 hover:text-white hover:font-medium">
+              <div
+                className="py-1 border-t hover:bg-red-600 text-red-600 hover:text-white hover:font-medium"
+                onClick={() => {
+                  handleSetValueCookie("appchat", {});
+                  history("/");
+                }}
+              >
                 <p className="text-center ">Đăng xuất</p>
               </div>
             </Menu.Item>

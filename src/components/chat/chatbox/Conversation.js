@@ -7,10 +7,19 @@ export default function Conversation({ messages }) {
     let [messageLocal, setMessageLocal] = useState(message);
     return (
       <div
-        className=" relative h-fit w-full  flex flex-col items-end my-3"
+        className={`  h-fit w-full  flex flex-row ${
+          messages.id === message.sender ? "justify-start" : "justify-end"
+        } items-star  my-5 `}
         key={message.id}
       >
-        <div className="h-full max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-row justify-start items-center border  shadow-lg p-2">
+        {messages.id === message.sender && (
+          <img
+            src={messages.avt}
+            alt="#"
+            className="h-12 w-12 rounded-full mr-3"
+          />
+        )}
+        <div className="relative h-full max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-row justify-start items-center border  shadow-lg p-2">
           <div className=" h-fit flex flex-col items-start justify-around">
             <p className=" ">{messageLocal.message}</p>
             <span className="text-[12px] text-gray-400">{`${
@@ -68,8 +77,6 @@ export default function Conversation({ messages }) {
   return (
     <div className="p-5 h-fit">
       {messages.conversation.map((item) => {
-      
-
         if (item.type === "text/content") {
           return <ContentText key={item.id} message={item} />;
         } else if (item.type.startsWith("application/")) {

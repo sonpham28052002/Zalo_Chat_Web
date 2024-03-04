@@ -10,8 +10,6 @@ import { useSelector } from "react-redux";
 
 export default function ChatRoom({ index, setIndex }) {
   var conversation = useSelector((state) => state.data);
-  console.log("chatroom");
-  console.log(conversation);
 
   const scrollContainerRef = useRef(null);
 

@@ -18,4 +18,5 @@ var getAccount = (callBack, phone, password) => {
       callBack(undefined);
     });
 };
+
 export { getAccount };
