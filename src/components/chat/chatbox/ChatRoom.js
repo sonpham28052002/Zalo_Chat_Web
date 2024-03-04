@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BsCameraVideo } from "react-icons/bs";
 import { IoIosSearch } from "react-icons/io";
 import { PiTagSimpleFill } from "react-icons/pi";
@@ -7,10 +7,11 @@ import "../../../style/scrollBar.css";
 import Conversation from "./Conversation";
 import InputMessage from "./InputMessage";
 import { useSelector } from "react-redux";
+import UserInfoModal from "../infoUser/UserInfoModal";
 
 export default function ChatRoom({ index, setIndex }) {
   var conversation = useSelector((state) => state.data);
-
+  var [isOpenInforUser, setIsOpenInforUser] = useState(false);
   const scrollContainerRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -25,12 +26,15 @@ export default function ChatRoom({ index, setIndex }) {
 
   return (
     <div className=" h-full w-10/12 ">
-      <div className="border-b flex flex-row items-center justify-between px-4 ">
-        <div className="flex flex-row w-1/5 py-2">
+      <div className="border-b flex flex-row items-center justify-between px-4">
+        <div className="flex flex-row w-1/5 py-2 ">
           <img
             className="rounded-full h-12  mr-1 border border-white "
             alt="#"
             src={conversation.messages[index].avt}
+            onClick={() => {
+              setIsOpenInforUser(true);
+            }}
           ></img>
           <div>
             <h1 className="font-medium text-lg">
@@ -79,6 +83,11 @@ export default function ChatRoom({ index, setIndex }) {
           setIndex={setIndex}
         />
       </div>
+      <UserInfoModal
+        isOpen={isOpenInforUser}
+        setIsOpen={setIsOpenInforUser}
+        user={conversation.messages[index]}
+      />
     </div>
   );
 }
