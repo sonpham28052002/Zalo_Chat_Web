@@ -66,7 +66,16 @@ var reducer = createSlice({
   initialState: {
     data: undefined,
   },
-  reducers: {},
+  reducers: {
+    updateMessage: (state, action) => {
+      let mess = state.data.messages.map((item) => ({ ...item }));
+      let newMessage = mess.filter(
+        (item, index) => item.id !== action.payload.id
+      );
+      newMessage.unshift(action.payload);
+      state.data.messages = newMessage;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAPI.fulfilled, (state, action) => {
@@ -82,4 +91,5 @@ var reducer = createSlice({
   },
 });
 export default reducer;
+export const { updateMessage } = reducer.actions;
 export { getAPI, putAPI, postAPI };

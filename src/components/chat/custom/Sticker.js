@@ -4,8 +4,12 @@ import { Menu, Transition } from "@headlessui/react";
 import { PickerComponent } from "stipop-react-sdk";
 
 import { v4 as uuidv4 } from "uuid";
+import { useDispatch, useSelector } from "react-redux";
+import { updateMessage } from "../../../redux_Toolkit/slices";
 
-export default function Sticker({ setMessage, message }) {
+export default function Sticker({ setIndex, message }) {
+  var user = useSelector((state) => state.data);
+  var dispatch = useDispatch()
   return (
     <>
       <Menu as="div" className="relative">
@@ -37,9 +41,12 @@ export default function Sticker({ setMessage, message }) {
                   src: url.url,
                   type: "image/Sticker",
                   createDateTime: new Date(),
-                  sender: "tran",
+                  sender: user.id,
                 };
-                setMessage([...message,newText]);
+                let newMessage = { ...message };
+                newMessage.conversation = [...message.conversation, newText];
+                dispatch(updateMessage(newMessage));
+                setIndex(0)
               }}
             />
           </Menu.Items>

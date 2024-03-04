@@ -6,8 +6,13 @@ import Sticker from "../custom/Sticker";
 import Emoji from "../custom/Emoji";
 import { BsFillSendFill } from "react-icons/bs";
 import { v4 as uuidv4 } from "uuid";
+import { useDispatch, useSelector } from "react-redux";
+import { updateMessage } from "../../../redux_Toolkit/slices";
 
-export default function InputMessage({ message, setMessage }) {
+export default function InputMessage({ message, setMessage,setIndex }) {
+  var  user = useSelector(state => state.data)
+  var dispatch = useDispatch()
+
   var [text, setText] = useState("");
   function formatFileSize(size) {
     if (size < 1024) {
@@ -23,7 +28,7 @@ export default function InputMessage({ message, setMessage }) {
   return (
     <div className="flex flex-col h-28 ">
       <div className=" h-12 p-1 flex flex-row items-center justify-start border-b">
-        <Sticker setMessage={setMessage} message={message} />
+        <Sticker setIndex={setIndex} message={message} />
         <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
           <label htmlFor="dropzone-image">
             <input
@@ -81,13 +86,17 @@ export default function InputMessage({ message, setMessage }) {
               let content = {
                 id: uuidv4(),
                 type: "text/content",
-                content: text,
+                message: text,
                 createDateTime: new Date(),
-                sender: "tran",
+                sender: user.id,
               };
+              console.log(content)
               e.preventDefault();
-              setMessage([...message, content]);
+              let newMessage = {...message}
+              newMessage.conversation =[...message.conversation, content]
+              dispatch(updateMessage(newMessage))
               setText(" ".trim());
+              setIndex(0)
             }
           }}
           placeholder={`Nhập tin nhắn gửi tới đối phương`}

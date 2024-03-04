@@ -4,7 +4,7 @@ import NavIconInteract from "./NavIconInteract";
 
 export default function Conversation({ messages }) {
   function ContentText({ message }) {
-    let [messageLocal,setMessageLocal] = useState(message)
+    let [messageLocal, setMessageLocal] = useState(message);
     return (
       <div
         className=" relative h-fit w-full  flex flex-col items-end my-3"
@@ -12,18 +12,22 @@ export default function Conversation({ messages }) {
       >
         <div className="h-full max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-row justify-start items-center border  shadow-lg p-2">
           <div className=" h-fit flex flex-col items-start justify-around">
-            <p className=" ">{message.content}</p>
+            <p className=" ">{messageLocal.message}</p>
             <span className="text-[12px] text-gray-400">{`${
-              new Date().getHours() < 10
-                ? "0" + new Date().getHours()
-                : new Date().getHours()
+              new Date(message.createDateTime).getHours() < 10
+                ? "0" + new Date(message.createDateTime).getHours()
+                : new Date(message.createDateTime).getHours()
             }:${
-              new Date().getMinutes() < 10
-                ? "0" + new Date().getMinutes()
-                : new Date().getMinutes()
+              new Date(message.createDateTime).getMinutes() < 10
+                ? "0" + new Date(message.createDateTime).getMinutes()
+                : new Date(message.createDateTime).getMinutes()
             }`}</span>
           </div>
-          <NavIconInteract icon={message.interact} setMessage={setMessageLocal} message={messageLocal}/>
+          <NavIconInteract
+            icon={message.interact}
+            setMessage={setMessageLocal}
+            message={messageLocal}
+          />
         </div>
       </div>
     );
@@ -63,7 +67,9 @@ export default function Conversation({ messages }) {
   }
   return (
     <div className="p-5 h-fit">
-      {messages.map((item) => {
+      {messages.conversation.map((item) => {
+      
+
         if (item.type === "text/content") {
           return <ContentText key={item.id} message={item} />;
         } else if (item.type.startsWith("application/")) {
