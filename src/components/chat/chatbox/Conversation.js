@@ -19,7 +19,7 @@ export default function Conversation({ messages }) {
             className="h-12 w-12 rounded-full mr-3"
           />
         )}
-        <div className="relative h-full max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-row justify-start items-center border  shadow-lg p-2">
+        <div className=" relative h-full max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-row justify-start items-center border  shadow-lg p-2">
           <div className=" h-fit flex flex-col items-start justify-around">
             <p className=" ">{messageLocal.message}</p>
             <span className="text-[12px] text-gray-400">{`${

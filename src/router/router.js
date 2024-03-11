@@ -34,7 +34,7 @@ export function HomeRouter() {
 export function AcceptRouter() {
   return (
     <Routes>
-      <Route element={<Login />} path="/"></Route>
+      <Route element={<Login />} path="/*"></Route>
       <Route element={<Home />} path="/home*"></Route>
     </Routes>
   );

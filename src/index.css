@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer base {
+  @font-face {
+    font-family: "font-ProtestGuerrilla";
+    src: url(/src/fonts/ProtestGuerrilla-Regular.ttf);
+  }
+  @font-face {
+    font-family: "font-SedgwickAveDisplay";
+    src: url(/src/fonts/SedgwickAveDisplay-Regular.ttf);
+  }
+  @font-face {
+    font-family: "font-BarettStreet";
+    src: url(/src/fonts/Barett_Street.ttf);
+  }
+}

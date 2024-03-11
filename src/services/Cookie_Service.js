@@ -15,6 +15,7 @@ const handleGetValueCookie = (cookieName, callback, setCloseCookie) => {
     callback(JSON.parse(cookie));
     setCloseCookie(false);
   } else {
+    callback(undefined);
     setCloseCookie(true);
   }
 };
