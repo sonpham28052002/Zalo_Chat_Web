@@ -1,37 +1,38 @@
 import React, { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import Loader from "../chat/custom/loader";
-import { stompClient } from "../../socket/socket";
 import { v4 as uuidV4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { IoIosHome } from "react-icons/io";
 import { AiOutlineReload } from "react-icons/ai";
+import { over } from "stompjs";
+import SockJS from "sockjs-client";
 export default function LoginByQRCode() {
-  var data = {
-    id: "yGjQT5o0sleSmjHVDHT24SS8FAB2",
-    name: "Rickey Jones",
-    image:
-      "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/455.jpg",
-  };
+  var [valueQR, setValueQR] = useState(uuidV4());
+  var [disableQR, setDisableQR] = useState(false);
+  var [isScaned, setIsScaned] = useState(false);
+  var history = useNavigate();
+  var [userReceive, setUserReceive] = useState();
+
+  const socket = new SockJS("http://localhost:8080/ws");
+  const stompClient = over(socket);
+
   stompClient.connect(
     {},
     () => {
-      stompClient.subscribe(
-        "/user/" +
-          "23486123904612040-612746124120-47120-4720-1470-071240-710247120-471204102740" +
-          "/QR",
-        (message) => {
-          console.log("Received message private:", message.body);
+      console.log(valueQR);
+      stompClient.subscribe("/user/" + valueQR + "/QR", (message) => {
+        if (message) {
+          setUserReceive(JSON.parse(message.body));
+          setIsScaned(true);
         }
-      );
+      });
     },
     (err) => {
       console.log(err);
     }
   );
-  var [valueQR, setValueQR] = useState(uuidV4());
-  var [disableQR, setDisableQR] = useState(false);
-  var history = useNavigate();
+
   useEffect(() => {
     setTimeout(() => {
       setDisableQR(true);
@@ -48,15 +49,15 @@ export default function LoginByQRCode() {
       <h4 className="text-gray-400 text-base font-medium">
         Sử ứng dụng để quét mã QR bên dưới.
       </h4>
-      {false ? (
+      {isScaned ? (
         <div className="mt-10 h-fit ">
           <img
             alt="#"
-            src={data.image}
-            className="shadow-2xl h-52 rounded-full border-2 border-white"
+            src={userReceive?.image}
+            className="shadow-2xl h-52 rounded-full border-2 border-white -mt-5"
           />
           <h1 className="mt-2 text-xl font-bold text-center w-full">
-            {data.name}
+            {userReceive?.name}
           </h1>
           <p className="text-center text-sm text-gray-400">
             Vui lòng đợi chấp nhận
@@ -81,7 +82,7 @@ export default function LoginByQRCode() {
                         setValueQR(uuidV4());
                       }}
                     >
-                      <AiOutlineReload className="font-medium mr-1"/>
+                      <AiOutlineReload className="font-medium mr-1" />
                       Lấy mã mới
                     </button>
                   </div>
