@@ -11,7 +11,7 @@ import NavMenuSetting from "./setting/NavMenuSetting";
 import InfoUser from "./infoUser/infoUser";
 export default function Home() {
   var [indexSelect, setIndexSelect] = useState(0);
-  
+
   return (
     <div className="min-w-screen-md  min-h-dvh flex flex-row">
       <div className=" bg-[#3883ac]  w-16 h-svh flex flex-col items-center justify-between">
@@ -19,7 +19,7 @@ export default function Home() {
           <InfoUser />
           <div className="w-full flex flex-col items-center">
             <Link
-              to="/home/ChatRom"
+              to="/home"
               className={`${
                 indexSelect === 0 ? "bg-[#1a8dcd]" : ""
               } w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center my-1 `}

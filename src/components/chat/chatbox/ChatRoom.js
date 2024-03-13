@@ -22,7 +22,7 @@ export default function ChatRoom({ index, setIndex }) {
   };
   useEffect(() => {
     scrollToBottom();
-  }, [index]);
+  }, [index,conversation]);
 
   return (
     <div className=" h-full w-10/12 ">
