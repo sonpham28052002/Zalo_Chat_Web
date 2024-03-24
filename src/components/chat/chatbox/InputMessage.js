@@ -5,14 +5,14 @@ import { FaRegFolder } from "react-icons/fa";
 import Sticker from "../custom/Sticker";
 import Emoji from "../custom/Emoji";
 import { BsFillSendFill } from "react-icons/bs";
-import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { updateMessage } from "../../../redux_Toolkit/slices";
-
-export default function InputMessage({ message, setMessage,setIndex }) {
-  var  user = useSelector(state => state.data)
-  var dispatch = useDispatch()
-
+import { v4 } from "uuid";
+export default function InputMessage({ conversation, setIndex, receiver }) {
+  var user = useSelector((state) => state.data);
+  var dispatch = useDispatch();
+  console.log("conversation");
+  console.log(conversation);
   var [text, setText] = useState("");
   function formatFileSize(size) {
     if (size < 1024) {
@@ -28,7 +28,7 @@ export default function InputMessage({ message, setMessage,setIndex }) {
   return (
     <div className="flex flex-col h-28 ">
       <div className=" h-12 p-1 flex flex-row items-center justify-start border-b">
-        <Sticker setIndex={setIndex} message={message} />
+        <Sticker setIndex={setIndex} message={conversation} />
         <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
           <label htmlFor="dropzone-image">
             <input
@@ -84,19 +84,37 @@ export default function InputMessage({ message, setMessage,setIndex }) {
               e.preventDefault();
             } else if (e.key === "Enter" && text.trim() !== "") {
               let content = {
-                id: uuidv4(),
-                type: "text/content",
-                message: text,
-                createDateTime: new Date(),
-                sender: user.id,
+                id: v4(),
+                messageType: "Text",
+                senderDate: new Date(),
+                sender: {
+                  id: user.id,
+                  userName: user.userName,
+                  avt: user.avt,
+                },
+                receiver: {
+                  id: receiver.id,
+                  userName: receiver.userName,
+                  avt: receiver.avt,
+                },
+                seen: [
+                  {
+                    id: user.id,
+                    userName: user.userName,
+                    avt: user.avt,
+                  },
+                ],
+                content: text,
               };
-              console.log(content)
+              console.log(content);
               e.preventDefault();
-              let newMessage = {...message}
-              newMessage.conversation =[...message.conversation, content]
-              dispatch(updateMessage(newMessage))
+              console.log("conversation");
+              console.log(conversation);
+              let newMessage = { ...conversation };
+              newMessage.messages = [...conversation.messages, content];
+              dispatch(updateMessage(newMessage));
               setText(" ".trim());
-              setIndex(0)
+              setIndex(0);
             }
           }}
           placeholder={`Nhập tin nhắn gửi tới đối phương`}

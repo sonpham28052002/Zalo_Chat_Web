@@ -10,7 +10,8 @@ import { useSelector } from "react-redux";
 import UserInfoModal from "../infoUser/UserInfoModal";
 
 export default function ChatRoom({ index, setIndex }) {
-  var conversation = useSelector((state) => state.data);
+  var data = useSelector((state) => state.data);
+  console.log("conversation");
   var [isOpenInforUser, setIsOpenInforUser] = useState(false);
   const scrollContainerRef = useRef(null);
 
@@ -21,24 +22,25 @@ export default function ChatRoom({ index, setIndex }) {
     }
   };
   useEffect(() => {
+    console.log("a");
     scrollToBottom();
-  }, [index,conversation]);
+  }, [index, data]);
 
   return (
     <div className=" h-full w-10/12 ">
-      <div className="border-b flex flex-row items-center justify-between px-4">
+      <div className="border-b flex  flex-row items-center justify-between px-4">
         <div className="flex flex-row w-1/5 py-2 ">
           <img
             className="rounded-full h-12  mr-1 border border-white "
             alt="#"
-            src={conversation.messages[index].avt}
+            src={data.conversation[index].user.avt}
             onClick={() => {
               setIsOpenInforUser(true);
             }}
           ></img>
           <div>
             <h1 className="font-medium text-lg">
-              {conversation.messages[index].name}
+              {data.conversation[index].user.userName}
             </h1>
             <div className="flex flex-row items-center">
               <p className="text-xs border-r pr-2 mr-2 font-medium text-gray-400">
@@ -67,7 +69,7 @@ export default function ChatRoom({ index, setIndex }) {
         <div
           className="bg-image bg-cover bg-center relative h-[765px] w-full"
           style={{
-            backgroundImage: `url(${conversation.messages[index].avt})`,
+            backgroundImage: `url(${data.conversation[index].user.avt})`,
           }}
         >
           <div className="absolute inset-0 opacity-65 bg-white"></div>
@@ -75,18 +77,19 @@ export default function ChatRoom({ index, setIndex }) {
             ref={scrollContainerRef}
             className="absolute  bottom-0 max-h-[752px] w-full flex flex-col justify-items-end overflow-y-auto scrollbar-container my-2 "
           >
-            <Conversation messages={conversation.messages[index]} />
+            <Conversation conversation={data.conversation[index]} />
           </div>
         </div>
         <InputMessage
-          message={conversation.messages[index]}
+          conversation={data.conversation[index]}
           setIndex={setIndex}
+          receiver={data.conversation[index].user}
         />
       </div>
       <UserInfoModal
         isOpen={isOpenInforUser}
         setIsOpen={setIsOpenInforUser}
-        user={conversation.messages[index]}
+        userId={data.conversation[index].user.id}
       />
     </div>
   );

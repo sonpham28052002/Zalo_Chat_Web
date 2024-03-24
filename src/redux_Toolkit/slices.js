@@ -1,13 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
+const host = process.env.REACT_APP_HOST
 var getAPI = createAsyncThunk(
   "user/getAPI",
   async (arg, { rejectWithValue }) => {
     try {
       const res = await fetch(
-        `https://65e300d088c4088649f526ea.mockapi.io/user/${arg}`
+        `${host}/users/getUserById?id=${arg}`
       );
       var data = await res.json();
+      console.log("data");
+      console.log(data);
       return data;
     } catch (error) {
       rejectWithValue(error.response.data);
@@ -68,12 +70,15 @@ var reducer = createSlice({
   },
   reducers: {
     updateMessage: (state, action) => {
-      let mess = state.data.messages.map((item) => ({ ...item }));
+      let mess = state.data.conversation.map((item) => ({ ...item }));
       let newMessage = mess.filter(
         (item, index) => item.id !== action.payload.id
       );
+      console.log("kkkkk");
+      console.log(action.payload);
       newMessage.unshift(action.payload);
-      state.data.messages = newMessage;
+      console.log(newMessage);
+      state.data.conversation = newMessage;
     },
   },
   extraReducers: (builder) => {

@@ -23,7 +23,7 @@ export function LoginRouter() {
   );
 }
 export function HomeRouter() {
-  var [index, setIndex] = useState(0);
+  var [index, setIndex] = useState(-1);
   return (
     <Routes>
       <Route element={<Chat setIndex={setIndex} index={index} />} path="/"></Route>

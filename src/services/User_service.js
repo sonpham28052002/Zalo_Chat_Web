@@ -1,7 +1,11 @@
-var getUserById = (id, callBack) => {
-  fetch(`https://65e300d088c4088649f526ea.mockapi.io/user/${id}`)
+const host = process.env.REACT_APP_HOST
+var getInfoUserById = (id, callBack) => {
+  console.log(id);
+  fetch(`${host}/users/getInfoUserById?id=${id}`)
     .then((resp) => resp.json())
     .then((data) => {
         callBack(data)
     });
 };
+
+export {getInfoUserById}

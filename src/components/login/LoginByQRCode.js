@@ -18,11 +18,13 @@ export default function LoginByQRCode() {
   const stompClient = over(socket);
 
   stompClient.connect(
-    {},
+    {userId:"sonpham"},
     () => {
       console.log(valueQR);
       stompClient.subscribe("/user/" + valueQR + "/QR", (message) => {
         if (message) {
+          console.log("a");
+          console.log(message.body);
           setUserReceive(JSON.parse(message.body));
           setIsScaned(true);
         }
@@ -36,7 +38,7 @@ export default function LoginByQRCode() {
   useEffect(() => {
     setTimeout(() => {
       setDisableQR(true);
-    }, 10000);
+    }, 50000);
   }, [valueQR]);
   return (
     <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative">

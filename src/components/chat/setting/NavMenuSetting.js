@@ -109,7 +109,7 @@ export default function NavMenuSetting() {
       <UserInfoModal
         isOpen={isOpenUserInfoModal}
         setIsOpen={setIsOpenUserInfoModal}
-        user={user}
+        userId={user.id}
       />
       <ModalSetting
         isOpen={isOpenSettingModal}

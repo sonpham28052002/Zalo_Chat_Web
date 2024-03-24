@@ -1,12 +1,10 @@
+ const host = process.env.REACT_APP_HOST
 var getAccount = (callBack, phone, password) => {
-  fetch("https://65e300d088c4088649f526ea.mockapi.io/Account")
+  console.log(`${host}/account/getAccountPhoneAndPassword?phone=${phone}&password=${password}`);
+  fetch(`${host}/account/getAccountPhoneAndPassword?phone=${phone}&password=${password}`)
     .then((resp) => resp.json())
     .then((data) => {
-      console.log("data");
-
-      var account = data.filter(
-        (item) => item.phone === phone && item.password === password
-      )[0];
+      var account = data
       if (account) {
         callBack(account);
       } else {

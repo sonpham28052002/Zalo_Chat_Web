@@ -1,35 +1,39 @@
 import React, { useState } from "react";
 import { BiSolidFilePdf } from "react-icons/bi";
 import NavIconInteract from "./NavIconInteract";
-
-export default function Conversation({ messages }) {
+import {v4} from "uuid"
+export default function Conversation({ conversation }) {
+  console.log("messages");
+  console.log(conversation);
   function ContentText({ message }) {
+    console.log("message");
+    console.log(message);
     let [messageLocal, setMessageLocal] = useState(message);
     return (
       <div
         className={`  h-fit w-full  flex flex-row ${
-          messages.id === message.sender ? "justify-start" : "justify-end"
+          conversation.id === message.sender ? "justify-start" : "justify-end"
         } items-star  my-5 `}
         key={message.id}
       >
-        {messages.id === message.sender && (
+        {conversation.id === message.sender && (
           <img
-            src={messages.avt}
+            src={conversation.avt}
             alt="#"
             className="h-12 w-12 rounded-full mr-3"
           />
         )}
         <div className=" relative h-full max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-row justify-start items-center border  shadow-lg p-2">
           <div className=" h-fit flex flex-col items-start justify-around">
-            <p className=" ">{messageLocal.message}</p>
+            <p className=" ">{messageLocal.content}</p>
             <span className="text-[12px] text-gray-400">{`${
-              new Date(message.createDateTime).getHours() < 10
-                ? "0" + new Date(message.createDateTime).getHours()
-                : new Date(message.createDateTime).getHours()
+              new Date(message.senderDate).getHours() < 10
+                ? "0" + new Date(message.senderDate).getHours()
+                : new Date(message.senderDate).getHours()
             }:${
-              new Date(message.createDateTime).getMinutes() < 10
-                ? "0" + new Date(message.createDateTime).getMinutes()
-                : new Date(message.createDateTime).getMinutes()
+              new Date(message.senderDate).getMinutes() < 10
+                ? "0" + new Date(message.senderDate).getMinutes()
+                : new Date(message.senderDate).getMinutes()
             }`}</span>
           </div>
           <NavIconInteract
@@ -68,23 +72,51 @@ export default function Conversation({ messages }) {
       >
         <div className="h-full max-w-[50%] w-fit  p-2">
           <div className=" h-fit flex flex-col items-start justify-around">
-            <img src={sticker.src} alt="#" className="h-28 w-28" />
+            <img src={sticker.url} alt="#" className="h-28 w-28" />
+            
           </div>
         </div>
       </div>
     );
   }
+
+  function ContentImage({ image }) {
+    return (
+      <div
+        className=" relative h-fit w-full  flex flex-col items-end my-3 "
+        key={image.id}
+      >
+        <div className="h-full max-w-[20%] w-fit border shadow-lg rounded-md">
+          <div className=" h-fit flex flex-col items-start justify-around rounded-md">
+            <img src={image.url} alt="#" className="" />
+          </div>
+        </div>
+        <span className="text-[12px] px-4 text-gray-400">{`${
+              new Date(image.senderDate).getHours() < 10
+                ? "0" + new Date(image.senderDate).getHours()
+                : new Date(image.senderDate).getHours()
+            }:${
+              new Date(image.senderDate).getMinutes() < 10
+                ? "0" + new Date(image.senderDate).getMinutes()
+                : new Date(image.senderDate).getMinutes()
+            }`}</span>
+      </div>
+    );
+  }
+
   return (
     <div className="p-5 h-fit">
-      {messages.conversation.map((item) => {
-        if (item.type === "text/content") {
+      {conversation.messages.map((item) => {
+        if (item.messageType === "Text") {
           return <ContentText key={item.id} message={item} />;
-        } else if (item.type.startsWith("application/")) {
+        } else if (item.messageType.startsWith("application/")) {
           return <ContentFile key={item.id} file={item} />;
-        } else if (item.type === "image/Sticker") {
+        } else if (item.messageType === "PNG" || item.messageType === "JPEG" || item.messageType === "JPG" || item.messageType === "GIF"  ) {
+          return <ContentImage key={item.id} image={item} />;
+        }else if(item.messageType === "STICKER"){
           return <ContentSticker key={item.id} sticker={item} />;
         }
-        return <div key={"21212"}></div>;
+        return <div key={v4()}></div>;
       })}
     </div>
   );

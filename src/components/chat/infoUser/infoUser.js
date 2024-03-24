@@ -38,7 +38,7 @@ export default function InfoUser() {
           <Menu.Items className="absolute p-3 top-9 left-12 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <Menu.Item>
               <div className="py-1 border-b">
-                <h1 className="font-bold mb-2 px-2">{user.name}</h1>
+                <h1 className="font-bold mb-2 px-2">{user.userName}</h1>
               </div>
             </Menu.Item>
             <Menu.Item>
@@ -74,7 +74,7 @@ export default function InfoUser() {
       <UserInfoModal
         isOpen={isOpenInforUser}
         setIsOpen={setIsOpenInforUser}
-        user={user}
+        userId={user.id}
       />
       <ModalSetting setIsOpen={setIsOpenSetting} isOpen={isOpenSetting} />
     </>
