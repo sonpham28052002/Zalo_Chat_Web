@@ -18,12 +18,13 @@ function ViewFriendRequests() {
     ];
 
     const [isTurnOnRecomment, setTurnOnRecomment] = useState(false);
+    
 
     function ListRequest({list}){
         return(
             <div className="flex flex-row w-full flex-wrap">
                 {list.map(item => (
-                    <button key={item.id} className="flex flex-col justify-around bg-white rounded mb-2 p-3 h-[200px] request-item">
+                    <div key={item.id} className="flex flex-col justify-around bg-white rounded mb-2 p-3 h-[200px] cursor-pointer request-item">
                         <div className="flex flex-row w-full">
                             <div className="img-avatar rounded-full bg-cover bg-center mr-4 w-[60px]" style={{ backgroundImage: `url(${item.path})` }}></div>
                             <div className="flex flex-col items-start overflow-hidden" >
@@ -45,7 +46,7 @@ function ViewFriendRequests() {
                                 <p className="font-semibold text-blue-600">Đồng ý</p>
                             </button>
                         </div>
-                    </button>
+                    </div>
                 ))}
             </div>
         )
