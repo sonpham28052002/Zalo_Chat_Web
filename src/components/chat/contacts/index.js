@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { IoPersonAddOutline } from "react-icons/io5";
 import { PiUserListLight } from "react-icons/pi";
 import ViewListFriend from "./ViewListFriend";
 import ViewListGroup from "./ViewListGroup";
