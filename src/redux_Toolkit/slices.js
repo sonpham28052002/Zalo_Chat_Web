@@ -1,12 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-const host = process.env.REACT_APP_HOST
+const host = process.env.REACT_APP_HOST;
 var getAPI = createAsyncThunk(
   "user/getAPI",
   async (arg, { rejectWithValue }) => {
     try {
-      const res = await fetch(
-        `${host}/users/getUserById?id=${arg}`
-      );
+      const res = await fetch(`${host}/users/getUserById?id=${arg}`);
       var data = await res.json();
       console.log("data");
       console.log(data);
@@ -63,6 +61,7 @@ var postAPI = createAsyncThunk(
     }
   }
 );
+
 var reducer = createSlice({
   name: "user",
   initialState: {
@@ -71,14 +70,16 @@ var reducer = createSlice({
   reducers: {
     updateMessage: (state, action) => {
       let mess = state.data.conversation.map((item) => ({ ...item }));
-      let newMessage = mess.filter(
-        (item, index) => item.id !== action.payload.id
-      );
-      console.log("kkkkk");
-      console.log(action.payload);
-      newMessage.unshift(action.payload);
-      console.log(newMessage);
-      state.data.conversation = newMessage;
+      if (true) {
+        let newMessage = mess.filter(
+          (item, index) =>
+            Object.assign({}, item.user).id !== action.payload.user.id
+        );
+        console.log(newMessage);
+        state.data.conversation = [action.payload, ...newMessage];
+      }else{
+        console.log("aaaa");
+      }
     },
   },
   extraReducers: (builder) => {

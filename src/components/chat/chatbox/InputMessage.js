@@ -8,34 +8,94 @@ import { BsFillSendFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { updateMessage } from "../../../redux_Toolkit/slices";
 import { v4 } from "uuid";
+import { uploadFile } from "../../../services/Azure_Service";
+import { stompClient } from "../../../socket/socket";
+
 export default function InputMessage({ conversation, setIndex, receiver }) {
   var user = useSelector((state) => state.data);
   var dispatch = useDispatch();
-  console.log("conversation");
-  console.log(conversation);
+
+  const sender = {
+    id: user.id,
+    userName: user.userName,
+    avt: user.avt,
+  };
   var [text, setText] = useState("");
-  function formatFileSize(size) {
-    if (size < 1024) {
-      return size.toFixed(2) + "B";
-    } else if (size < 1024 * 1024) {
-      return (size / 1024).toFixed(2) + "KB";
-    } else if (size < 1024 * 1024 * 1024) {
-      return (size / (1024 * 1024)).toFixed(2) + "MB";
-    } else {
-      return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB";
-    }
+
+  function sendMessage(message) {
+    stompClient.connect(
+      {},
+      () => {
+        console.log("Connected to WebSocket server");
+        stompClient.send(
+          "/app/private-single-message",
+          {},
+          JSON.stringify("hi")
+        );
+        stompClient.subscribe(
+          "/user/" + sender.id + receiver.id + "/singleChat",
+          (message) => {
+            console.log("Received message private:", message.body);
+          }
+        );
+      },
+      (error) => {
+        console.error("Error connecting to WebSocket server:", error);
+      }
+    );
   }
+
   return (
-    <div className="flex flex-col h-28 ">
+    <div className="flex flex-col h-28 border-t-2">
       <div className=" h-12 p-1 flex flex-row items-center justify-start border-b">
-        <Sticker setIndex={setIndex} message={conversation} />
+        <Sticker
+          setIndex={setIndex}
+          conversation={conversation}
+          receiver={receiver}
+          sender={sender}
+        />
         <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
           <label htmlFor="dropzone-image">
             <input
               id="dropzone-image"
-              accept="image/jpeg, image/png"
+              accept="image/*"
               className="hidden"
               type="file"
+              onChange={async (e) => {
+                if (e.target.files[0]) {
+                  const fileSize = e.target.files[0].size;
+                  const url = await uploadFile(e.target.files[0]);
+                  const typeFileArr = e.target.files[0].type.split("/");
+                  const type =
+                    typeFileArr[typeFileArr.length - 1].toUpperCase();
+                  const content = {
+                    id: v4(),
+                    messageType: type,
+                    senderDate: new Date(),
+                    sender: sender,
+                    receiver: {
+                      id: receiver.id,
+                      userName: receiver.userName,
+                      avt: receiver.avt,
+                    },
+                    seen: [
+                      {
+                        id: user.id,
+                        userName: user.userName,
+                        avt: user.avt,
+                      },
+                    ],
+                    size: fileSize,
+                    titleFile: e.target.files[0].name,
+                    url: url,
+                  };
+                  let newMessage = { ...conversation };
+                  newMessage.messages = [...conversation.messages, content];
+                  dispatch(updateMessage(newMessage));
+                  e.target.value = "";
+                  setIndex(0)
+                }
+              }}
             />
             <IoImageOutline className="text-2xl" />
           </label>
@@ -46,11 +106,44 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
               id="dropzone-file"
               className="hidden"
               type="file"
-              onChange={(e) => {
+              onChange={async (e) => {
                 if (e.target.files[0]) {
                   const fileSize = e.target.files[0].size;
+                  if (fileSize >= 10485760) {
+                    alert("Kích thước file không được quá 10MB");
+                    e.target.value = "";
+                    return;
+                  }
                   console.log(e.target.files[0]);
-                  console.log(formatFileSize(fileSize));
+                  const url = await uploadFile(e.target.files[0]);
+                  const typeFileArr = e.target.files[0].type.split("/");
+                  const type =
+                    typeFileArr[typeFileArr.length - 1].toUpperCase();
+                  const content = {
+                    id: v4(),
+                    messageType: type,
+                    senderDate: new Date(),
+                    sender: sender,
+                    receiver: {
+                      id: receiver.id,
+                      userName: receiver.userName,
+                      avt: receiver.avt,
+                    },
+                    seen: [
+                      {
+                        id: user.id,
+                        userName: user.userName,
+                        avt: user.avt,
+                      },
+                    ],
+                    size: fileSize,
+                    titleFile: e.target.files[0].name,
+                    url: url,
+                  };
+                  let newMessage = { ...conversation };
+                  newMessage.messages = [...conversation.messages, content];
+                  dispatch(updateMessage(newMessage));
+                  e.target.value = "";
                 }
               }}
             />
@@ -87,11 +180,7 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
                 id: v4(),
                 messageType: "Text",
                 senderDate: new Date(),
-                sender: {
-                  id: user.id,
-                  userName: user.userName,
-                  avt: user.avt,
-                },
+                sender: sender,
                 receiver: {
                   id: receiver.id,
                   userName: receiver.userName,
@@ -106,10 +195,8 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
                 ],
                 content: text,
               };
-              console.log(content);
               e.preventDefault();
-              console.log("conversation");
-              console.log(conversation);
+              sendMessage(content)
               let newMessage = { ...conversation };
               newMessage.messages = [...conversation.messages, content];
               dispatch(updateMessage(newMessage));

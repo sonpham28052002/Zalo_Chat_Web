@@ -34,10 +34,18 @@ export default function NavChat({ indexSelect, setIndex }) {
               </p>
 
               <span className="text-slate-400">
-                {data.id === item.messages[item.messages.length - 1].sender
+                {data.id === item.messages[item.messages.length - 1].sender.id
                   ? "Bạn: "
                   : ""}
-                {item.messages[item.messages.length - 1].content}
+                {/* {item.messages[item.messages.length - 1].content.length > 15
+                  ? item.messages[item.messages.length - 1].content.substring(
+                      0,
+                      15
+                    ) + "..."
+                  : item.messages[item.messages.length - 1].content.substring(
+                      0,
+                      15
+                )} */}
               </span>
             </div>
             <div className="flex flex-row justify-center items-center w-1/6">

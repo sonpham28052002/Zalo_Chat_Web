@@ -3,13 +3,14 @@ import { LuSticker } from "react-icons/lu";
 import { Menu, Transition } from "@headlessui/react";
 import { PickerComponent } from "stipop-react-sdk";
 
-import { v4 as uuidv4 } from "uuid";
+import { v4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { updateMessage } from "../../../redux_Toolkit/slices";
 
-export default function Sticker({ setIndex, message }) {
+export default function Sticker({ setIndex, conversation, receiver, sender }) {
   var user = useSelector((state) => state.data);
-  var dispatch = useDispatch()
+
+  var dispatch = useDispatch();
   return (
     <>
       <Menu as="div" className="relative">
@@ -36,17 +37,33 @@ export default function Sticker({ setIndex, message }) {
               }}
               storeClick={(click) => console.log(click)}
               stickerClick={(url) => {
-                let newText = {
-                  id: uuidv4(),
-                  src: url.url,
-                  type: "image/Sticker",
-                  createDateTime: new Date(),
-                  sender: user.id,
+                const content = {
+                  id: v4(),
+                  messageType: "STICKER",
+                  senderDate: new Date(),
+                  sender: sender,
+                  receiver: {
+                    id: receiver.id,
+                    userName: receiver.userName,
+                    avt: receiver.avt,
+                  },
+                  seen: [
+                    {
+                      id: user.id,
+                      userName: user.userName,
+                      avt: user.avt,
+                    },
+                  ],
+                  size: null,
+                  titleFile: null,
+                  url: url.url,
                 };
-                let newMessage = { ...message };
-                newMessage.conversation = [...message.conversation, newText];
+                let newMessage = { ...conversation };
+                console.log(conversation);
+
+                newMessage.messages = [...conversation.messages, content];
                 dispatch(updateMessage(newMessage));
-                setIndex(0)
+                setIndex(0);
               }}
             />
           </Menu.Items>

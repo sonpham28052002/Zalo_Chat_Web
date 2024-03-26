@@ -8,23 +8,25 @@ import Conversation from "./Conversation";
 import InputMessage from "./InputMessage";
 import { useSelector } from "react-redux";
 import UserInfoModal from "../infoUser/UserInfoModal";
-
 export default function ChatRoom({ index, setIndex }) {
   var data = useSelector((state) => state.data);
-  console.log("conversation");
-  var [isOpenInforUser, setIsOpenInforUser] = useState(false);
-  const scrollContainerRef = useRef(null);
 
-  const scrollToBottom = () => {
-    const scrollContainer = scrollContainerRef.current;
-    if (scrollContainer) {
-      scrollContainer.scrollTop = scrollContainer.scrollHeight;
-    }
-  };
+  var [isOpenInforUser, setIsOpenInforUser] = useState(false);
+
+  const scrollRef = useRef();
   useEffect(() => {
-    console.log("a");
-    scrollToBottom();
+    scrollRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+      inline: "end",
+    });
   }, [index, data]);
+  console.log("aaa");
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [data.conversation, index]);
 
   return (
     <div className=" h-full w-10/12 ">
@@ -74,10 +76,18 @@ export default function ChatRoom({ index, setIndex }) {
         >
           <div className="absolute inset-0 opacity-65 bg-white"></div>
           <div
-            ref={scrollContainerRef}
-            className="absolute  bottom-0 max-h-[752px] w-full flex flex-col justify-items-end overflow-y-auto scrollbar-container my-2 "
+            ref={scrollRef}
+            className="absolute  bottom-0 max-h-[764px] w-full flex flex-col overflow-scroll justify-items-end overflow-y-auto scrollbar-container "
           >
-            <Conversation conversation={data.conversation[index]} />
+            {data.conversation[index].messages.map((item, indexMess) => (
+              <Conversation
+                ownerId={data.id}
+                key={indexMess}
+                conversation={data.conversation[index]}
+                item={item}
+                index={indexMess}
+              />
+            ))}
           </div>
         </div>
         <InputMessage

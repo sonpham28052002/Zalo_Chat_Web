@@ -65,9 +65,9 @@ export default function IntroduceChatRoom() {
     <div className="h-full w-10/12 flex flex-row justify-center items-center ">
       <div className="w-full  flex flex-col justify-center items-center">
         <div className=" flex flex-col justify-center items-center my-10">
-          <p className="text-2xl my-7 flex flex-row justify-center items-center">
-            Chào mừng đến với <p className="font-bold mx-1"> Zalo PC</p>
-          </p>
+          <span className="text-2xl my-7 flex flex-row justify-center items-center">
+            Chào mừng đến với <span className="font-bold mx-1"> Zalo PC</span>
+          </span>
           <span className="w-[500px] text-sm text-center">
             Khám phá những tiện ích hỗ trợ làm việc và trò chuyện cùng người
             thân, bạn bè được tối ưu hoá cho máy tính của bạn.
@@ -91,7 +91,7 @@ export default function IntroduceChatRoom() {
           className="mySwiper w-[1400px]"
         >
           {data.map((item) => (
-            <SwiperSlide>
+            <SwiperSlide key={item.id}>
               <div className="flex flex-col justify-center items-center">
                 <img className="h-60" src={item.image} alt="#" />
                 <div className="my-10">
