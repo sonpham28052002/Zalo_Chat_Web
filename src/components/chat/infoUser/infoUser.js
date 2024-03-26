@@ -1,13 +1,15 @@
 import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment, useState } from "react";
 import UserInfoModal from "./UserInfoModal";
+import { useSelector } from "react-redux";
+import ModalSetting from "../setting/ModalSetting";
+import { useNavigate } from "react-router-dom";
+import { handleSetValueCookie } from "../../../services/Cookie_Service";
 export default function InfoUser() {
-  var user = {
-    id: 1,
-    name: "Phạm Thanh Sơn",
-  };
-  const [isOpen, setIsOpen] = useState(false);
-
+  var user = useSelector((state) => state.data);
+  const [isOpenInforUser, setIsOpenInforUser] = useState(false);
+  const [isOpenSetting, setIsOpenSetting] = useState(false);
+  var history = useNavigate();
   return (
     <>
       <Menu
@@ -19,7 +21,7 @@ export default function InfoUser() {
             <img
               className="rounded-full h-12 mb-4 border border-white"
               alt="#"
-              src="https://s120-ava-talk.zadn.vn/c/b/f/1/8/120/fa77be6399bd4028983cfc723dda9494.jpg"
+              src={user.avt}
             ></img>
           </Menu.Button>
         </div>
@@ -36,31 +38,45 @@ export default function InfoUser() {
           <Menu.Items className="absolute p-3 top-9 left-12 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <Menu.Item>
               <div className="py-1 border-b">
-                <h1 className="font-bold mb-2 px-2">{user.name}</h1>
+                <h1 className="font-bold mb-2 px-2">{user.userName}</h1>
               </div>
             </Menu.Item>
             <Menu.Item>
               <div
                 className="py-1 hover:bg-slate-400 hover:text-white px-2 hover:font-medium"
-                onClick={() => setIsOpen(true)}
+                onClick={() => setIsOpenInforUser(true)}
               >
                 <p>Hồ sơ của bạn</p>
               </div>
             </Menu.Item>
             <Menu.Item>
-              <div className="py-1 hover:bg-slate-400 hover:text-white px-2 hover:font-medium">
+              <div
+                className="py-1 hover:bg-slate-400 hover:text-white px-2 hover:font-medium"
+                onClick={() => setIsOpenSetting(true)}
+              >
                 <p>cài đặt</p>
               </div>
             </Menu.Item>
             <Menu.Item className="">
-              <div className="py-1 border-t hover:bg-red-600 text-red-600 hover:text-white hover:font-medium">
+              <div
+                className="py-1 border-t hover:bg-red-600 text-red-600 hover:text-white hover:font-medium"
+                onClick={() => {
+                  handleSetValueCookie("appchat", {});
+                  history("/");
+                }}
+              >
                 <p className="text-center ">Đăng xuất</p>
               </div>
             </Menu.Item>
           </Menu.Items>
         </Transition>
       </Menu>
-      <UserInfoModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <UserInfoModal
+        isOpen={isOpenInforUser}
+        setIsOpen={setIsOpenInforUser}
+        userId={user.id}
+      />
+      <ModalSetting setIsOpen={setIsOpenSetting} isOpen={isOpenSetting} />
     </>
   );
 }

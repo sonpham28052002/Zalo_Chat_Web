@@ -1,17 +1,39 @@
 import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { Link, useNavigate } from "react-router-dom";
 import { FaUnlockAlt } from "react-icons/fa";
+import Loader from "../chat/custom/loader.js";
+import { Link, useNavigate } from "react-router-dom";
+import { getAccount } from "../../services/Account_Service.js";
+import { handleSetValueCookie } from "../../services/Cookie_Service.js";
+import { useDispatch, useSelector } from "react-redux";
+import { getAPI } from "../../redux_Toolkit/slices.js";
+
 export default function LoginByNumberPhone() {
   const history = useNavigate();
-  var [phone, setPhone] = useState(undefined);
-  var [password, setPassword] = useState(undefined);
+  var [phone, setPhone] = useState("84898168640");
+  var [password, setPassword] = useState("sonpham28052002");
+  var [isLoading, setIsLoading] = useState(false);
+  var isWaitting = useSelector((state) => state.isWaitting);
+  var dispatch = useDispatch();
 
   var handleLoginWithPhoneAnhPassword = (phone, password) => {
-    phone = "+" + phone;
-    console.log(phone);
-    console.log(password);
+    setIsLoading(true);
+    getAccount(
+      async (data) => {
+        console.log(data);
+        handleSetValueCookie("appchat",data);
+        setIsLoading(false);
+        if (data) {
+          await dispatch(getAPI(data.id));
+          history("/home");
+        }
+        if (!isWaitting) {
+        }
+      },
+      phone,
+      password
+    );
   };
 
   return (
@@ -52,7 +74,7 @@ export default function LoginByNumberPhone() {
             <FaUnlockAlt className="text-lg" />
           </div>
           <input
-            // value={password}
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
             type="password"
             className="bg-white border border-gray-300 text-gray-900 text-sm rounded-md  w-full ps-10 p-2.5 focus:outline-none focus:border-black"
@@ -75,7 +97,7 @@ export default function LoginByNumberPhone() {
           type="button"
           className="min-h-10 w-full rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
         >
-          Đăng nhập
+          {isLoading ? <Loader /> : "Đăng nhập"}
         </button>
         <p className="mb-5 text-center text-sm font-medium text-slate-500 mr-1">
           Chưa có tài khoản nào trước đây.{" "}
