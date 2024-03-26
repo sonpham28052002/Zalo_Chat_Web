@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { IoPersonAddOutline } from "react-icons/io5";
+import { PiUserListLight } from "react-icons/pi";
 import ViewListFriend from "./ViewListFriend";
 import ViewListGroup from "./ViewListGroup";
 import ViewFriendRequests from "./ViewFriendRequests";
 import HeaderNavChat from "../chatbox/headerNavChat";
+import { RiGroupLine } from "react-icons/ri";
+import { SlEnvolopeLetter } from "react-icons/sl";
+
 
 function Contacts() {
   const [active, setActive] = useState(1);
@@ -23,7 +26,7 @@ function Contacts() {
             style={{ backgroundColor: active === 1 ? "#e5efff" : "white" }}
           >
             <div className="w-16">
-              <IoPersonAddOutline className="w-7 h-7 mx-auto" />
+              <PiUserListLight className="w-7 h-7 mx-auto" />
             </div>
             <div className="font-semibold">Danh sách bạn bè</div>
           </button>
@@ -34,7 +37,7 @@ function Contacts() {
             style={{ backgroundColor: active === 2 ? "#e5efff" : "white" }}
           >
             <div className="w-16">
-              <IoPersonAddOutline className="w-7 h-7 mx-auto" />
+              <RiGroupLine className="w-7 h-7 mx-auto" />
             </div>
             <div className="font-semibold">Danh sách nhóm</div>
           </button>
@@ -45,7 +48,7 @@ function Contacts() {
             style={{ backgroundColor: active === 3 ? "#e5efff" : "white" }}
           >
             <div className="w-16">
-              <IoPersonAddOutline className="w-7 h-7 mx-auto" />
+              <SlEnvolopeLetter className="w-7 h-7 mx-auto" />
             </div>
             <div className="font-semibold">Lời mời kết bạn</div>
           </button>

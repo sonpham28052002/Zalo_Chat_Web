@@ -7,10 +7,15 @@ import { HiOutlineWrench } from "react-icons/hi2";
 import { TbWorld, TbExclamationCircle } from "react-icons/tb";
 import UserInfoModal from "../infoUser/UserInfoModal";
 import ModalSetting from "./ModalSetting";
+import { useSelector } from "react-redux";
+import { handleSetValueCookie } from "../../../services/Cookie_Service";
+import { useNavigate } from "react-router-dom";
 
 export default function NavMenuSetting() {
+  var user = useSelector((state) => state.data);
   const [isOpenUserInfoModal, setIsOpenUserInfoModal] = useState(false);
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
+  var history = useNavigate();
 
   var dataNav = [
     {
@@ -81,14 +86,19 @@ export default function NavMenuSetting() {
                     }`}
                     onClick={item?.onclick}
                   >
-                    
                     {item.icon}
                     <p className="block text-sm ml-2 ">{item.title}</p>
                   </div>
                 </Menu.Item>
               ))}
               <Menu.Item>
-                <div className="py-2 border-t hover:bg-red-600 text-red-600 hover:font-medium hover:text-white rounded-b-md ">
+                <div
+                  className="py-2 border-t hover:bg-red-600 text-red-600 hover:font-medium hover:text-white rounded-b-md "
+                  onClick={() => {
+                    handleSetValueCookie("appchat", {});
+                    history("/");
+                  }}
+                >
                   <p className="text-center ">Đăng xuất</p>
                 </div>
               </Menu.Item>
@@ -96,8 +106,15 @@ export default function NavMenuSetting() {
           </Menu.Items>
         </Transition>
       </Menu>
-      <UserInfoModal isOpen={isOpenUserInfoModal} setIsOpen={setIsOpenUserInfoModal} />
-      <ModalSetting isOpen={isOpenSettingModal} setIsOpen={setIsOpenSettingModal}/>
+      <UserInfoModal
+        isOpen={isOpenUserInfoModal}
+        setIsOpen={setIsOpenUserInfoModal}
+        userId={user.id}
+      />
+      <ModalSetting
+        isOpen={isOpenSettingModal}
+        setIsOpen={setIsOpenSettingModal}
+      />
     </>
   );
 }

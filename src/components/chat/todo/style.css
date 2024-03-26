@@ -1,0 +1,23 @@
+.btn-close:hover {
+  background-color: rgb(232, 230, 230);
+  border-radius: 50%;
+}
+
+.btn-blur-gray {
+    background-color: #eaedf0;    
+}
+
+.btn-blur-gray:hover {
+    background-color: #dadddf;
+}
+
+.btn-blur-blue {
+    background-color: #0068ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-blur-blue:hover {
+    background-color: #005ae0;
+}

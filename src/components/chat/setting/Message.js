@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Toggle from "../custom/toggle";
-
+import "../../../style/scrollBar.css"
 export default function Message() {
     var [isCheck,setIsCheck] = useState(0)
 
   return (
-    <div className="w-[450px] max-h-[600px] overflow-y-auto">
+    <div className="w-[450px] max-h-[600px] overflow-y-auto scrollbar-container">
     <div className="">
       <div className="px-4 border-b">
         <div className="flex flex-row justify-between items-center">
@@ -59,7 +59,7 @@ export default function Message() {
           <input checked={isCheck===2} onChange={()=>{setIsCheck(2)}} type="radio" name="dd" className="accent-blue-700 h-4 w-4" />
         </div>
       </div>
-      <div className="px-4 pt-2 border-b">
+      <div className="px-4 pt-2">
         <h1 className="font-medium text-lg">Cài đặt khác</h1>
         <div className="flex flex-col mb-4">
           <div className="flex flex-row justify-between items-center mb-3">

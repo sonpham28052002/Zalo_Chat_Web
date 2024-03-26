@@ -9,14 +9,17 @@
     overflow-y: auto;
 }
 
+
+
 .view-bg {
     width: calc(100% - 40px);
     height: 100%;
 }
 
 .txt-contacts {
-    width: calc(100% - 40px);
-    margin: 20px;
+    width: calc(100% - 40px);    
+    margin: 14px;
+    margin-left: 20px;
 }
 
 .blur-item-light:hover {
@@ -76,3 +79,4 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+

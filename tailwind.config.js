@@ -2,7 +2,13 @@
 module.exports = {
   content: ["./src/**/*.{html,js}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        ProtestGuerrilla: ["font-ProtestGuerrilla"],
+        SedgwickAveDisplay: ["font-SedgwickAveDisplay"],
+        BarettStreet: ["font-BarettStreet"],
+      },
+    },
   },
   plugins: [],
 };
