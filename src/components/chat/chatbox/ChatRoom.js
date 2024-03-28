@@ -6,12 +6,15 @@ import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import "../../../style/scrollBar.css";
 import Conversation from "./Conversation";
 import InputMessage from "./InputMessage";
-import { useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import UserInfoModal from "../infoUser/UserInfoModal";
+
+
 export default function ChatRoom({ index, setIndex }) {
   var data = useSelector((state) => state.data);
 
   var [isOpenInforUser, setIsOpenInforUser] = useState(false);
+  
 
   const scrollRef = useRef();
   useEffect(() => {
@@ -21,7 +24,7 @@ export default function ChatRoom({ index, setIndex }) {
       inline: "end",
     });
   }, [index, data]);
-  console.log("aaa");
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-const host = process.env.REACT_APP_HOST;
+const host = "https://deploybackend-production.up.railway.app/";
 var getAPI = createAsyncThunk(
   "user/getAPI",
   async (arg, { rejectWithValue }) => {
@@ -76,8 +76,8 @@ var reducer = createSlice({
             Object.assign({}, item.user).id !== action.payload.user.id
         );
         console.log(newMessage);
-        state.data.conversation = [action.payload, ...newMessage];
-      }else{
+        state.data.conversation = [...newMessage, action.payload];
+      } else {
         console.log("aaaa");
       }
     },

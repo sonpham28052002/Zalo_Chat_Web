@@ -1,4 +1,4 @@
-const host = process.env.REACT_APP_HOST;
+const host = "https://deploybackend-production.up.railway.app/";
 var uploadFile = async (file) => {
   const formdata = new FormData();
   formdata.append("file", file);
