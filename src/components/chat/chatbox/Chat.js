@@ -7,6 +7,8 @@ import IntroduceChatRoom from "../introduce/introduceChatRoom";
 export default function ChatRom({ setIndex, index }) {
   var [saveIndex, setSaveIndex] = useState(index);
 
+  
+
   useEffect(() => {
     setIndex(saveIndex);
     // eslint-disable-next-line

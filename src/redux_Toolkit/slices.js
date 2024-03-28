@@ -76,7 +76,7 @@ var reducer = createSlice({
             Object.assign({}, item.user).id !== action.payload.user.id
         );
         console.log(newMessage);
-        state.data.conversation = [action.payload, ...newMessage];
+        state.data.conversation = [ ...newMessage,action.payload];
       }else{
         console.log("aaaa");
       }
