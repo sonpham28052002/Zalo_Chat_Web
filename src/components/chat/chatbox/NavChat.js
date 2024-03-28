@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import { getAPI } from "../../../redux_Toolkit/slices";
-const socket = new SockJS("http://localhost:8080/ws");
+const socket = new SockJS("https://deploybackend-production.up.railway.app/ws");
 const stompClient = over(socket);
 stompClient.connect({}, () => {});
 

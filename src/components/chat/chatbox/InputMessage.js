@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { IoImageOutline } from "react-icons/io5";
 import { MdAttachFile, MdOutlineKeyboardVoice } from "react-icons/md";
 import { FaRegFolder } from "react-icons/fa";
@@ -11,7 +11,7 @@ import { v4 } from "uuid";
 import { uploadFile } from "../../../services/Azure_Service";
 import SockJS from "sockjs-client";
 import { over } from "stompjs";
-const socket = new SockJS("http://localhost:8080/ws");
+const socket = new SockJS("https://deploybackend-production.up.railway.app/ws");
 const stompClient = over(socket);
 stompClient.connect({}, () => {});
 export default function InputMessage({ conversation, setIndex, receiver }) {
@@ -22,7 +22,7 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
     userName: user.userName,
     avt: user.avt,
   };
-  
+
   var [text, setText] = useState("");
 
   function sendMessage(message) {
