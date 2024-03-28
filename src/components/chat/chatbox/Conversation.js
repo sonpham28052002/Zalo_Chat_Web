@@ -5,6 +5,7 @@ import TextMessage from "../message/TextMessage";
 import StickerMessage from "../message/StickerMessage";
 import ImageMessage from "../message/ImageMessage";
 export default function Conversation({ item, index, conversation, ownerID }) {
+  
   switch (item.messageType) {
     case "Text":
       return <TextMessage key={item.id} index={index} message={item} ownerID={ownerID}/>;

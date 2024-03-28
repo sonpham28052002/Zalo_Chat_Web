@@ -9,39 +9,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateMessage } from "../../../redux_Toolkit/slices";
 import { v4 } from "uuid";
 import { uploadFile } from "../../../services/Azure_Service";
-import { stompClient } from "../../../socket/socket";
-
+import SockJS from "sockjs-client";
+import { over } from "stompjs";
+const socket = new SockJS("https://deploybackend-production.up.railway.app/ws");
+const stompClient = over(socket);
+stompClient.connect({}, () => {});
 export default function InputMessage({ conversation, setIndex, receiver }) {
   var user = useSelector((state) => state.data);
   var dispatch = useDispatch();
-
   const sender = {
     id: user.id,
     userName: user.userName,
     avt: user.avt,
   };
+
   var [text, setText] = useState("");
 
   function sendMessage(message) {
-    stompClient.connect(
+    stompClient.send(
+      "/app/private-single-message",
       {},
-      () => {
-        console.log("Connected to WebSocket server");
-        stompClient.send(
-          "/app/private-single-message",
-          {},
-          JSON.stringify("hi")
-        );
-        stompClient.subscribe(
-          "/user/" + sender.id + receiver.id + "/singleChat",
-          (message) => {
-            console.log("Received message private:", message.body);
-          }
-        );
-      },
-      (error) => {
-        console.error("Error connecting to WebSocket server:", error);
-      }
+      JSON.stringify(message)
     );
   }
 
@@ -93,7 +81,7 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
                   newMessage.messages = [...conversation.messages, content];
                   dispatch(updateMessage(newMessage));
                   e.target.value = "";
-                  setIndex(0)
+                  setIndex(0);
                 }
               }}
             />
@@ -196,7 +184,7 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
                 content: text,
               };
               e.preventDefault();
-              sendMessage(content)
+              sendMessage(content);
               let newMessage = { ...conversation };
               newMessage.messages = [...conversation.messages, content];
               dispatch(updateMessage(newMessage));

@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import HeaderNavChat from "./headerNavChat";
 import { BsThreeDots } from "react-icons/bs";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { over } from "stompjs";
+import SockJS from "sockjs-client";
+import { getAPI } from "../../../redux_Toolkit/slices";
+const socket = new SockJS("https://deploybackend-production.up.railway.app/ws");
+const stompClient = over(socket);
+stompClient.connect({}, () => {});
 
 export default function NavChat({ indexSelect, setIndex }) {
   var data = useSelector((state) => state.data);
-  console.log(data);
+  var dispatch = useDispatch();
 
+  useEffect(() => {
+    stompClient.subscribe("/user/" + data.id + "/singleChat", () => {
+      dispatch(getAPI(data.id));
+    });
+    // eslint-disable-next-line
+  }, [data]);
   return (
     <div className="h-full  w-2/12  border-r">
       <HeaderNavChat />
