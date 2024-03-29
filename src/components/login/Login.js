@@ -3,11 +3,16 @@ import "react-phone-input-2/lib/style.css";
 import { LoginRouter } from "../../router/router";
 import AcceptCookie from "./AcceptCookie";
 import { useEffect, useState } from "react";
-import { handleGetValueCookie } from "../../services/Cookie_Service";
+import {
+  createCookie,
+  handleGetValueCookie,
+} from "../../services/Cookie_Service";
 import { useDispatch } from "react-redux";
 import { getAPI } from "../../redux_Toolkit/slices";
 import { useNavigate } from "react-router-dom";
 import Loader from "../chat/custom/loader";
+import Cookies from "js-cookie";
+
 // eslint-disable-next-line
 import { motion, useTime, useTransform } from "framer-motion";
 function Login() {
@@ -24,6 +29,9 @@ function Login() {
 
   useEffect(() => {
     handleGetValueCookie("appchat", autoLoginWithCookie, setCloseCookie);
+    if (Cookies.get("lastRequestOtp") === undefined) {
+      createCookie("lastRequestOtp");
+    }
     // eslint-disable-next-line
   }, []);
 

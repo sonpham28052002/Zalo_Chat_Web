@@ -1,17 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import OTPInput from "react-otp-input";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import { handleVertifi } from "../../firebase/firebaseService";
+import { useDispatch } from "react-redux";
+import { getAPI } from "../../redux_Toolkit/slices";
+import { handleGetValueCookie } from "../../services/Cookie_Service";
+import Loader from "../chat/custom/loader";
+import CountDownTimeLast from "./countDownTimeLast";
 export default function ForgotPassword() {
   const history = useNavigate();
   var [phone, setPhone] = useState("84346676956");
   var [contentButton, setContentButton] = useState("Gửi");
   var [otpVertifi, setOtpVertifi] = useState();
+  var buttonRef = useRef();
 
   var [isVertifi, setVertifi] = useState(false);
   var [otp, setOtp] = useState("");
+  var [isload, setIsload] = useState(false);
+  var [checkTime, setCheckTime] = useState(undefined);
+  var [viewCountDown, setViewCountDown] = useState(false);
+  
+  var dispatch = useDispatch();
+
+  useEffect(() => {
+    checkTimeRequestOtp();
+  }, []);
+
+  function checkTimeRequestOtp() {
+    handleGetValueCookie(
+      "lastRequestOtp",
+      (value) => {
+        if (value.time) {
+          var differenceInSeconds = Math.floor(
+            (new Date() - new Date(value.time)) / 1000
+          );
+          console.log(differenceInSeconds);
+
+          if (differenceInSeconds > 180) {
+            setViewCountDown(false);
+            setCheckTime(undefined);
+          } else {
+            buttonRef.current.disabled = true;
+            setViewCountDown(true);
+            setCheckTime(180 - differenceInSeconds);
+          }
+        }
+      },
+      () => {}
+    );
+  }
 
   return (
     <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative">
@@ -70,20 +109,27 @@ export default function ForgotPassword() {
           </>
         )}
         <button
+          ref={buttonRef}
           onClick={async () => {
-            if (!isVertifi) {
-              await handleVertifi("+" + phone, "recaptcha").then((e) => {
+            setIsload(true);
+            if (contentButton === "Gửi") {
+              await handleVertifi("+" + phone).then((e) => {
                 setOtpVertifi(e);
-                setVertifi(true);
+                setVertifi(true)
                 setContentButton("Xác thực SMS");
               });
-            } else {
+              setTimeout(() => {
+                setIsload(false);
+              }, 5000);
+            } else if (contentButton === "Xác thực SMS") {
               if (otp.length === 6) {
+                setIsload(true);
                 await otpVertifi
                   .confirm(otp)
-                  .then((result) => {
-                    console.log(result.user.uid);
-                    console.log(result.user.phoneNumber);
+                  .then(async (result) => {
+                    await dispatch(getAPI(result.user.uid));
+                    setIsload(false);
+                    history("/home");
                   })
                   .catch((e) => {
                     console.log(e);
@@ -96,7 +142,17 @@ export default function ForgotPassword() {
           type="button"
           className="min-h-10 w-full rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
         >
-          {contentButton}
+          {viewCountDown ? (
+            <CountDownTimeLast
+              timeCheck={checkTime}
+              setView={() => {
+                setViewCountDown(false);
+                buttonRef.current.disabled = false;
+              }}
+            />
+          ) : (
+            <div>{isload ? <Loader /> : contentButton}</div>
+          )}
         </button>
         <p className="mb-5 text-center text-sm font-medium text-slate-500 mr-1">
           Chưa có tài khoản nào trước đây.
