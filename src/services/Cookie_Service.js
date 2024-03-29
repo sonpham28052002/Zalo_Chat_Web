@@ -12,6 +12,7 @@ const handleDeleteCookie = (cookieName) => {
 const handleGetValueCookie = (cookieName, callback, setCloseCookie) => {
   const cookie = Cookies.get(cookieName);
   if (cookie !== undefined) {
+    console.log(JSON.parse(cookie));
     callback(JSON.parse(cookie));
     setCloseCookie(false);
   } else {
@@ -19,6 +20,7 @@ const handleGetValueCookie = (cookieName, callback, setCloseCookie) => {
     setCloseCookie(true);
   }
 };
+
 const handleSetValueCookie = (cookieName, account) => {
   const cookie = Cookies.get(cookieName);
   if (cookie !== undefined) {

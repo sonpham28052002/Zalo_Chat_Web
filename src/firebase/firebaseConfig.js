@@ -9,12 +9,6 @@ const firebaseConfig = {
   messagingSenderId: "1071228614114",
   appId: "1:1071228614114:web:d237cd487ccf81952f35bb",
 
-  // apiKey: "AIzaSyCWvHnZf-Tefw4mGL1m2uTSsa2QYZxHvqk",
-  // authDomain: "shoesapp-4e07e.firebaseapp.com",
-  // projectId: "shoesapp-4e07e",
-  // storageBucket: "shoesapp-4e07e.appspot.com",
-  // messagingSenderId: "827169400530",
-  // appId: "1:827169400530:web:98d0fcfafd16ca95ea2f0b",
 };
 export const FIREBASE_APP = initializeApp(firebaseConfig);
 export const FIREBASE_AUTH = getAuth(FIREBASE_APP);

@@ -6,16 +6,21 @@ import Sticker from "../custom/Sticker";
 import Emoji from "../custom/Emoji";
 import { BsFillSendFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { updateMessage } from "../../../redux_Toolkit/slices";
+import {
+  updateMessage,
+} from "../../../redux_Toolkit/slices";
 import { v4 } from "uuid";
 import { uploadFile } from "../../../services/Azure_Service";
 import SockJS from "sockjs-client";
 import { over } from "stompjs";
-const socket = new SockJS("https://deploybackend-production.up.railway.app/ws");
-const stompClient = over(socket);
-stompClient.connect({}, () => {});
+
+const sockjs = new SockJS("https://deploybackend-production.up.railway.app/ws")
+const stompClient = over(sockjs)
+stompClient.connect({}, () => {console.log("run");});
+
 export default function InputMessage({ conversation, setIndex, receiver }) {
   var user = useSelector((state) => state.data);
+  console.log(stompClient);
   var dispatch = useDispatch();
   const sender = {
     id: user.id,
@@ -24,13 +29,15 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
   };
 
   var [text, setText] = useState("");
-
+  
   function sendMessage(message) {
-    stompClient.send(
-      "/app/private-single-message",
-      {},
-      JSON.stringify(message)
-    );
+    if (stompClient && stompClient.connected) {
+      stompClient.send(
+        "/app/private-single-message",
+        {},
+        JSON.stringify(message)
+      );
+    }
   }
 
   return (

@@ -1,19 +1,66 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import OTPInput from "react-otp-input";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { VscArrowLeft } from "react-icons/vsc";
 
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { handleVertifi } from "../../firebase/firebaseService";
+import { FaUnlockAlt } from "react-icons/fa";
+import Loader from "../chat/custom/loader";
+import { forgotPasswordAccount } from "../../services/Account_Service";
+import {
+  handleGetValueCookie,
+  handleSetValueCookie,
+} from "../../services/Cookie_Service";
+import CountDownTimeLast from "./countDownTimeLast";
 
 export default function ForgotPassword() {
   var [phone, setPhone] = useState("84346676956");
   var [contentButton, setContentButton] = useState("Gửi");
   var [otpVertifi, setOtpVertifi] = useState();
 
-  var [isVertifi, setVertifi] = useState(false);
+  var [password, setPassword] = useState(undefined);
+  var [rePassword, setRePassword] = useState(undefined);
+
+  var [idAccount, setidAccount] = useState(undefined);
   var [otp, setOtp] = useState("");
+  var [isload, setIsload] = useState(false);
+  var history = useNavigate();
+  var [checkUpdate, setCheckUpdate] = useState(true);
+  var [notifi, setNotifi] = useState("");
+  var [checkTime, setCheckTime] = useState(undefined);
+  var [viewCountDown, setViewCountDown] = useState(false);
+  var buttonRef = useRef();
+  useEffect(() => {
+    checkTimeRequestOtp();
+  }, []);
+
+  function checkTimeRequestOtp() {
+    handleGetValueCookie(
+      "lastRequestOtp",
+      (value) => {
+        if (value.time) {
+          console.log(value.time);
+          var differenceInSeconds = Math.floor(
+            (new Date() - new Date(value.time)) / 1000
+          );
+          console.log(differenceInSeconds);
+
+          if (differenceInSeconds > 180) {
+            console.log("a");
+            setViewCountDown(false);
+            setCheckTime(undefined);
+          } else {
+            console.log("b");
+
+            setViewCountDown(true);
+            setCheckTime(180-differenceInSeconds);
+          }
+        }
+      },
+      () => {}
+    );
+  }
   return (
     <div
       className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative"
@@ -49,9 +96,12 @@ export default function ForgotPassword() {
             borderTopLeftRadius: 6,
           }}
         />
+        {!checkUpdate && <p className={` text-sm  text-red-700 `}>{notifi}</p>}
+        {notifi === "Cập nhật mật khẩu thành công." && (
+          <p className={`m-1 text-sm  text-green-500 `}>{notifi}</p>
+        )}
         <div id="recaptcha"></div>
-
-        {!isVertifi || (
+        {contentButton === "Xác thực SMS" && (
           <>
             <label className="ml-2 font-medium  mr-5">Nhập mã OPT:</label>
             <div className="relative w-full flex flex-row justify-center items-end mb-5 mt-1 ">
@@ -73,39 +123,122 @@ export default function ForgotPassword() {
             </div>
           </>
         )}
+        {contentButton === "Cập nhật" && (
+          <div className="mb-4">
+            <label className="font-medium">Nhập mật khẩu mới:</label>
+            <div className="relative w-full ">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <FaUnlockAlt className="text-lg" />
+              </div>
+              <input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                className="bg-white border border-gray-300 text-gray-900 text-sm rounded-md  w-full ps-10 p-2.5 focus:outline-none focus:border-black"
+                placeholder="mật khẩu"
+              />
+            </div>
+            <label className="font-medium">Nhập lại mật khẩu mới:</label>
+            <div className="relative w-full ">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <FaUnlockAlt className="text-lg" />
+              </div>
+              <input
+                value={rePassword}
+                onChange={(e) => setRePassword(e.target.value)}
+                type="password"
+                className="bg-white border border-gray-300 text-gray-900 text-sm rounded-md  w-full ps-10 p-2.5 focus:outline-none focus:border-black"
+                placeholder="mật khẩu"
+              />
+            </div>
+          </div>
+        )}
         <button
+          ref={buttonRef}
           onClick={async () => {
-            if (!isVertifi) {
-              await handleVertifi("+" + phone, "recaptcha").then((e) => {
+            if (contentButton === "Cập nhật") {
+              setIsload(true);
+              if (password === rePassword) {
+                forgotPasswordAccount(
+                  (result) => {
+                    if (result) {
+                      setNotifi("Cập nhật mật khẩu thành công.");
+                      buttonRef.current.disabled = true;
+                      checkTimeRequestOtp();
+                      setContentButton("Vui lòng quay lại đăng nhập.");
+                      setIsload(false);
+                    } else {
+                      setCheckUpdate(false);
+                      setNotifi("Mật khẩu cập nhật không thành công!!!");
+                      setIsload(false);
+                    }
+                  },
+                  idAccount,
+                  password
+                );
+              } else {
+                setCheckUpdate(false);
+                setNotifi("Mật khẩu không khớp nhau vui lòng kiểm tra lại!!!");
+                setIsload(true);
+              }
+            } else if (contentButton === "Gửi") {
+              setOtp(undefined);
+              setPassword(undefined);
+              setRePassword(undefined);
+              setIsload(true);
+              checkTimeRequestOtp();
+              await handleVertifi("+" + phone).then((e) => {
                 setOtpVertifi(e);
-                setVertifi(true);
                 setContentButton("Xác thực SMS");
+                handleSetValueCookie("lastRequestOtp", { time: new Date() });
               });
-            } else {
+              setIsload(false);
+            } else if (contentButton === "Xác thực SMS") {
+              setIsload(true);
               if (otp.length === 6) {
                 await otpVertifi
                   .confirm(otp)
                   .then((result) => {
-                    console.log(result.user.uid);
-                    console.log(result.user.phoneNumber);
+                    setidAccount(result.user.uids);
+                    setIsload(false);
+                    setCheckUpdate(true);
+                    setContentButton("Cập nhật");
                   })
                   .catch((e) => {
-                    console.log(e);
+                    setCheckUpdate(false);
+                    setNotifi("Mã OTP không đúng vui lòng kiểm tra lại!");
+                    setIsload(false);
                   });
               } else {
-                console.log("a");
+                setCheckUpdate(false);
+                setNotifi("Mã OTP phải đủ 6 số !");
+                setIsload(false);
               }
             }
           }}
           type="button"
           className="min-h-10 w-full rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
         >
-          {contentButton}
+          {viewCountDown ? (
+            <CountDownTimeLast
+              timeCheck={checkTime}
+              setView={() => {
+                setViewCountDown(false);
+              }}
+            />
+          ) : (
+            <div>{isload ? <Loader /> : contentButton}</div>
+          )}
         </button>
-        <Link to={-1} className="flex flex-row pl-1 items-center ">
-          <VscArrowLeft className="text-xl mr-1" />
-          <p className="font-medium">Quay lại</p>
-        </Link>
+        <button
+          onClick={() => {
+            history(-1);
+          }}
+          type="button"
+          className=" min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold"
+        >
+          Quay lại
+        </button>
       </form>
     </div>
   );
