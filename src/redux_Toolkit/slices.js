@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-const host = "https://deploybackend-production.up.railway.app/";
+const host = process.env.REACT_APP_HOST
 var getAPI = createAsyncThunk(
   "user/getAPI",
   async (arg, { rejectWithValue }) => {
@@ -66,6 +66,7 @@ var reducer = createSlice({
   name: "user",
   initialState: {
     data: undefined,
+    stomjs:undefined
   },
   reducers: {
     updateMessage: (state, action) => {

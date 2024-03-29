@@ -1,4 +1,4 @@
-const host = "https://deploybackend-production.up.railway.app/";
+const host = process.env.REACT_APP_HOST
 var getInfoUserById = (id, callBack) => {
   console.log(id);
   fetch(`${host}/users/getInfoUserById?id=${id}`)
