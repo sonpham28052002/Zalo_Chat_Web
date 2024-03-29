@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OTPInput from "react-otp-input";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -8,6 +8,8 @@ import { handleVertifi } from "../../firebase/firebaseService";
 import { FaUnlockAlt } from "react-icons/fa";
 import Loader from "../chat/custom/loader";
 import { forgotPasswordAccount } from "../../services/Account_Service";
+import { FIREBASE_AUTH } from "../../firebase/firebaseConfig";
+import { RecaptchaVerifier } from "firebase/auth";
 
 export default function ForgotPassword() {
   var [phone, setPhone] = useState("84346676956");
@@ -23,6 +25,14 @@ export default function ForgotPassword() {
   var history = useNavigate();
   var [checkUpdate, setCheckUpdate] = useState(true);
   var [notifi, setNotifi] = useState("");
+  var [captCha, setCapCha] = useState(undefined);
+  useEffect(() => {
+    const captCha = new RecaptchaVerifier(FIREBASE_AUTH, "recaptcha", {
+      size: "invisible",
+    });
+    setCapCha(captCha);
+  }, []);
+
   return (
     <div
       className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative"
@@ -59,7 +69,9 @@ export default function ForgotPassword() {
           }}
         />
         {!checkUpdate && <p className={` text-sm  text-red-700 `}>{notifi}</p>}
-        {notifi === "Cập nhật mật khẩu thành công." && <p className={`m-1 text-sm  text-green-500 `}>{notifi}</p>}
+        {notifi === "Cập nhật mật khẩu thành công." && (
+          <p className={`m-1 text-sm  text-green-500 `}>{notifi}</p>
+        )}
         <div id="recaptcha"></div>
         {contentButton === "Xác thực SMS" && (
           <>
@@ -139,11 +151,11 @@ export default function ForgotPassword() {
                 setIsload(true);
               }
             } else if (contentButton === "Gửi") {
-              setOtp(undefined)
-              setPassword(undefined)
-              setRePassword(undefined)
+              setOtp(undefined);
+              setPassword(undefined);
+              setRePassword(undefined);
               setIsload(true);
-              await handleVertifi("+" + phone, "recaptcha").then((e) => {
+              await handleVertifi("+" + phone, captCha).then((e) => {
                 setOtpVertifi(e);
                 setContentButton("Xác thực SMS");
               });

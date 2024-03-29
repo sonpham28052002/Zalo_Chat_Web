@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OTPInput from "react-otp-input";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import { handleVertifi } from "../../firebase/firebaseService";
+import { FIREBASE_AUTH } from "../../firebase/firebaseConfig";
+import { RecaptchaVerifier } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { getAPI } from "../../redux_Toolkit/slices";
 export default function ForgotPassword() {
@@ -17,6 +19,13 @@ export default function ForgotPassword() {
 
   var dispatch = useDispatch();
 
+  var [captCha, setCapCha] = useState(undefined);
+  useEffect(() => {
+    const captCha = new RecaptchaVerifier(FIREBASE_AUTH, "recaptcha", {
+      size: "invisible",
+    });
+    setCapCha(captCha);
+  }, []);
   return (
     <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative">
       <img
@@ -76,7 +85,7 @@ export default function ForgotPassword() {
         <button
           onClick={async () => {
             if (!isVertifi) {
-              await handleVertifi("+" + phone, "recaptcha").then((e) => {
+              await handleVertifi("+" + phone, captCha).then((e) => {
                 setOtpVertifi(e);
                 setVertifi(true);
                 setContentButton("Xác thực SMS");
