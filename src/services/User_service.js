@@ -8,4 +8,5 @@ var getInfoUserById = (id, callBack) => {
     });
 };
 
+
 export { getInfoUserById };

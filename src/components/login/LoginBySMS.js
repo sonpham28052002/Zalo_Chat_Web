@@ -4,6 +4,8 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import { handleVertifi } from "../../firebase/firebaseService";
+import { useDispatch } from "react-redux";
+import { getAPI } from "../../redux_Toolkit/slices";
 export default function ForgotPassword() {
   const history = useNavigate();
   var [phone, setPhone] = useState("84346676956");
@@ -12,6 +14,8 @@ export default function ForgotPassword() {
 
   var [isVertifi, setVertifi] = useState(false);
   var [otp, setOtp] = useState("");
+
+  var dispatch = useDispatch();
 
   return (
     <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative">
@@ -81,9 +85,9 @@ export default function ForgotPassword() {
               if (otp.length === 6) {
                 await otpVertifi
                   .confirm(otp)
-                  .then((result) => {
-                    console.log(result.user.uid);
-                    console.log(result.user.phoneNumber);
+                  .then(async (result) => {
+                    await dispatch(getAPI(result.user.uid));
+                    history("/home");
                   })
                   .catch((e) => {
                     console.log(e);
