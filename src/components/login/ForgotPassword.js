@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import OTPInput from "react-otp-input";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -8,8 +8,11 @@ import { handleVertifi } from "../../firebase/firebaseService";
 import { FaUnlockAlt } from "react-icons/fa";
 import Loader from "../chat/custom/loader";
 import { forgotPasswordAccount } from "../../services/Account_Service";
-import { FIREBASE_AUTH } from "../../firebase/firebaseConfig";
-import { RecaptchaVerifier } from "firebase/auth";
+import {
+  handleGetValueCookie,
+  handleSetValueCookie,
+} from "../../services/Cookie_Service";
+import CountDownTimeLast from "./countDownTimeLast";
 
 export default function ForgotPassword() {
   var [phone, setPhone] = useState("84346676956");
@@ -25,14 +28,39 @@ export default function ForgotPassword() {
   var history = useNavigate();
   var [checkUpdate, setCheckUpdate] = useState(true);
   var [notifi, setNotifi] = useState("");
-  var [captCha, setCapCha] = useState(undefined);
+  var [checkTime, setCheckTime] = useState(undefined);
+  var [viewCountDown, setViewCountDown] = useState(false);
+  var buttonRef = useRef();
   useEffect(() => {
-    const captCha = new RecaptchaVerifier(FIREBASE_AUTH, "recaptcha", {
-      size: "invisible",
-    });
-    setCapCha(captCha);
+    checkTimeRequestOtp();
   }, []);
 
+  function checkTimeRequestOtp() {
+    handleGetValueCookie(
+      "lastRequestOtp",
+      (value) => {
+        if (value.time) {
+          console.log(value.time);
+          var differenceInSeconds = Math.floor(
+            (new Date() - new Date(value.time)) / 1000
+          );
+          console.log(differenceInSeconds);
+
+          if (differenceInSeconds > 180) {
+            console.log("a");
+            setViewCountDown(false);
+            setCheckTime(undefined);
+          } else {
+            console.log("b");
+
+            setViewCountDown(true);
+            setCheckTime(180-differenceInSeconds);
+          }
+        }
+      },
+      () => {}
+    );
+  }
   return (
     <div
       className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative"
@@ -126,6 +154,7 @@ export default function ForgotPassword() {
           </div>
         )}
         <button
+          ref={buttonRef}
           onClick={async () => {
             if (contentButton === "Cập nhật") {
               setIsload(true);
@@ -134,7 +163,9 @@ export default function ForgotPassword() {
                   (result) => {
                     if (result) {
                       setNotifi("Cập nhật mật khẩu thành công.");
-                      setContentButton("Gửi");
+                      buttonRef.current.disabled = true;
+                      checkTimeRequestOtp();
+                      setContentButton("Vui lòng quay lại đăng nhập.");
                       setIsload(false);
                     } else {
                       setCheckUpdate(false);
@@ -155,9 +186,11 @@ export default function ForgotPassword() {
               setPassword(undefined);
               setRePassword(undefined);
               setIsload(true);
-              await handleVertifi("+" + phone, captCha).then((e) => {
+              checkTimeRequestOtp();
+              await handleVertifi("+" + phone).then((e) => {
                 setOtpVertifi(e);
                 setContentButton("Xác thực SMS");
+                handleSetValueCookie("lastRequestOtp", { time: new Date() });
               });
               setIsload(false);
             } else if (contentButton === "Xác thực SMS") {
@@ -186,7 +219,16 @@ export default function ForgotPassword() {
           type="button"
           className="min-h-10 w-full rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
         >
-          {isload ? <Loader /> : contentButton}
+          {viewCountDown ? (
+            <CountDownTimeLast
+              timeCheck={checkTime}
+              setView={() => {
+                setViewCountDown(false);
+              }}
+            />
+          ) : (
+            <div>{isload ? <Loader /> : contentButton}</div>
+          )}
         </button>
         <button
           onClick={() => {
