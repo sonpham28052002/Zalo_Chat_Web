@@ -7,14 +7,19 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store, persistor } from "./redux_Toolkit/store";
 import { PersistGate } from "redux-persist/integration/react";
+import { StompSessionProvider } from "react-stomp-hooks";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <BrowserRouter basename="/">
-        <App />
-      </BrowserRouter>
+      <StompSessionProvider
+        url={"https://deploybackend-production.up.railway.app/ws"}
+      >
+        <BrowserRouter basename="/">
+          <App />
+        </BrowserRouter>
+      </StompSessionProvider>
     </PersistGate>
   </Provider>
 );
