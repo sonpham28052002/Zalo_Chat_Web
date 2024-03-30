@@ -10,12 +10,11 @@ import { PersistGate } from "redux-persist/integration/react";
 import { StompSessionProvider } from "react-stomp-hooks";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+const host = process.env.REACT_APP_HOST;
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <StompSessionProvider
-        url={"https://deploybackend-production.up.railway.app/ws"}
-      >
+      <StompSessionProvider url={`${host}/ws`}>
         <BrowserRouter basename="/">
           <App />
         </BrowserRouter>

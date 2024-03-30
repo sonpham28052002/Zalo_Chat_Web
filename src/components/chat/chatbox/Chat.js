@@ -4,22 +4,21 @@ import NavChat from "./NavChat";
 import ChatRoom from "./ChatRoom";
 import IntroduceChatRoom from "../introduce/introduceChatRoom";
 
-export default function ChatRom({ setIndex, index }) {
-  var [saveIndex, setSaveIndex] = useState(index);
-
-  
-
+export default function ChatRom({ setIdConversation, idConversation }) {
+  // id conversation group or user.id conversation single
+  var [saveIndex, setSaveIndex] = useState(idConversation);
   useEffect(() => {
-    setIndex(saveIndex);
+    setIdConversation(saveIndex);
     // eslint-disable-next-line
   }, [saveIndex]);
+
   return (
     <div className="w-full h-full flex flex-row">
       <NavChat indexSelect={saveIndex} setIndex={setSaveIndex} />
-      {index === -1 ? (
-        <IntroduceChatRoom/>
+      {idConversation === -1 ? (
+        <IntroduceChatRoom />
       ) : (
-        <ChatRoom index={saveIndex} setIndex={setSaveIndex} />
+        <ChatRoom idConversation={saveIndex} setIndex={setSaveIndex} />
       )}
     </div>
   );

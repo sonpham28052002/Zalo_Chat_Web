@@ -6,30 +6,74 @@ import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import "../../../style/scrollBar.css";
 import Conversation from "./Conversation";
 import InputMessage from "./InputMessage";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import UserInfoModal from "../infoUser/UserInfoModal";
+import { getInfoUserById } from "../../../services/User_service";
 
-
-export default function ChatRoom({ index, setIndex }) {
+export default function ChatRoom({ idConversation, setIndex }) {
   var data = useSelector((state) => state.data);
-
+  console.log(data);
+  var [avtMember, setAvtMember] = useState("");
+  var [nameConversation, setNameConversation] = useState("");
   var [isOpenInforUser, setIsOpenInforUser] = useState(false);
-  
-
+  var [receiver, setReceiver] = useState(undefined);
   const scrollRef = useRef();
+
+  var [conversation, setConversation] = useState(
+    // eslint-disable-next-line
+    data.conversation.filter((item) => {
+      if (
+        item.conversationType === "group" &&
+        item.idGroup === idConversation
+      ) {
+        return item;
+      } else if (
+        item.conversationType === "single" &&
+        item.user.id === idConversation
+      ) {
+        return item;
+      }
+    })[0]
+  );
+
   useEffect(() => {
+    // eslint-disable-next-line
+    var conversation = data.conversation.filter((item) => {
+      if (
+        item.conversationType === "group" &&
+        item.idGroup === idConversation
+      ) {
+        return item;
+      } else if (
+        item.conversationType === "single" &&
+        item.user.id === idConversation
+      ) {
+        return item;
+      }
+    })[0];
+    if (conversation?.conversationType === "group") {
+    } else if (conversation?.conversationType === "single") {
+      getInfoUserById(conversation.user.id, (data) => {
+        setAvtMember(data.avt);
+        setNameConversation(data.userName);
+        setReceiver({ id: data.id });
+      });
+    }
+    setConversation(conversation);
+    scrollToButtom();
+  }, [data.conversation, idConversation]);
+
+  function scrollToButtom() {
     scrollRef.current.scrollIntoView({
-      behavior: "smooth",
+      behavior: "auto",
       block: "end",
       inline: "end",
     });
-  }, [index, data]);
-
+    scrollRef.current.scrollTop = 10000000000;
+  }
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [data.conversation, index]);
+    scrollToButtom();
+  }, [conversation])
 
   return (
     <div className=" h-full w-10/12 ">
@@ -38,15 +82,13 @@ export default function ChatRoom({ index, setIndex }) {
           <img
             className="rounded-full h-12  mr-1 border border-white "
             alt="#"
-            src={data.conversation[index].user.avt}
+            src={avtMember}
             onClick={() => {
               setIsOpenInforUser(true);
             }}
           ></img>
           <div>
-            <h1 className="font-medium text-lg">
-              {data.conversation[index].user.userName}
-            </h1>
+            <h1 className="font-medium text-lg">{nameConversation}</h1>
             <div className="flex flex-row items-center">
               <p className="text-xs border-r pr-2 mr-2 font-medium text-gray-400">
                 Truy cập 4 giờ trước
@@ -74,7 +116,7 @@ export default function ChatRoom({ index, setIndex }) {
         <div
           className="bg-image bg-cover bg-center relative h-[765px] w-full"
           style={{
-            backgroundImage: `url(${data.conversation[index].user.avt})`,
+            backgroundImage: `url(${avtMember})`,
           }}
         >
           <div className="absolute inset-0 opacity-65 bg-white"></div>
@@ -82,11 +124,12 @@ export default function ChatRoom({ index, setIndex }) {
             ref={scrollRef}
             className="absolute  bottom-0 max-h-[764px] w-full flex flex-col overflow-scroll justify-items-end overflow-y-auto scrollbar-container "
           >
-            {data.conversation[index].messages.map((item, indexMess) => (
+            {conversation.messages.map((item, indexMess) => (
               <Conversation
                 ownerId={data.id}
                 key={indexMess}
-                conversation={data.conversation[index]}
+                avt={avtMember}
+                conversation={conversation}
                 item={item}
                 index={indexMess}
               />
@@ -94,16 +137,18 @@ export default function ChatRoom({ index, setIndex }) {
           </div>
         </div>
         <InputMessage
-          conversation={data.conversation[index]}
+          conversation={conversation}
           setIndex={setIndex}
-          receiver={data.conversation[index].user}
+          receiver={receiver}
         />
       </div>
-      <UserInfoModal
-        isOpen={isOpenInforUser}
-        setIsOpen={setIsOpenInforUser}
-        userId={data.conversation[index].user.id}
-      />
+      {receiver && (
+        <UserInfoModal
+          isOpen={isOpenInforUser}
+          setIsOpen={setIsOpenInforUser}
+          userId={receiver.id}
+        />
+      )}
     </div>
   );
 }
