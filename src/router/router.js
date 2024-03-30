@@ -27,10 +27,10 @@ export function LoginRouter() {
   );
 }
 export function HomeRouter() {
-  var [index, setIndex] = useState(-1);
+  var [idConversation, setIdConversation] = useState(-1);
   return (
     <Routes>
-      <Route element={<Chat setIndex={setIndex} index={index} />} path="/"></Route>
+      <Route element={<Chat setIdConversation={setIdConversation} idConversation={idConversation} />} path="/"></Route>
       <Route element={<Contact />} path="/Contact"></Route>
       <Route element={<Todo />} path="/Todos"></Route>
     </Routes>

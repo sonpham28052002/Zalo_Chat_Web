@@ -2,7 +2,7 @@
 .scrollbar-container::-webkit-scrollbar {
   width: 7px;
   margin-right: 10px;
- 
+
 }
 
 .scrollbar-container::-webkit-scrollbar-thumb {

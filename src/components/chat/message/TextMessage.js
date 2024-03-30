@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import NavIconInteract from "../chatbox/NavIconInteract";
 import { useSelector } from "react-redux";
 
-export default function TextMessage({ message, conversation }) {
+export default function TextMessage({ avt, message, conversation }) {
   var owner = useSelector((state) => state.data);
   let [messageLocal, setMessageLocal] = useState(message);
   return (
@@ -15,7 +15,7 @@ export default function TextMessage({ message, conversation }) {
       key={message.id}
     >
       {owner.id !== message.sender.id && (
-        <img src={message.sender.avt} alt="#" className="h-12 w-12 rounded-full mr-3" />
+        <img src={avt} alt="#" className="h-12 w-12 rounded-full mr-3" />
       )}
       <div className=" relative h-fit max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-col justify-start items-center border  shadow-lg p-2">
         <div className=" h-fit max-w-full flex flex-col items-start justify-around text-wrap  ">
