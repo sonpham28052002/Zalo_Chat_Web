@@ -1,17 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom";
-// import { getAPI } from "../../redux_Toolkit/slices";
-// import { getAccount } from "../../services/Account_Service";
-// import { handleSetValueCookie } from "../../services/Cookie_Service";
 import { useRef, useState } from "react";
 import { registerAccount } from "../../services/Account_Service";
 
 export default function SignUpPasswordForm() {
     const location = useLocation();
     const history = useNavigate();
-    // const phone = location.state.phone;
-    // const id = location.state.id
-    const phone = "0379046326";
-    const id = "7";
+    const phone = location.state.phone;
+    const id = location.state.id
+    // const phone = "0379046329";
+    // const id = "16";
     var [rePassword, setRePassword] = useState("");
     var [note, setNote] = useState("");
     const passwordRef = useRef(null);
@@ -42,6 +39,7 @@ export default function SignUpPasswordForm() {
             id: id,
             phone: phone,
             password: passwordRef.current.value,
+            // password: "1234",
             createDate: new Date(),
         };
         console.log(account);

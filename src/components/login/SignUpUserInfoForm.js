@@ -3,6 +3,7 @@ import { VscArrowLeft } from "react-icons/vsc";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
+import { insertUser } from "../../services/User_service";
 
 export default function SignUpUserInfoForm() {
     const location = useLocation();
@@ -12,7 +13,7 @@ export default function SignUpUserInfoForm() {
     const dayRef = useRef(null);
     const monthRef = useRef(null);
     const yearRef = useRef(null);
-    const [gender, setGender] = useState("");
+    const [gender, setGender] = useState("Nam");
 
     var history = useNavigate();
     //set default value for day, month, year(you can remove or change it)
@@ -106,16 +107,23 @@ export default function SignUpUserInfoForm() {
                 <button
                     onClick={async () => {
                         console.log(fullName);
-                        const date = new Date(yearRef.current.value, monthRef.current.value - 1, dayRef.current.value);
+                        const date = new Date(yearRef.current.value, monthRef.current.value - 1, dayRef.current.value+1);
                         const user = {
-                            id:id,
+                            id: id,
                             phone: phone,
                             userName: fullName,
-                            date: date,
+                            dob: date,
                             gender: gender
                         };
-                        console.log(user);
-                        // history("/userform", { state: { phone } });
+                        console.log(user);                        
+                        insertUser(user)
+                            .then(responseData => {
+                                console.log('Account registered successfully:', responseData);
+                            })
+                            .catch(error => {
+                                console.error('Failed to register account:', error);
+                            });
+                        history(`/`);
 
                     }}
                     type="button"

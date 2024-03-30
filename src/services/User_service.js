@@ -8,5 +8,22 @@ var getInfoUserById = (id, callBack) => {
     });
 };
 
+var insertUser = async (user) => {
+  try {
+    const response = await fetch(`${host}/users/insertUser`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
 
-export { getInfoUserById };
+
+export { getInfoUserById,insertUser };

@@ -32,7 +32,7 @@ export default function SignUp() {
         className="h-36"
         alt="/"
       ></img>
-      <h1 className="font-bold text-3xl text-center">ĐĂNG NHẬP VỚI OPT</h1>
+      <h1 className="font-bold text-3xl text-center">ĐĂNG Ký VỚI OPT</h1>
 
       <form className="h-full w-full flex flex-col justify-start mt-5">
         <PhoneInput
