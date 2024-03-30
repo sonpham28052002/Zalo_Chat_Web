@@ -9,6 +9,8 @@ export default function SignUpUserInfoForm() {
     const location = useLocation();
     var phone = location.state.phone;
     const id = location.state.id
+    // const phone = "84379046321";
+    // const id = "17";
     var [fullName, setFullName] = useState("");
     const dayRef = useRef(null);
     const monthRef = useRef(null);
@@ -107,7 +109,7 @@ export default function SignUpUserInfoForm() {
                 <button
                     onClick={async () => {
                         console.log(fullName);
-                        const date = new Date(yearRef.current.value, monthRef.current.value - 1, dayRef.current.value+1);
+                        const date = new Date(yearRef.current.value, monthRef.current.value - 1, dayRef.current.value);
                         const user = {
                             id: id,
                             phone: phone,
