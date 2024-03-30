@@ -6,7 +6,6 @@ var getAPI = createAsyncThunk(
     try {
       const res = await fetch(`${host}/users/getUserById?id=${arg}`);
       var data = await res.json();
-      console.log("data");
       console.log(data);
       return data;
     } catch (error) {
@@ -67,25 +66,10 @@ var reducer = createSlice({
   initialState: {
     data: undefined,
   },
-  reducers: {
-    updateMessage: (state, action) => {
-      let mess = state.data.conversation.map((item) => ({ ...item }));
-      if (true) {
-        let newMessage = mess.filter(
-          (item, index) =>
-            Object.assign({}, item.user).id !== action.payload.user.id
-        );
-        console.log(newMessage);
-        state.data.conversation = [...newMessage, action.payload];
-      } else {
-        console.log("aaaa");
-      }
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(getAPI.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.data = action.payload;
       })
       .addCase(putAPI.pending, (state, action) => {
@@ -97,5 +81,4 @@ var reducer = createSlice({
   },
 });
 export default reducer;
-export const { updateMessage} = reducer.actions;
 export { getAPI, putAPI, postAPI };

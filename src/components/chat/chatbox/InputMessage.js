@@ -5,31 +5,27 @@ import { FaRegFolder } from "react-icons/fa";
 import Sticker from "../custom/Sticker";
 import Emoji from "../custom/Emoji";
 import { BsFillSendFill } from "react-icons/bs";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updateMessage,
-} from "../../../redux_Toolkit/slices";
+import { useSelector } from "react-redux";
 import { v4 } from "uuid";
 import { uploadFile } from "../../../services/Azure_Service";
 import SockJS from "sockjs-client";
 import { over } from "stompjs";
-
-const sockjs = new SockJS("https://deploybackend-production.up.railway.app/ws")
-const stompClient = over(sockjs)
-stompClient.connect({}, () => {console.log("run");});
+const host = process.env.REACT_APP_HOST;
+const sockjs = new SockJS(`${host}/ws`);
+const stompClient = over(sockjs);
+stompClient.connect({}, () => {
+  console.log("run");
+});
 
 export default function InputMessage({ conversation, setIndex, receiver }) {
   var user = useSelector((state) => state.data);
-  console.log(stompClient);
-  var dispatch = useDispatch();
+
   const sender = {
     id: user.id,
-    userName: user.userName,
-    avt: user.avt,
   };
 
   var [text, setText] = useState("");
-  
+
   function sendMessage(message) {
     if (stompClient && stompClient.connected) {
       stompClient.send(
@@ -48,6 +44,7 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
           conversation={conversation}
           receiver={receiver}
           sender={sender}
+          sendMessage={sendMessage}
         />
         <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
           <label htmlFor="dropzone-image">
@@ -66,29 +63,20 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
                   const content = {
                     id: v4(),
                     messageType: type,
-                    senderDate: new Date(),
                     sender: sender,
-                    receiver: {
-                      id: receiver.id,
-                      userName: receiver.userName,
-                      avt: receiver.avt,
-                    },
+                    receiver: receiver,
                     seen: [
                       {
                         id: user.id,
-                        userName: user.userName,
-                        avt: user.avt,
                       },
                     ],
                     size: fileSize,
                     titleFile: e.target.files[0].name,
                     url: url,
                   };
-                  let newMessage = { ...conversation };
-                  newMessage.messages = [...conversation.messages, content];
-                  dispatch(updateMessage(newMessage));
+                  sendMessage(content);
                   e.target.value = "";
-                  setIndex(0);
+                  setIndex(receiver.id);
                 }
               }}
             />
@@ -104,6 +92,7 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
               onChange={async (e) => {
                 if (e.target.files[0]) {
                   const fileSize = e.target.files[0].size;
+                  console.log("file");
                   if (fileSize >= 10485760) {
                     alert("Kích thước file không được quá 10MB");
                     e.target.value = "";
@@ -119,25 +108,19 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
                     messageType: type,
                     senderDate: new Date(),
                     sender: sender,
-                    receiver: {
-                      id: receiver.id,
-                      userName: receiver.userName,
-                      avt: receiver.avt,
-                    },
+                    receiver: receiver,
                     seen: [
                       {
                         id: user.id,
-                        userName: user.userName,
-                        avt: user.avt,
                       },
                     ],
                     size: fileSize,
                     titleFile: e.target.files[0].name,
                     url: url,
                   };
-                  let newMessage = { ...conversation };
-                  newMessage.messages = [...conversation.messages, content];
-                  dispatch(updateMessage(newMessage));
+                  console.log(content);
+                  // setIndex(receiver.id);
+                  // sendMessage(content);
                   e.target.value = "";
                 }
               }}
@@ -174,29 +157,21 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
               let content = {
                 id: v4(),
                 messageType: "Text",
-                senderDate: new Date(),
                 sender: sender,
                 receiver: {
                   id: receiver.id,
-                  userName: receiver.userName,
-                  avt: receiver.avt,
                 },
                 seen: [
                   {
                     id: user.id,
-                    userName: user.userName,
-                    avt: user.avt,
                   },
                 ],
                 content: text,
               };
               e.preventDefault();
               sendMessage(content);
-              let newMessage = { ...conversation };
-              newMessage.messages = [...conversation.messages, content];
-              dispatch(updateMessage(newMessage));
               setText(" ".trim());
-              setIndex(0);
+              setIndex(receiver.id);
             }
           }}
           placeholder={`Nhập tin nhắn gửi tới đối phương`}
