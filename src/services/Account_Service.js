@@ -29,4 +29,22 @@ var forgotPasswordAccount = (callBack, id, passwordNew) => {
       callBack(false);
     });
 };
-export { getAccount, forgotPasswordAccount };
+
+var registerAccount = async (account) => {
+  try {
+    const response = await fetch(`${host}/account/registerAccount`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(account),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
+export { getAccount, forgotPasswordAccount,registerAccount };

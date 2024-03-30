@@ -8,7 +8,9 @@ import Chat from "../components/chat/chatbox/Chat";
 import Contact from "../components/chat/contacts/index";
 import Todo from "../components/chat/todo/Todo";
 import Login from "../components/login/Login";
+import SignUpUserInfoForm from "../components/login/SignUpUserInfoForm";
 import Home from "../components/chat/home";
+import SignUpPasswordForm from "../components/login/SignUpPasswordForm";
 import { useState } from "react";
 
 export function LoginRouter() {
@@ -19,6 +21,8 @@ export function LoginRouter() {
       <Route element={<LoginBySMS />} path="/SMS"></Route>
       <Route element={<ForgotPassword />} path="/forgot"></Route>
       <Route element={<SignUp />} path="/signup"></Route>
+      <Route element={<SignUpUserInfoForm />} path="/userform"></Route>
+      <Route element={<SignUpPasswordForm />} path="/enterpassword"></Route>
     </Routes>
   );
 }

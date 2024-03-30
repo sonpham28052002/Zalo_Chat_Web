@@ -8,7 +8,11 @@
     - npm i react-otp-input
 
     - npm install --save stipop-react-sdk
+
     - npm install emoji-picker-react
+    
     - npm install js-cookie
+    
     - npm i sockjs-client --save
+    
     - npm i stompjs --save
