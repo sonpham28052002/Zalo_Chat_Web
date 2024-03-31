@@ -43,6 +43,7 @@ export default function ForgotPassword() {
             setCheckTime(undefined);
           } else {
             buttonRef.current.disabled = true;
+            setIsload(false);
             setViewCountDown(true);
             setCheckTime(180 - differenceInSeconds);
           }
@@ -113,17 +114,20 @@ export default function ForgotPassword() {
           onClick={async () => {
             setIsload(true);
             if (contentButton === "Gửi") {
-              await handleVertifi("+" + phone).then((e) => {
-                if (e) {
-                  setOtpVertifi(e);
-                  setVertifi(true);
-                  setContentButton("Xác thực SMS");
-                }
-                setIsload(false);
-              });
-              setTimeout(() => {
-                setIsload(false);
-              }, 5000);
+              checkTimeRequestOtp();
+              await handleVertifi("+" + phone)
+                .then((e) => {
+                  if (e) {
+                    setOtpVertifi(e);
+                    setVertifi(true);
+                    setContentButton("Xác thực SMS");
+                  }
+                  setIsload(false);
+                })
+                .catch((Error) => {
+                  setIsload(false);
+                  console.log(Error);
+                });
             } else if (contentButton === "Xác thực SMS") {
               if (otp.length === 6) {
                 setIsload(true);

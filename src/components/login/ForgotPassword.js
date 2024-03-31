@@ -30,6 +30,7 @@ export default function ForgotPassword() {
   var [notifi, setNotifi] = useState("");
   var [checkTime, setCheckTime] = useState(undefined);
   var [viewCountDown, setViewCountDown] = useState(false);
+
   var buttonRef = useRef();
   useEffect(() => {
     checkTimeRequestOtp();
@@ -47,12 +48,10 @@ export default function ForgotPassword() {
           console.log(differenceInSeconds);
 
           if (differenceInSeconds > 180) {
-            console.log("a");
             setViewCountDown(false);
             setCheckTime(undefined);
           } else {
-            console.log("b");
-
+            setIsload(false);
             setViewCountDown(true);
             setCheckTime(180 - differenceInSeconds);
           }
@@ -187,14 +186,22 @@ export default function ForgotPassword() {
               setRePassword(undefined);
               setIsload(true);
               checkTimeRequestOtp();
-              await handleVertifi("+" + phone).then((e) => {
-                if (e) {
-                  setOtpVertifi(e);
-                  setContentButton("Xác thực SMS");
-                }
-                setIsload(false);
-                handleSetValueCookie("lastRequestOtp", { time: new Date() });
-              });
+              console.log("gửi");
+              await handleVertifi("+" + phone)
+                .then((e) => {
+                  if (e) {
+                    console.log("gửi");
+                    setOtpVertifi(e);
+                    setContentButton("Xác thực SMS");
+                  } else {
+                    console.log("no gửi");
+                  }
+                  setIsload(false);
+                  handleSetValueCookie("lastRequestOtp", { time: new Date() });
+                })
+                .catch((Error) => {
+                  console.log(Error);
+                });
             } else if (contentButton === "Xác thực SMS") {
               setIsload(true);
               if (otp.length === 6) {

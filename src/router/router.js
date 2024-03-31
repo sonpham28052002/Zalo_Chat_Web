@@ -12,6 +12,7 @@ import SignUpUserInfoForm from "../components/login/SignUpUserInfoForm";
 import Home from "../components/chat/home";
 import SignUpPasswordForm from "../components/login/SignUpPasswordForm";
 import { useState } from "react";
+import FormSignUp from "../components/login/formSignUp";
 
 export function LoginRouter() {
   return (
@@ -20,9 +21,7 @@ export function LoginRouter() {
       <Route element={<LoginByQRCode />} path="/qr"></Route>
       <Route element={<LoginBySMS />} path="/SMS"></Route>
       <Route element={<ForgotPassword />} path="/forgot"></Route>
-      <Route element={<SignUp />} path="/signup"></Route>
-      <Route element={<SignUpUserInfoForm />} path="/userform"></Route>
-      <Route element={<SignUpPasswordForm />} path="/enterpassword"></Route>
+      <Route element={<SignUp />} path="/signup*"></Route>
     </Routes>
   );
 }
@@ -30,9 +29,26 @@ export function HomeRouter() {
   var [idConversation, setIdConversation] = useState(-1);
   return (
     <Routes>
-      <Route element={<Chat setIdConversation={setIdConversation} idConversation={idConversation} />} path="/"></Route>
+      <Route
+        element={
+          <Chat
+            setIdConversation={setIdConversation}
+            idConversation={idConversation}
+          />
+        }
+        path="/"
+      ></Route>
       <Route element={<Contact />} path="/Contact"></Route>
       <Route element={<Todo />} path="/Todos"></Route>
+    </Routes>
+  );
+}
+export function SignUpRouter() {
+  return (
+    <Routes>
+      <Route element={<FormSignUp />} path="/"></Route>
+      <Route element={<SignUpPasswordForm />} path="/enterpassword"></Route>
+      <Route element={<SignUpUserInfoForm />} path="/userform"></Route>
     </Routes>
   );
 }
