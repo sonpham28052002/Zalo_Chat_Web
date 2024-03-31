@@ -5,40 +5,42 @@ import { v4 as uuidV4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { IoIosHome } from "react-icons/io";
 import { AiOutlineReload } from "react-icons/ai";
-import { over } from "stompjs";
-import SockJS from "sockjs-client";
+
+import { useSubscription } from "react-stomp-hooks";
+import { getAPI } from "../../redux_Toolkit/slices";
+import { useDispatch } from "react-redux";
 export default function LoginByQRCode() {
   var [valueQR, setValueQR] = useState(uuidV4());
   var [disableQR, setDisableQR] = useState(false);
   var [isScaned, setIsScaned] = useState(false);
   var history = useNavigate();
   var [userReceive, setUserReceive] = useState();
+  var dispatch = useDispatch();
 
-  const socket = new SockJS("http://localhost:8080/ws");
-  const stompClient = over(socket);
-
-  stompClient.connect(
-    {userId:"sonpham"},
-    () => {
-      console.log(valueQR);
-      stompClient.subscribe("/user/" + valueQR + "/QR", (message) => {
-        if (message) {
-          console.log("a");
-          console.log(message.body);
-          setUserReceive(JSON.parse(message.body));
-          setIsScaned(true);
-        }
-      });
-    },
-    (err) => {
-      console.log(err);
+  useSubscription("/user/" + valueQR + "/QR", async (message) => {
+    if (message) {
+      console.log("a");
+      let data = JSON.parse(message.body);
+      console.log(data);
+      data.content = JSON.parse(data.content);
+      setUserReceive(data);
+      if (data.content.id) {
+        console.log(data.content.id);
+        //   // await dispatch(getAPI(JSON.parse(message.body).idUser));
+        // setIsScaned(false);
+        //   history("/home");
+      }
+      setIsScaned(true);
     }
-  );
+  });
 
   useEffect(() => {
-    setTimeout(() => {
-      setDisableQR(true);
-    }, 50000);
+    if (!userReceive) {
+      setTimeout(() => {
+        setDisableQR(true);
+      }, 50000);
+    }
+    // eslint-disable-next-line
   }, [valueQR]);
   return (
     <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative">
@@ -55,11 +57,11 @@ export default function LoginByQRCode() {
         <div className="mt-10 h-fit ">
           <img
             alt="#"
-            src={userReceive?.image}
+            src={userReceive?.content.avatar}
             className="shadow-2xl h-52 rounded-full border-2 border-white -mt-5"
           />
           <h1 className="mt-2 text-xl font-bold text-center w-full">
-            {userReceive?.name}
+            {userReceive?.content.name}
           </h1>
           <p className="text-center text-sm text-gray-400">
             Vui lòng đợi chấp nhận
