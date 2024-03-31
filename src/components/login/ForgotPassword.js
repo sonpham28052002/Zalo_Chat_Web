@@ -54,7 +54,7 @@ export default function ForgotPassword() {
             console.log("b");
 
             setViewCountDown(true);
-            setCheckTime(180-differenceInSeconds);
+            setCheckTime(180 - differenceInSeconds);
           }
         }
       },
@@ -188,11 +188,13 @@ export default function ForgotPassword() {
               setIsload(true);
               checkTimeRequestOtp();
               await handleVertifi("+" + phone).then((e) => {
-                setOtpVertifi(e);
-                setContentButton("Xác thực SMS");
+                if (e) {
+                  setOtpVertifi(e);
+                  setContentButton("Xác thực SMS");
+                }
+                setIsload(false);
                 handleSetValueCookie("lastRequestOtp", { time: new Date() });
               });
-              setIsload(false);
             } else if (contentButton === "Xác thực SMS") {
               setIsload(true);
               if (otp.length === 6) {

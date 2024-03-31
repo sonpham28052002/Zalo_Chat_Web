@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IoImageOutline } from "react-icons/io5";
-import { MdAttachFile, MdOutlineKeyboardVoice } from "react-icons/md";
+import { MdAttachFile } from "react-icons/md";
 import { FaRegFolder } from "react-icons/fa";
 import Sticker from "../custom/Sticker";
 import Emoji from "../custom/Emoji";
@@ -10,6 +10,7 @@ import { v4 } from "uuid";
 import { uploadFile } from "../../../services/Azure_Service";
 import SockJS from "sockjs-client";
 import { over } from "stompjs";
+import InputVioce from "../custom/inputVioce";
 const host = process.env.REACT_APP_HOST;
 const sockjs = new SockJS(`${host}/ws`);
 const stompClient = over(sockjs);
@@ -180,7 +181,7 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
         />
         <div className="flex flex-row justify-center items-start h-full pt-3 px-3">
           <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
-            <MdOutlineKeyboardVoice className="text-2xl" />
+            <InputVioce/>
           </div>
           <Emoji setText={setText} text={text} />
           <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2 hover:text-blue-600">
