@@ -12,9 +12,9 @@ export default function NavChat({ indexSelect, setIndex }) {
     dispatch(getAPI(data.id));
   });
   useEffect(() => {
-    setIndex(idConversation)
-  }, [idConversation,setIndex])
-   // eslint-disable-next-line
+    setIndex(idConversation);
+    // eslint-disable-next-line
+  }, [idConversation]);
 
   var dispatch = useDispatch();
   return (

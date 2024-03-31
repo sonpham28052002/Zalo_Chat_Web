@@ -28,7 +28,7 @@ export default function SignUpPasswordForm() {
     else setNote("");
   };
 
-  const handleSignUpAccount = () => {
+  const handleSignUpAccount = async () => {
     if (note.length > 0) {
       alert("Mật khẩu không hợp lệ, vui lòng thử lại!");
       return;
@@ -41,15 +41,14 @@ export default function SignUpPasswordForm() {
       createDate: new Date(),
     };
     console.log(account);
-
     registerAccount(account)
       .then((responseData) => {
         console.log("Account registered successfully:", responseData);
+        history("/signup/userform", { state: { phone, id } });
       })
       .catch((error) => {
         console.error("Failed to register account:", error);
       });
-    history(`/userform`, { state: { phone, id } });
   };
 
   return (
@@ -60,7 +59,7 @@ export default function SignUpPasswordForm() {
         alt="/"
       ></img>
       <h1 className="font-bold text-3xl pb-7">NHẬP MẬT KHẨU</h1>
-      <form className="w-full flex flex-col justify-center">
+      <div className="w-full flex flex-col justify-center">
         <div className="pb-3">
           <label className="font-medium">Nhập mật khẩu: </label>
           <input
@@ -95,7 +94,7 @@ export default function SignUpPasswordForm() {
         >
           Xác nhận mật khẩu
         </button>
-      </form>
+      </div>
     </div>
   );
 }
