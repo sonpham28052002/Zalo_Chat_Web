@@ -21,7 +21,7 @@ export default function ForgotPassword() {
   var [isload, setIsload] = useState(false);
   var [checkTime, setCheckTime] = useState(undefined);
   var [viewCountDown, setViewCountDown] = useState(false);
-  
+
   var dispatch = useDispatch();
 
   useEffect(() => {
@@ -114,9 +114,12 @@ export default function ForgotPassword() {
             setIsload(true);
             if (contentButton === "Gửi") {
               await handleVertifi("+" + phone).then((e) => {
-                setOtpVertifi(e);
-                setVertifi(true)
-                setContentButton("Xác thực SMS");
+                if (e) {
+                  setOtpVertifi(e);
+                  setVertifi(true);
+                  setContentButton("Xác thực SMS");
+                }
+                setIsload(false);
               });
               setTimeout(() => {
                 setIsload(false);

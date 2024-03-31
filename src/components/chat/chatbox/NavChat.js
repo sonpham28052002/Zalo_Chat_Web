@@ -13,7 +13,8 @@ export default function NavChat({ indexSelect, setIndex }) {
   });
   useEffect(() => {
     setIndex(idConversation)
-  }, [idConversation])
+  }, [idConversation,setIndex])
+   // eslint-disable-next-line
 
   var dispatch = useDispatch();
   return (
