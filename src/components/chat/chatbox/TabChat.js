@@ -19,6 +19,7 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
     idConversation = conversation.idGroup;
   }
 
+  // eslint-disable-next-line
   useEffect(() => {
     if (conversation.conversationType === "single") {
       fetch(`${host}/users/getInfoUserById?id=${conversation.user.id}`)
@@ -29,7 +30,7 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
           setIdSingle(data.id);
         });
     }
-  }, []);
+  }, [conversation.conversationType, conversation.user.id]);
 
   const lastMessage = conversation.messages[conversation.messages.length - 1];
   if (lastMessage.messageType === "Text") {

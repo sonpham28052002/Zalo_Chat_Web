@@ -84,34 +84,34 @@ export default function SignUp() {
           onClick={async () => {
             if (!isVertifi) {
               await handleVertifi("+" + phone, "recaptcha").then((e) => {
-                setOtpVertifi(e);
-                setVertifi(true);
-                setContentButton("Xác thực SMS");
+                if (e) {
+                  setOtpVertifi(e);
+                  setVertifi(true);
+                  setContentButton("Xác thực SMS");
+                }
               });
             } else {
               if (otp.length === 6) {
                 await otpVertifi
                   .confirm(otp)
                   .then((result) => {
-                    const id = result.user.uid
+                    const id = result.user.uid;
                     history(`/enterpassword`, { state: { phone, id } });
                   })
                   .catch((e) => {
-                    alert("Mã OTP không hợp lệ");                    
+                    alert("Mã OTP không hợp lệ");
                   });
               } else {
                 alert("Mã OTP không hợp lệ");
               }
               // history(`/enterpassword`,{ state: { phone, id } } );
-            }            
-            
-
+            }
           }}
           type="button"
           className="min-h-10 w-full rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
-        >{contentButton}
+        >
+          {contentButton}
         </button>
-
       </form>
     </div>
   );
