@@ -13,6 +13,7 @@ import Home from "../components/chat/home";
 import SignUpPasswordForm from "../components/login/SignUpPasswordForm";
 import { useState } from "react";
 import FormSignUp from "../components/login/formSignUp";
+import SignUpPreviewInfoForm from "../components/login/SignUpPreviewInfoForm";
 
 export function LoginRouter() {
   return (
@@ -49,6 +50,7 @@ export function SignUpRouter() {
       <Route element={<FormSignUp />} path="/"></Route>
       <Route element={<SignUpPasswordForm />} path="/enterpassword"></Route>
       <Route element={<SignUpUserInfoForm />} path="/userform"></Route>
+      <Route element={<SignUpPreviewInfoForm />} path="/preview"></Route>
     </Routes>
   );
 }
