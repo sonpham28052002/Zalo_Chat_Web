@@ -30,6 +30,19 @@ var forgotPasswordAccount = (callBack, id, passwordNew) => {
     });
 };
 
+var getAccountByPhone = async (phone) => {
+  try {
+    const response = await fetch(
+      `${host}/account/getAccountByPhone?phone=${phone}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
 var registerAccount = async (account) => {
   try {
     const response = await fetch(`${host}/account/registerAccount`, {
@@ -45,6 +58,11 @@ var registerAccount = async (account) => {
     console.error(error);
     return false;
   }
-}
+};
 
-export { getAccount, forgotPasswordAccount,registerAccount };
+export {
+  getAccount,
+  forgotPasswordAccount,
+  registerAccount,
+  getAccountByPhone,
+};
