@@ -5,8 +5,10 @@ import { handleVertifi } from "../../firebase/firebaseService";
 import { useNavigate } from "react-router-dom";
 import { VscArrowLeft } from "react-icons/vsc";
 import { Link } from "react-router-dom";
+import { checkNumberPhoneExist } from "../../services/Account_Service";
+
 export default function FormSignUp() {
-  var [phone, setPhone] = useState("84379046321");
+  var [phone, setPhone] = useState();
   var [otpVertifi, setOtpVertifi] = useState();
   var [isVertifi, setVertifi] = useState(false);
   var [otp, setOtp] = useState("");
@@ -81,12 +83,21 @@ export default function FormSignUp() {
         <button
           onClick={async () => {
             if (contentButton === "Gửi") {
+              if (phone.length <= 10) {
+                alert("Số điện thoại không hợp lệ");
+                return;
+              }
+              var res = await checkNumberPhoneExist(phone);
+              if (res!==false) {
+                alert("Số điện thoại đã tồn tại");
+                return;
+              }
+              setVertifi(true);
+              setContentButton("Xác thực SMS");
               await handleVertifi("+" + phone, "recaptcha")
                 .then((e) => {
                   if (e) {
                     setOtpVertifi(e);
-                    setVertifi(true);
-                    setContentButton("Xác thực SMS");
                   }
                 })
                 .catch((Error) => {

@@ -24,5 +24,16 @@ var insertUser = async (user) => {
   }
 };
 
+var getUserById = async (id) => {
+  try {
+    const response = await fetch(`${host}/users/getUserById?id=${id}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
 
-export { getInfoUserById,insertUser };
+
+export { getInfoUserById,insertUser, getUserById };
