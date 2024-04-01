@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { insertUser } from "../../services/User_service";
+import { getUserById } from "../../services/User_service";
 
 export default function SignUpUserInfoForm() {
   const location = useLocation();
@@ -12,6 +13,7 @@ export default function SignUpUserInfoForm() {
   // const phone = "84379046321";
   // const id = "17";
   var [fullName, setFullName] = useState("");
+  var [note, setNote] = useState("");
   const dayRef = useRef(null);
   const monthRef = useRef(null);
   const yearRef = useRef(null);
@@ -63,9 +65,26 @@ export default function SignUpUserInfoForm() {
           <label className="font-medium">Họ tên: </label>
           <input
             type="text"
-            onChange={(e) => setFullName(e.target.value)}
+            onBlur={(e) => {
+              var fullname = e.target.value;
+              if (fullname.length === 0) {
+                setNote("Họ tên không được để trống");
+                return;
+              }
+              // const validname = /^[a-z\\săâêôơưáàảãạắằẳẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ]+$/
+              // var res = validname.test(fullname);
+              // if (!res) {
+              //   setNote("Họ tên không hợp lệ");
+              //   return;
+              // }
+              setNote("");
+              setFullName(e.target.value)
+            }}
             className="h-10 w-full rounded-md focus:outline-none border border-gray border-solid p-1"
           />
+          <p className="" style={{ color: "red", fontWeight: "400" }}>
+            {note}
+          </p>
         </div>
 
         <div className="pb-5">
@@ -136,7 +155,10 @@ export default function SignUpUserInfoForm() {
 
         <button
           onClick={async () => {
-            console.log(fullName);
+            if (fullName.length === 0) {
+              setNote("Họ tên không được để trống");
+              return;
+            }
             const date = new Date(
               yearRef.current.value,
               monthRef.current.value - 1,
@@ -149,15 +171,18 @@ export default function SignUpUserInfoForm() {
               dob: date,
               gender: gender,
             };
-            console.log(user);
             insertUser(user)
               .then((responseData) => {
+                var account = responseData;
                 console.log("Account registered successfully:", responseData);
-                history(`/`);
+                history(`/Signup/preview`, { state: { account } });
               })
               .catch((error) => {
                 console.error("Failed to register account:", error);
               });
+            // var account = await getUserById("Ukk2dSG2xlfYBOiih7C2pE7Ct542");
+            // console.log(account);
+            // history(`/Signup/preview`, { state: { account } });
           }}
           type="button"
           className="min-h-10 w-full rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
