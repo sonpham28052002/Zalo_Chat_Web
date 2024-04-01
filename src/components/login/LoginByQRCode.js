@@ -24,15 +24,28 @@ export default function LoginByQRCode() {
       console.log(data);
       data.content = JSON.parse(data.content);
       setUserReceive(data);
-      if (data.content.id) {
-        console.log(data.content.id);
-        //   // await dispatch(getAPI(JSON.parse(message.body).idUser));
-        // setIsScaned(false);
-        //   history("/home");
+      if (data.content.idUser) {
+        console.log("data.content.idUser");
+        console.log(data.content.idUser);
+        await dispatch(getAPI(data.content.idUser));
+        setIsScaned(false);
+        history("/home");
       }
       setIsScaned(true);
     }
   });
+
+  useEffect(() => {
+    if (isScaned) {
+      setTimeout(() => {
+        setValueQR(uuidV4());
+        setUserReceive(undefined);
+        setIsScaned(false);
+        setDisableQR(false);
+      }, 30000);
+    }
+    // eslint-disable-next-line
+  }, [isScaned]);
 
   useEffect(() => {
     if (!userReceive) {
@@ -49,7 +62,7 @@ export default function LoginByQRCode() {
         className="h-36"
         alt="/"
       ></img>
-      <h1 className="font-bold text-3xl">ĐĂNG NHẬP VỚI QR</h1>
+      <h1 className="font-bold text-2xl">ĐĂNG NHẬP VỚI QR</h1>
       <h4 className="text-gray-400 text-base font-medium">
         Sử ứng dụng để quét mã QR bên dưới.
       </h4>
@@ -57,8 +70,8 @@ export default function LoginByQRCode() {
         <div className="mt-10 h-fit ">
           <img
             alt="#"
-            src={userReceive?.content.avatar}
-            className="shadow-2xl h-52 rounded-full border-2 border-white -mt-5"
+            src={userReceive?.content.avt}
+            className="shadow-2xl h-52 rounded-full border-2 border-white -mt-7"
           />
           <h1 className="mt-2 text-xl font-bold text-center w-full">
             {userReceive?.content.name}
@@ -95,7 +108,7 @@ export default function LoginByQRCode() {
               <div className="border-2  border-white shadow-md p-3 rounded-md">
                 <QRCode className="h-full " value={valueQR} />
               </div>
-              <h4 className="text-base text-center font-medium mt-3 text-blue-300">
+              <h4 className="text-base text-center font-medium mt-2 text-blue-300">
                 chỉ sử dụng đăng nhập cho website
               </h4>
             </div>
@@ -103,7 +116,9 @@ export default function LoginByQRCode() {
         </>
       )}
       <button
-        className=" mt-5 min-h-10 w-full rounded-md  bg-slate-500 hover:bg-slate-700 text-white font-semibold flex flex-row justify-center items-center"
+        className={` mt-7 ${
+          isScaned ? "mt-[10px]" : ""
+        } min-h-10 w-full rounded-md  bg-slate-500 hover:bg-slate-700 text-white font-semibold flex flex-row justify-center items-center`}
         onClick={() => {
           history("/");
         }}

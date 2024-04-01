@@ -33,7 +33,7 @@ export default function FormSignUp() {
         className="h-36"
         alt="/"
       ></img>
-      <h1 className="font-bold text-3xl text-center">ĐĂNG Ký VỚI OPT</h1>
+      <h1 className="font-bold text-3xl text-center">ĐĂNG Ký Tài Khoản</h1>
       <div className="h-full w-full flex flex-col justify-start mt-5">
         <PhoneInput
           country={"vn"}
