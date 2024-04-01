@@ -223,6 +223,7 @@ export default function ForgotPassword() {
                   .confirm(otp)
                   .then((result) => {
                     setidAccount(result.user.uid);
+                    console.log(result.user.uid);
                     setIsload(false);
                     setCheckUpdate(true);
                     setContentButton("Cập nhật");

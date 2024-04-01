@@ -18,8 +18,16 @@ var getAccount = (callBack, phone, password) => {
     });
 };
 var forgotPasswordAccount = (callBack, id, passwordNew) => {
+  console.log(id);
+  console.log(passwordNew);
   fetch(
-    `${host}/account/forgotPasswordAccount?id=${id}&passwordNew=${passwordNew}`
+    `${host}/account/forgotPasswordAccount?id=${id}&passwordNew=${passwordNew}`,
+    {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
   )
     .then((resp) => resp.json())
     .then((data) => {

@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { insertUser } from "../../services/User_service";
-import { getUserById } from "../../services/User_service";
 
 export default function SignUpUserInfoForm() {
   const location = useLocation();
