@@ -47,4 +47,24 @@ var registerAccount = async (account) => {
   }
 }
 
-export { getAccount, forgotPasswordAccount,registerAccount };
+var checkNumberPhoneExist = async (phone) => {
+  // return false if not exist, return object if exist
+  try {
+    const response = await fetch(`${host}/account/getAccountByPhone?phone=${phone}`);
+    try {
+      const data = await response.json();
+      if (data.status === 500) {
+        console.log("2 account");
+        return data.status;
+      }
+      return data;
+    } catch (error) {
+      return false;
+    }
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+}
+
+export { getAccount, forgotPasswordAccount, registerAccount, checkNumberPhoneExist };

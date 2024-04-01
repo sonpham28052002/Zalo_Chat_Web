@@ -9,7 +9,6 @@ export default function SignUpPasswordForm() {
   const id = location.state.id;
   // const phone = "0379046329";
   // const id = "16";
-
   // eslint-disable-next-line
   var [rePassword, setRePassword] = useState("");
   var [note, setNote] = useState("");
@@ -17,8 +16,12 @@ export default function SignUpPasswordForm() {
 
   const handleEnterPassword = () => {
     const tmpPassword = passwordRef.current.value;
-    if (tmpPassword.length < 4) setNote("Mật khẩu phải từ 4 ký tự trở lên");
-    else setNote("");
+    var regrex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])([a-zA-Z0-9]{8,})$/;
+    var res = regrex.test(tmpPassword);
+    if (!res)
+      setNote("Mật khẩu phải từ 8 ký tự trở lên, gồm chữ thường, chữ hoa và số");
+    else  
+      setNote("");
   };
 
   const handleRePassword = (rpw) => {
@@ -37,7 +40,6 @@ export default function SignUpPasswordForm() {
       id: id,
       phone: phone,
       password: passwordRef.current.value,
-      // password: "1234",
       createDate: new Date(),
     };
     console.log(account);
@@ -58,7 +60,7 @@ export default function SignUpPasswordForm() {
         className="h-36"
         alt="/"
       ></img>
-      <h1 className="font-bold text-3xl pb-7">NHẬP MẬT KHẨU</h1>
+      <h1 className="font-bold text-3xl text-center pb-7">NHẬP MẬT KHẨU</h1>
       <div className="w-full flex flex-col justify-center">
         <div className="pb-3">
           <label className="font-medium">Nhập mật khẩu: </label>
