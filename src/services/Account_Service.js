@@ -18,8 +18,16 @@ var getAccount = (callBack, phone, password) => {
     });
 };
 var forgotPasswordAccount = (callBack, id, passwordNew) => {
+  console.log(id);
+  console.log(passwordNew);
   fetch(
-    `${host}/account/forgotPasswordAccount?id=${id}&passwordNew=${passwordNew}`
+    `${host}/account/forgotPasswordAccount?id=${id}&passwordNew=${passwordNew}`,
+    {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
   )
     .then((resp) => resp.json())
     .then((data) => {
@@ -28,6 +36,19 @@ var forgotPasswordAccount = (callBack, id, passwordNew) => {
     .catch((error) => {
       callBack(false);
     });
+};
+
+var getAccountByPhone = async (phone) => {
+  try {
+    const response = await fetch(
+      `${host}/account/getAccountByPhone?phone=${phone}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 };
 
 var registerAccount = async (account) => {
@@ -45,12 +66,14 @@ var registerAccount = async (account) => {
     console.error(error);
     return false;
   }
-}
+};
 
 var checkNumberPhoneExist = async (phone) => {
   // return false if not exist, return object if exist
   try {
-    const response = await fetch(`${host}/account/getAccountByPhone?phone=${phone}`);
+    const response = await fetch(
+      `${host}/account/getAccountByPhone?phone=${phone}`
+    );
     try {
       const data = await response.json();
       if (data.status === 500) {
@@ -65,6 +88,12 @@ var checkNumberPhoneExist = async (phone) => {
     console.error(error);
     return error;
   }
-}
+};
 
-export { getAccount, forgotPasswordAccount, registerAccount, checkNumberPhoneExist };
+export {
+  getAccount,
+  forgotPasswordAccount,
+  registerAccount,
+  checkNumberPhoneExist,
+  getAccountByPhone,
+};

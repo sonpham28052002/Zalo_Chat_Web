@@ -7,7 +7,10 @@ import { useNavigate } from "react-router-dom";
 import { handleVertifi } from "../../firebase/firebaseService";
 import { FaUnlockAlt } from "react-icons/fa";
 import Loader from "../chat/custom/loader";
-import { forgotPasswordAccount } from "../../services/Account_Service";
+import {
+  forgotPasswordAccount,
+  getAccountByPhone,
+} from "../../services/Account_Service";
 import {
   handleGetValueCookie,
   handleSetValueCookie,
@@ -19,8 +22,8 @@ export default function ForgotPassword() {
   var [contentButton, setContentButton] = useState("Gửi");
   var [otpVertifi, setOtpVertifi] = useState();
 
-  var [password, setPassword] = useState(undefined);
-  var [rePassword, setRePassword] = useState(undefined);
+  var [password, setPassword] = useState("");
+  var [rePassword, setRePassword] = useState("");
 
   var [idAccount, setidAccount] = useState(undefined);
   var [otp, setOtp] = useState("");
@@ -161,6 +164,7 @@ export default function ForgotPassword() {
                 forgotPasswordAccount(
                   (result) => {
                     if (result) {
+                      console.log(result);
                       setNotifi("Cập nhật mật khẩu thành công.");
                       buttonRef.current.disabled = true;
                       checkTimeRequestOtp();
@@ -182,33 +186,44 @@ export default function ForgotPassword() {
               }
             } else if (contentButton === "Gửi") {
               setOtp(undefined);
-              setPassword(undefined);
-              setRePassword(undefined);
+              setPassword("");
+              setRePassword("");
               setIsload(true);
               checkTimeRequestOtp();
-              console.log("gửi");
-              await handleVertifi("+" + phone)
-                .then((e) => {
-                  if (e) {
-                    console.log("gửi");
-                    setOtpVertifi(e);
-                    setContentButton("Xác thực SMS");
-                  } else {
-                    console.log("no gửi");
-                  }
+              await getAccountByPhone(phone).then(async (res) => {
+                console.log(res);
+                if (res) {
+                  await handleVertifi("+" + phone)
+                    .then((e) => {
+                      if (e) {
+                        console.log("gửi");
+                        setOtpVertifi(e);
+                        setContentButton("Xác thực SMS");
+                      } else {
+                        console.log("no gửi");
+                      }
+                      setIsload(false);
+                      handleSetValueCookie("lastRequestOtp", {
+                        time: new Date(),
+                      });
+                    })
+                    .catch((Error) => {
+                      console.log(Error);
+                    });
+                } else {
+                  alert("Số điện thoại chưa được đăng kí tài khoản");
                   setIsload(false);
-                  handleSetValueCookie("lastRequestOtp", { time: new Date() });
-                })
-                .catch((Error) => {
-                  console.log(Error);
-                });
+                }
+              });
+              console.log("gửi");
             } else if (contentButton === "Xác thực SMS") {
               setIsload(true);
               if (otp.length === 6) {
                 await otpVertifi
                   .confirm(otp)
                   .then((result) => {
-                    setidAccount(result.user.uids);
+                    setidAccount(result.user.uid);
+                    console.log(result.user.uid);
                     setIsload(false);
                     setCheckUpdate(true);
                     setContentButton("Cập nhật");
