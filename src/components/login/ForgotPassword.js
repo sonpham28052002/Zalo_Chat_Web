@@ -36,7 +36,7 @@ export default function ForgotPassword() {
 
   var buttonRef = useRef();
   useEffect(() => {
-    checkTimeRequestOtp();
+    // checkTimeRequestOtp();
   }, []);
 
   function checkTimeRequestOtp() {
@@ -167,7 +167,7 @@ export default function ForgotPassword() {
                       console.log(result);
                       setNotifi("Cập nhật mật khẩu thành công.");
                       buttonRef.current.disabled = true;
-                      checkTimeRequestOtp();
+                      // checkTimeRequestOtp();
                       setContentButton("Vui lòng quay lại đăng nhập.");
                       setIsload(false);
                     } else {
@@ -189,7 +189,7 @@ export default function ForgotPassword() {
               setPassword("");
               setRePassword("");
               setIsload(true);
-              checkTimeRequestOtp();
+              // checkTimeRequestOtp();
               await getAccountByPhone(phone).then(async (res) => {
                 console.log(res);
                 if (res) {

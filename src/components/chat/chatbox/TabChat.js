@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useSelector } from "react-redux";
-const host = process.env.REACT_APP_HOST;
 
 export default function TabChat({ conversation, indexSelect, setIndex }) {
   var owner = useSelector((state) => state.data);
-  var [nameSingle, setNameSingle] = useState(undefined);
-  var [avtSingle, setAvtSingle] = useState(undefined);
-  var [idSingle, setIdSingle] = useState(undefined);
-
-  var nameConversation = undefined;
+  var nameConversation = "";
   var avtConversation = undefined;
   var idConversation = undefined;
   var viewLastMessage = undefined;
@@ -17,22 +12,13 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
     avtConversation = conversation.avtGroup;
     nameConversation = conversation.nameGroup;
     idConversation = conversation.idGroup;
+  } else if (conversation.conversationType === "single") {
+    avtConversation = conversation.user.avt;
+    nameConversation = conversation.user.userName;
+    idConversation = conversation.user.id;
   }
 
-  useEffect(() => {
-    if (conversation.conversationType === "single") {
-      fetch(`${host}/users/getInfoUserById?id=${conversation.user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setAvtSingle(data.avt);
-          setNameSingle(data.userName);
-          setIdSingle(data.id);
-        });
-    }
-    // eslint-disable-next-line
-  }, []);
-
-  const lastMessage = conversation.messages[conversation.messages.length - 1];
+  const lastMessage = conversation.lastMessage;
   if (lastMessage.messageType === "Text") {
     viewLastMessage = `${owner.id === lastMessage.sender.id ? "Bạn: " : ""} ${
       lastMessage.content.length > 15
@@ -44,32 +30,22 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
     <div
       className={`w-full h-[80px] border-red-100 hover:bg-slate-100 px-3 flex flex-row justify-start items-center ${
         indexSelect === idConversation ? "bg-[#e5efff] hover:bg-[#e5efff] " : ""
-      }${indexSelect === idSingle ? "bg-[#e5efff] hover:bg-[#e5efff] " : ""}
+      }
       `}
       onClick={() => {
-        if (idSingle) {
-          setIndex(idSingle);
-        } else {
-          setIndex(idConversation);
-        }
+        setIndex(idConversation);
       }}
     >
       <img
         className="rounded-full h-12 w-12 bg-center bg-cover"
-        src={avtSingle ? avtSingle : avtConversation}
+        src={avtConversation}
         alt="#"
       />
       <div className="flex flex-col justify-center w-4/6  ml-2">
         <p className="font-medium text-nowrap max-w-44 overflow-hidden">
-          {nameSingle
-            ? nameSingle
-            : nameConversation > 10
-            ? nameSingle
-              ? nameSingle
-              : nameConversation.substring(0, 10) + "..."
-            : nameSingle
-            ? nameSingle
-            : nameConversation}
+          {nameConversation < 10
+            ? nameConversation
+            : nameConversation.substring(0, 10) + "..."}
         </p>
 
         <span className="text-slate-400">{viewLastMessage}</span>

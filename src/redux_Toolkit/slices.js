@@ -13,30 +13,7 @@ var getAPI = createAsyncThunk(
     }
   }
 );
-var putAPI = createAsyncThunk(
-  "user/putAPI",
-  async (arg, { rejectWithValue }) => {
-    console.log("put");
-    console.log(arg);
-    // let newInforUser = { ...arg };
-    try {
-      //   const res = await fetch(`http://localhost:8080/user/id=${newUser.id}`, {
-      //     method: "put",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(newInforUser),
-      //   });
-      //   var data = await res.json();
-      var data = { ...arg };
-      if (data) {
-        return data;
-      }
-    } catch (error) {
-      rejectWithValue(error.response.data);
-    }
-  }
-);
+
 var postAPI = createAsyncThunk(
   "user/postAPI",
   async (arg, { rejectWithValue }) => {
@@ -66,14 +43,24 @@ var reducer = createSlice({
   initialState: {
     data: undefined,
   },
-  reducers: {},
+  reducers: {
+    addMessage: (state, actions) => {
+      const { mess, id, type } = actions.payload;
+      for (let index = 0; index < state.data.conversation.length; index++) {
+        if (
+          state.data.conversation[index].conversationType === type &&
+          state.data.conversation[index].user.id === id
+        ) {
+          state.data.conversation[index].messages = mess;
+          break;
+        }
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAPI.fulfilled, (state, action) => {
         state.data = action.payload;
-      })
-      .addCase(putAPI.pending, (state, action) => {
-        return action.payload;
       })
       .addCase(postAPI.pending, (state, action) => {
         return action.payload;
@@ -81,4 +68,5 @@ var reducer = createSlice({
   },
 });
 export default reducer;
-export { getAPI, putAPI, postAPI };
+export const { addMessage } = reducer.actions;
+export { getAPI, postAPI };

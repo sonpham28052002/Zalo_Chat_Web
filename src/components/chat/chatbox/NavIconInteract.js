@@ -34,7 +34,7 @@ export default function NavIconInteract({
               👍
             </span>
             <span
-              className="p-1 rounded-md hover:bg-slate-100 hover:text-xl hover:text-xl hover:p-0"
+              className="p-1 rounded-md hover:bg-slate-100 hover:text-xl hover:p-0"
               role="img"
               aria-label="Biểu cảm"
               onClick={(e) => {
@@ -47,7 +47,7 @@ export default function NavIconInteract({
               😄
             </span>
             <span
-              className="p-1 rounded-md hover:bg-slate-100 hover:text-xl hover:text-xl hover:p-0"
+              className="p-1 rounded-md hover:bg-slate-100 hover:text-xl  hover:p-0"
               role="img"
               aria-label="Biểu cảm"
               onClick={(e) => {

@@ -12,7 +12,7 @@ import { getAPI } from "../../redux_Toolkit/slices.js";
 export default function LoginByNumberPhone() {
   const history = useNavigate();
   var [phone, setPhone] = useState("84898168640");
-  var [password, setPassword] = useState("sonpham28052002");
+  var [password, setPassword] = useState("sonpham1234");
   var [isLoading, setIsLoading] = useState(false);
   var isWaitting = useSelector((state) => state.isWaitting);
   var dispatch = useDispatch();

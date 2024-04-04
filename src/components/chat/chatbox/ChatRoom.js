@@ -6,22 +6,24 @@ import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import "../../../style/scrollBar.css";
 import Conversation from "./Conversation";
 import InputMessage from "./InputMessage";
-import { useSelector } from "react-redux";
 import UserInfoModal from "../infoUser/UserInfoModal";
-import { getInfoUserById } from "../../../services/User_service";
+import { getMessageByIdSenderAndIsReceiver } from "../../../services/Message_Service";
+import { useSelector } from "react-redux";
+import { Virtuoso } from "react-virtuoso";
+import { useSubscription } from "react-stomp-hooks";
 
 export default function ChatRoom({ idConversation, setIndex }) {
-  var data = useSelector((state) => state.data);
-  console.log(data);
+  var owner = useSelector((state) => state.data);
   var [avtMember, setAvtMember] = useState("");
   var [nameConversation, setNameConversation] = useState("");
   var [isOpenInforUser, setIsOpenInforUser] = useState(false);
   var [receiver, setReceiver] = useState(undefined);
-  const scrollRef = useRef();
+  var [messages, setMessages] = useState([]);
+  const scrollContainerRef = useRef(null);
 
   var [conversation, setConversation] = useState(
     // eslint-disable-next-line
-    data.conversation.filter((item) => {
+    owner.conversation.filter((item) => {
       if (
         item.conversationType === "group" &&
         item.idGroup === idConversation
@@ -36,9 +38,11 @@ export default function ChatRoom({ idConversation, setIndex }) {
     })[0]
   );
 
+  useSubscription("/user/" + owner.id + "/singleChat", async (messages) => {});
+
   useEffect(() => {
     // eslint-disable-next-line
-    var conversation = data.conversation.filter((item) => {
+    var conversation = owner.conversation.filter((item) => {
       if (
         item.conversationType === "group" &&
         item.idGroup === idConversation
@@ -51,36 +55,42 @@ export default function ChatRoom({ idConversation, setIndex }) {
         return item;
       }
     })[0];
+
     if (conversation?.conversationType === "group") {
     } else if (conversation?.conversationType === "single") {
-      getInfoUserById(conversation.user.id, (data) => {
-        setAvtMember(data.avt);
-        setNameConversation(data.userName);
-        setReceiver({ id: data.id });
-      });
+      setAvtMember(conversation.user.avt);
+      setNameConversation(conversation.user.userName);
+      setReceiver({ id: conversation.user.id });
+      getMessageByIdSenderAndIsReceiver(
+        owner.id,
+        conversation.user.id,
+        (mess) => {
+          setMessages(mess.slice().reverse());
+        }
+      );
     }
     setConversation(conversation);
-    scrollToButtom();
-  }, [data.conversation, idConversation]);
+    // eslint-disable-next-line
+  }, [owner.conversation, idConversation]);
 
   function scrollToButtom() {
-    scrollRef.current.scrollIntoView({
+    scrollContainerRef.current?.scrollToIndex({
+      index: -10, // Sử dụng index cuối cùng của mảng tin nhắn
+      align: "end",
       behavior: "auto",
-      block: "end",
-      inline: "end",
     });
-    scrollRef.current.scrollTop = 10000000000;
   }
+
   useEffect(() => {
     scrollToButtom();
-  }, [conversation])
+  }, [messages]);
 
   return (
     <div className=" h-full w-10/12 ">
       <div className="border-b flex  flex-row items-center justify-between px-4">
         <div className="flex flex-row w-1/5 py-2 ">
           <img
-            className="rounded-full h-12  mr-1 border border-white "
+            className="rounded-full h-12 w-12 mr-1 border border-white "
             alt="#"
             src={avtMember}
             onClick={() => {
@@ -120,26 +130,33 @@ export default function ChatRoom({ idConversation, setIndex }) {
           }}
         >
           <div className="absolute inset-0 opacity-65 bg-white"></div>
-          <div
-            ref={scrollRef}
-            className="absolute  bottom-0 max-h-[764px] w-full flex flex-col overflow-scroll justify-items-end overflow-y-auto scrollbar-container "
-          >
-            {conversation.messages.map((item, indexMess) => (
-              <Conversation
-                ownerId={data.id}
-                key={indexMess}
-                avt={avtMember}
-                conversation={conversation}
-                item={item}
-                index={indexMess}
-              />
-            ))}
+          <div className="absolute bottom-0 max-h-[764px] w-full flex flex-col overflow-scroll justify-items-end overflow-y-auto overflow-x-hidden  py-1">
+            <Virtuoso
+              ref={scrollContainerRef}
+              className="w-full min-h-[740px] scrollbar-container rotate-180 "
+              totalCount={messages.length}
+              initialTopMostItemIndex={messages.length - 1}
+              itemContent={(index) => {
+                return (
+                  <Conversation
+                    ownerId={owner.id}
+                    key={index}
+                    avt={avtMember}
+                    conversation={conversation}
+                    item={messages[index]}
+                    index={index}
+                  />
+                );
+              }}
+            />
           </div>
         </div>
         <InputMessage
           conversation={conversation}
           setIndex={setIndex}
           receiver={receiver}
+          setMessages={setMessages}
+          messages={messages}
         />
       </div>
       {receiver && (

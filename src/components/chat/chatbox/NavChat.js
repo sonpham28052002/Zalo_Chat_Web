@@ -8,7 +8,7 @@ import TabChat from "./TabChat";
 export default function NavChat({ indexSelect, setIndex }) {
   var data = useSelector((state) => state.data);
   var [idConversation, setIdConversation] = useState(indexSelect);
-  useSubscription("/user/" + data.id + "/singleChat", () => {
+  useSubscription("/user/" + data.id + "/singleChat", (messages) => {
     dispatch(getAPI(data.id));
   });
   useEffect(() => {

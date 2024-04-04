@@ -18,7 +18,13 @@ stompClient.connect({}, () => {
   console.log("run");
 });
 
-export default function InputMessage({ conversation, setIndex, receiver }) {
+export default function InputMessage({
+  conversation,
+  setIndex,
+  receiver,
+  setMessages,
+  messages,
+}) {
   var user = useSelector((state) => state.data);
 
   const sender = {
@@ -34,6 +40,7 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
         {},
         JSON.stringify(message)
       );
+      setMessages([message, ...messages]);
     }
   }
 
@@ -181,7 +188,7 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
         />
         <div className="flex flex-row justify-center items-start h-full pt-3 px-3">
           <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
-            <InputVioce/>
+            <InputVioce />
           </div>
           <Emoji setText={setText} text={text} />
           <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2 hover:text-blue-600">

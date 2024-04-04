@@ -89,7 +89,7 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                       Ngày sinh
                     </p>
                     <p className="w-28 font-sans">
-                      {new Date(user.DOB).toLocaleDateString()}
+                      {new Date(user.dob).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="h-8 px-1  flex flex-row items-center  ">

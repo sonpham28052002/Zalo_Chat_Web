@@ -32,7 +32,7 @@ export default function FileMessage({ file, conversation }) {
 
   return (
     <div
-      className={` relative h-fit w-full  flex flex-row items-end my-3  py-5 ${
+      className={` relative h-fit w-full  flex flex-row items-end my-3  py-5 rotate-180 ${
         conversation.id === file.sender
           ? "justify-start pl-5"
           : "justify-end pr-5"
