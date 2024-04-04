@@ -161,15 +161,17 @@ export default function SignUpUserInfoForm() {
             const date = new Date(
               yearRef.current.value,
               monthRef.current.value - 1,
-              dayRef.current.value
+              parseInt(dayRef.current.value, 10) +1
             );
+            let formattedDob = date.toISOString().split('T')[0];
             const user = {
               id: id,
               phone: phone,
               userName: fullName,
-              dob: date,
+              dob: formattedDob,
               gender: gender,
             };
+            console.log(user);
             insertUser(user)
               .then((responseData) => {
                 var account = responseData;

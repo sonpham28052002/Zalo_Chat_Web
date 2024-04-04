@@ -4,10 +4,12 @@ import { CiCamera, CiEdit } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
 import { getInfoUserById } from "../../../services/User_service";
 import { useSelector } from "react-redux";
+import UpdateInfoModal from './UpdateInfoModal';
 
 const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
   var [user, setUser] = useState(undefined);
   var owner = useSelector((state) => state.data);
+  const [isOpenUpdateInfoModal, setIsOpenUpdateInfoModal] = useState(false);
 
   useEffect(() => {
     getInfoUserById(userId, setUser);
@@ -22,6 +24,7 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
           className="bg-slate-900/20 backdrop-blur p-8 fixed inset-0 z-50 grid place-items-center overflow-y-scroll cursor-pointer "
         >
           <motion.div
+            key={'UserInfoModal'}
             initial={{ scale: 0, rotate: "45.5deg" }}
             animate={{ scale: 1, rotate: "0deg" }}
             exit={{ scale: 0, rotate: "-180deg" }}
@@ -89,7 +92,7 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                       Ngày sinh
                     </p>
                     <p className="w-28 font-sans">
-                      {new Date(user.DOB).toLocaleDateString()}
+                      {user.dob}
                     </p>
                   </div>
                   <div className="h-8 px-1  flex flex-row items-center  ">
@@ -101,7 +104,12 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                 </div>
                 <div className="w-full bg-white py-2 px-4">
                   {owner.id === user.id ? (
-                    <button className="w-full h-8 rounded-md hover:bg-slate-200 flex flex-row items-center justify-center font-medium">
+                    <button className="w-full h-8 rounded-md hover:bg-slate-200 flex flex-row items-center justify-center font-medium"
+                      onClick={() => {
+                        setIsOpen(!isOpen);
+                        setIsOpenUpdateInfoModal(true)
+                      }}
+                    >
                       <CiEdit className="text-xl mr-1" /> Cập Nhật
                     </button>
                   ) : (
@@ -113,6 +121,12 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
           </motion.div>
         </motion.div>
       )}
+      <UpdateInfoModal
+        key={'UpdateInfoModal'}
+        isOpen={isOpenUpdateInfoModal}
+        setIsOpen={setIsOpenUpdateInfoModal}
+      ></UpdateInfoModal>
+
     </AnimatePresence>
   );
 };

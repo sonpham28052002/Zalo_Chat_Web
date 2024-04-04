@@ -13,35 +13,59 @@ var getAPI = createAsyncThunk(
     }
   }
 );
+// var putAPI = createAsyncThunk(
+//   "user/putAPI",
+//   async (arg, { rejectWithValue }) => {
+//     console.log("put");
+//     console.log(arg);
+//     let newInforUser = { ...arg };
+//     try {
+//         const res = await fetch(`http://localhost:8080/user/id=${newInforUser.id}`, {
+//           method: "put",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify(newInforUser),
+//         });
+//         var data = await res.json();
+//       var data = { ...arg };
+//       if (data) {
+//         return data;
+//       }
+//     } catch (error) {
+//       rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
 var putAPI = createAsyncThunk(
   "user/putAPI",
   async (arg, { rejectWithValue }) => {
     console.log("put");
     console.log(arg);
-    // let newInforUser = { ...arg };
+    let newInforUser = { ...arg };
     try {
-      //   const res = await fetch(`http://localhost:8080/user/id=${newUser.id}`, {
-      //     method: "put",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(newInforUser),
-      //   });
-      //   var data = await res.json();
-      var data = { ...arg };
-      if (data) {
-        return data;
-      }
+        const res = await fetch('https://deploybackend-production.up.railway.app/users/updateUser', {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newInforUser),
+        });
+        var data = await res.json();
+        if (data) {
+            return data;
+        }
     } catch (error) {
-      rejectWithValue(error.response.data);
+        return rejectWithValue(error.message);
     }
   }
 );
+
 var postAPI = createAsyncThunk(
   "user/postAPI",
   async (arg, { rejectWithValue }) => {
     // let newInforUser = { ...arg };
-
     try {
       //   const res = await fetch("http://localhost:8080/user", {
       //     method: "post",

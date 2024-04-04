@@ -36,4 +36,6 @@ var getUserById = async (id) => {
 };
 
 
+
+
 export { getInfoUserById,insertUser, getUserById };
