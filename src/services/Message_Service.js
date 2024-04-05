@@ -8,4 +8,28 @@ var getMessageByIdSenderAndIsReceiver = (idSender, idReceiver, callBack) => {
       callBack(data);
     });
 };
-export { getMessageByIdSenderAndIsReceiver };
+
+const deleteMessageByIdOrGroupId = async (message, ownerId, idGroup) => {
+  try {
+    const res = await fetch(
+      `${host}/messages/deleteMessageByIdOrGroupId?ownerId=${ownerId}&idGroup=${idGroup}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(message),
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Something went wrong");
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export { getMessageByIdSenderAndIsReceiver, deleteMessageByIdOrGroupId };

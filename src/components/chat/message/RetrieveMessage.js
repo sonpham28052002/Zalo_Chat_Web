@@ -1,4 +1,5 @@
 import React from "react";
+import HandleMessage from "./handleMessage";
 export default function RetrieveMessage({ message }) {
   return (
     <div className=" relative h-fit max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-col justify-start items-center border  shadow-lg p-2">
@@ -18,6 +19,9 @@ export default function RetrieveMessage({ message }) {
             : new Date(message.senderDate).getMinutes()
         }`}</span>
       </div>
+      {message.messageType === "RETRIEVE" && (
+        <HandleMessage message={message} />
+      )}
     </div>
   );
 }

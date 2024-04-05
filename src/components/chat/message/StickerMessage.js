@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import RetrieveMessage from "./RetrieveMessage";
 import HandleMessage from "./handleMessage";
+import RetrieveMessages from "./RetrieveMessages";
 
 export default function StickerMessage({ avt, sticker }) {
   var owner = useSelector((state) => state.data);
@@ -9,19 +9,19 @@ export default function StickerMessage({ avt, sticker }) {
   var [isRetrieve, setIsRetrieve] = useState(false);
 
   return (
-    <div
-      className={` pr-5  h-fit w-full  flex  flex-row items-end rotate-180 ${
-        owner.id === sticker.sender.id
-          ? "justify-end pr-5"
-          : "justify-start pl-5"
-      } items-star  my-5 `}
-      key={sticker.id}
-    >
-      {owner.id !== sticker.sender.id && (
-        <img src={avt} alt="#" className="h-12 w-12 rounded-full mr-3" />
-      )}
+    <>
       {!isRetrieve ? (
-        <>
+        <div
+          className={` pr-5  h-fit w-full  flex  flex-row items-end rotate-180 ${
+            owner.id === sticker.sender.id
+              ? "justify-end pr-5"
+              : "justify-start pl-5"
+          } items-star  my-5 `}
+          key={sticker.id}
+        >
+          {owner.id !== sticker.sender.id && (
+            <img src={avt} alt="#" className="h-12 w-12 rounded-full mr-3" />
+          )}
           <div className="mb-4">
             {owner.id === sticker.sender.id && (
               <HandleMessage
@@ -52,10 +52,10 @@ export default function StickerMessage({ avt, sticker }) {
               setIsRetrieve={setIsRetrieve}
             />
           )}
-        </>
+        </div>
       ) : (
-        <RetrieveMessage message={sticker} />
+        <RetrieveMessages message={sticker} avt={avt} />
       )}
-    </div>
+    </>
   );
 }
