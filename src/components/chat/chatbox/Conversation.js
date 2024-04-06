@@ -1,6 +1,5 @@
 import React from "react";
 
-import { v4 } from "uuid";
 import TextMessage from "../message/TextMessage";
 import StickerMessage from "../message/StickerMessage";
 import ImageMessage from "../message/ImageMessage";
@@ -8,8 +7,6 @@ import RetrieveMessages from "../message/RetrieveMessages";
 import VideoMessage from "../message/VideoMessage";
 import FileMessage from "../message/FileMesage";
 import VioceMessage from "../message/VioceMessage";
-import { useState } from "react";
-import ModalSetting from "../setting/ModalSetting";
 export default function Conversation({
   avt,
   item,

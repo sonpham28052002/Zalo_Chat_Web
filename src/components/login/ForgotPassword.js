@@ -11,11 +11,7 @@ import {
   forgotPasswordAccount,
   getAccountByPhone,
 } from "../../services/Account_Service";
-import {
-  handleGetValueCookie,
-  handleSetValueCookie,
-} from "../../services/Cookie_Service";
-import CountDownTimeLast from "./countDownTimeLast";
+import { handleSetValueCookie } from "../../services/Cookie_Service";
 
 export default function ForgotPassword() {
   var [phone, setPhone] = useState("84346676956");
@@ -31,38 +27,12 @@ export default function ForgotPassword() {
   var history = useNavigate();
   var [checkUpdate, setCheckUpdate] = useState(true);
   var [notifi, setNotifi] = useState("");
-  var [checkTime, setCheckTime] = useState(undefined);
-  var [viewCountDown, setViewCountDown] = useState(false);
 
   var buttonRef = useRef();
   useEffect(() => {
     // checkTimeRequestOtp();
   }, []);
 
-  function checkTimeRequestOtp() {
-    handleGetValueCookie(
-      "lastRequestOtp",
-      (value) => {
-        if (value.time) {
-          console.log(value.time);
-          var differenceInSeconds = Math.floor(
-            (new Date() - new Date(value.time)) / 1000
-          );
-          console.log(differenceInSeconds);
-
-          if (differenceInSeconds > 180) {
-            setViewCountDown(false);
-            setCheckTime(undefined);
-          } else {
-            setIsload(false);
-            setViewCountDown(true);
-            setCheckTime(180 - differenceInSeconds);
-          }
-        }
-      },
-      () => {}
-    );
-  }
   return (
     <div
       className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative"
@@ -243,16 +213,7 @@ export default function ForgotPassword() {
           type="button"
           className="min-h-10 w-full rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
         >
-          {viewCountDown ? (
-            <CountDownTimeLast
-              timeCheck={checkTime}
-              setView={() => {
-                setViewCountDown(false);
-              }}
-            />
-          ) : (
-            <div>{isload ? <Loader /> : contentButton}</div>
-          )}
+          <div>{isload ? <Loader /> : contentButton}</div>
         </button>
         <button
           onClick={() => {

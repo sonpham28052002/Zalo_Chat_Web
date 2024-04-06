@@ -14,6 +14,16 @@ export default function VioceMessage({
   var owner = useSelector((state) => state.data);
   var [isRetrieve, setIsRetrieve] = useState(false);
   var refMessage = useRef(null);
+
+  function addHoursAndFormatToHHMM(date, hoursToAdd) {
+    const newDate = new Date(date);
+    newDate.setHours(newDate.getHours() + hoursToAdd);
+    const hours = newDate.getHours();
+    const minutes = newDate.getMinutes();
+    const formattedHours = hours < 10 ? "0" + hours : hours;
+    const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+    return `${formattedHours}:${formattedMinutes}`;
+  }
   return (
     <>
       {!isRetrieve ? (
@@ -44,15 +54,9 @@ export default function VioceMessage({
               </audio>
             </div>
             <div className="flex flex-row justify-between  items-center absolute w-full pt-1 ">
-              <span className=" text-[12px] px-4 text-gray-400 ">{`${
-                new Date(vioce.senderDate).getHours() < 10
-                  ? "0" + new Date(vioce.senderDate).getHours()
-                  : new Date(vioce.senderDate).getHours()
-              }:${
-                new Date(vioce.senderDate).getMinutes() < 10
-                  ? "0" + new Date(vioce.senderDate).getMinutes()
-                  : new Date(vioce.senderDate).getMinutes()
-              }`}</span>
+              <span className=" text-[12px] px-4 text-gray-400 ">
+                {addHoursAndFormatToHHMM(new Date(vioce.senderDate), 7)}
+              </span>
               <NavIconInteract
                 check={ownerID === vioce.receiver.id}
                 icon={vioce.ract}

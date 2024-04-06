@@ -76,7 +76,7 @@ export default function InputMessage({
     } else if (mimeType.trim() === "") {
       return "RAR";
     }
-    return mimeTypeMapping[mimeType] || "Unknown";
+    return mimeTypeMapping[mimeType] || "UNKNOWN";
   }
   return (
     <div className="flex flex-col h-28 border-t-2">

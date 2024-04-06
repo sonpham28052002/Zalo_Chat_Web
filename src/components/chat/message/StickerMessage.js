@@ -12,6 +12,15 @@ export default function StickerMessage({
   var refMessage = useRef(null);
   var [isRetrieve, setIsRetrieve] = useState(false);
 
+  function addHoursAndFormatToHHMM(date, hoursToAdd) {
+    const newDate = new Date(date);
+    newDate.setHours(newDate.getHours() + hoursToAdd);
+    const hours = newDate.getHours();
+    const minutes = newDate.getMinutes();
+    const formattedHours = hours < 10 ? "0" + hours : hours;
+    const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+    return `${formattedHours}:${formattedMinutes}`;
+  }
   return (
     <>
       {!isRetrieve ? (
@@ -39,15 +48,9 @@ export default function StickerMessage({
           <div className="h-full w-fit max-w-[50%] p-2">
             <div className=" h-fit w-fit flex flex-col items-start justify-around">
               <img src={sticker.url} alt="#" className="h-28 w-28" />
-              <span className="text-[12px] px-4 text-gray-400">{`${
-                new Date(sticker.senderDate).getHours() < 10
-                  ? "0" + new Date(sticker.senderDate).getHours()
-                  : new Date(sticker.senderDate).getHours()
-              }:${
-                new Date(sticker.senderDate).getMinutes() < 10
-                  ? "0" + new Date(sticker.senderDate).getMinutes()
-                  : new Date(sticker.senderDate).getMinutes()
-              }`}</span>
+              <span className="text-[12px] px-4 text-gray-400">
+                {addHoursAndFormatToHHMM(new Date(sticker.senderDate), 7)}
+              </span>
             </div>
           </div>
           {owner.id !== sticker.sender.id && (

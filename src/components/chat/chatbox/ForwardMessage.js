@@ -3,7 +3,6 @@ import { IoMdClose } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Virtuoso } from "react-virtuoso";
-import Loader from "../custom/loader";
 
 export default function ForwardMessage({ setIsOpen, forwardMessage, isOpen }) {
   const [activeTab, setActiveTab] = useState("all");
@@ -12,7 +11,6 @@ export default function ForwardMessage({ setIsOpen, forwardMessage, isOpen }) {
   var [chats, setChats] = useState([]);
   var [friend, setFriend] = useState([]);
   var [allUser, setAllUser] = useState([]);
-  var [isLoad, setIsLoad] = useState(false);
 
   function addToUniqueArray(arr, item) {
     if (arr.indexOf(item) === -1) {
@@ -188,16 +186,12 @@ export default function ForwardMessage({ setIsOpen, forwardMessage, isOpen }) {
                     role="tabpanel"
                     aria-labelledby="chat-tab"
                   >
-                    {isLoad ? (
-                      <Loader />
-                    ) : (
-                      <Virtuoso
-                        className="w-full min-h-[425px] text-black"
-                        totalCount={100}
-                        data={allUser}
-                        itemContent={(_, item) => itemRowchat(item)}
-                      ></Virtuoso>
-                    )}
+                    <Virtuoso
+                      className="w-full min-h-[425px] text-black"
+                      totalCount={100}
+                      data={allUser}
+                      itemContent={(_, item) => itemRowchat(item)}
+                    ></Virtuoso>
                   </div>
                   <div
                     className={`bg-gray-50 p-4 rounded-lg dark:bg-gray-800 ${
@@ -206,16 +200,12 @@ export default function ForwardMessage({ setIsOpen, forwardMessage, isOpen }) {
                     role="tabpanel"
                     aria-labelledby="chat-tab"
                   >
-                    {isLoad ? (
-                      <Loader />
-                    ) : (
-                      <Virtuoso
-                        className="w-full min-h-[425px] text-black"
-                        totalCount={100}
-                        data={chats}
-                        itemContent={(_, item) => itemRowchat(item)}
-                      ></Virtuoso>
-                    )}
+                    <Virtuoso
+                      className="w-full min-h-[425px] text-black"
+                      totalCount={100}
+                      data={chats}
+                      itemContent={(_, item) => itemRowchat(item)}
+                    ></Virtuoso>
                   </div>
                   <div
                     className={`bg-gray-50 p-4 rounded-lg dark:bg-gray-800 ${
@@ -224,16 +214,12 @@ export default function ForwardMessage({ setIsOpen, forwardMessage, isOpen }) {
                     role="tabpanel"
                     aria-labelledby="friend-tab"
                   >
-                    {isLoad ? (
-                      <Loader />
-                    ) : (
-                      <Virtuoso
-                        className="w-full min-h-[425px] text-black"
-                        totalCount={chats.length}
-                        data={friend}
-                        itemContent={(_, item) => itemRowchat(item)}
-                      ></Virtuoso>
-                    )}
+                    <Virtuoso
+                      className="w-full min-h-[425px] text-black"
+                      totalCount={chats.length}
+                      data={friend}
+                      itemContent={(_, item) => itemRowchat(item)}
+                    ></Virtuoso>
                   </div>
                   {/* Add similar divs for other tab contents */}
                 </div>

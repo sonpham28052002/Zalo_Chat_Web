@@ -38,6 +38,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
   });
   useSubscription("/user/" + owner.id + "/deleteMessage", (message) => {
     let mess = JSON.parse(message.body);
+    console.log(message.body);
     setMessages(messages.filter((item) => item.id !== mess.id));
   });
 

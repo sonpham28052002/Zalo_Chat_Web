@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { AiOutlineLike } from "react-icons/ai";
-import { stompClient } from "../../../socket/socket";
 
 export default function NavIconInteract({ icon, setMessage, message, check }) {
   var [iconText, setIconText] = useState(icon);
@@ -9,7 +8,7 @@ export default function NavIconInteract({ icon, setMessage, message, check }) {
   function sendREACT(react) {
     let text = { ...message };
     text.react = react;
-    
+
     setMessage(text);
     setIconText("");
   }

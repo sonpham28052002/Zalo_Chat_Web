@@ -16,6 +16,16 @@ export default function TextMessage({
   let [messageLocal, setMessageLocal] = useState(message);
   var [isRetrieve, setIsRetrieve] = useState(false);
 
+  function addHoursAndFormatToHHMM(date, hoursToAdd) {
+    const newDate = new Date(date);
+    newDate.setHours(newDate.getHours() + hoursToAdd);
+    const hours = newDate.getHours();
+    const minutes = newDate.getMinutes();
+    const formattedHours = hours < 10 ? "0" + hours : hours;
+    const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+    return `${formattedHours}:${formattedMinutes}`;
+  }
+
   return (
     <div>
       {!isRetrieve ? (
@@ -61,15 +71,9 @@ export default function TextMessage({
               )}
             </div>
             <div className="absolute -bottom-6  flex flex-row justify-between items-center  w-full pt-1 ">
-              <span className="text-[12px] text-gray-400">{`${
-                new Date(message.senderDate).getHours() < 10
-                  ? "0" + new Date(message.senderDate).getHours()
-                  : new Date(message.senderDate).getHours()
-              }:${
-                new Date(message.senderDate).getMinutes() < 10
-                  ? "0" + new Date(message.senderDate).getMinutes()
-                  : new Date(message.senderDate).getMinutes()
-              }`}</span>
+              <span className="text-[12px] text-gray-400">
+                {addHoursAndFormatToHHMM(new Date(message.senderDate), 7)}
+              </span>
               <NavIconInteract
                 check={owner.id === message.sender.id}
                 icon={message.interact}
