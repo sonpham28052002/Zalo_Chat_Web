@@ -10,7 +10,7 @@ import { BsDownload } from "react-icons/bs";
 import { IoLogoHtml5 } from "react-icons/io";
 import { LuFileJson } from "react-icons/lu";
 
-export default function FileMessage({ avt, file }) {
+export default function FileMessage({ avt, file, setIsOpenForwardMessage }) {
   let [messageLocal, setMessageLocal] = useState(file);
   var owner = useSelector((state) => state.data);
   var [isRetrieve, setIsRetrieve] = useState(false);
@@ -38,6 +38,8 @@ export default function FileMessage({ avt, file }) {
       return <AiFillFilePpt className="text-8xl text-[#ff7e5c]" />;
     } else if (type === "HTML") {
       return <IoLogoHtml5 className="text-8xl text-[#d1ef29]" />;
+    } else if (type === "TXT") {
+      return <BiSolidFileTxt className="text-8xl text-[#02c1f3]" />;
     } else if (type === "JSON") {
       return <LuFileJson className="text-8xl text-[#7f8e25]" />;
     } else if (type === "CSV") {
@@ -69,6 +71,7 @@ export default function FileMessage({ avt, file }) {
               refMessage={refMessage}
               message={file}
               setIsRetrieve={setIsRetrieve}
+              setIsOpenForwardMessage={setIsOpenForwardMessage}
             />
           )}
           <div className="relative h-full max-w-[40%] w-fit border shadow-lg rounded-md bg-[#e5efff]">
@@ -76,8 +79,10 @@ export default function FileMessage({ avt, file }) {
               {renderIconFile(file.messageType)}
               <div className="flex flex-col justify-around  h-24 w-72">
                 <p className="font-medium text-base">
-                  {file.titleFile.substring(0, file.titleFile.lastIndexOf("."))
-                    .length > 29
+                  {file.titleFile &&
+                  file.titleFile +
+                    "".substring(0, file.titleFile.lastIndexOf(".")).length >
+                    29
                     ? file.titleFile.substring(0, 29) +
                       "..." +
                       file.titleFile.substring(
@@ -119,6 +124,7 @@ export default function FileMessage({ avt, file }) {
               refMessage={refMessage}
               message={file}
               setIsRetrieve={setIsRetrieve}
+              setIsOpenForwardMessage={setIsOpenForwardMessage}
             />
           )}
         </div>

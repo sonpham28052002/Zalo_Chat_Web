@@ -2,14 +2,21 @@ import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment, useEffect, useState } from "react";
 import { MdOutlineKeyboardVoice } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
+import { useSelector } from "react-redux";
 
 import { RiSendPlaneFill } from "react-icons/ri";
 import { VoiceVisualizer, useVoiceVisualizer } from "react-voice-visualizer";
 import { uploadAudio } from "../../../services/Azure_Service";
+import { v4 } from "uuid";
 
-export default function InputVioce(props) {
+export default function InputVioce({
+  setIndex,
+  receiver,
+  sender,
+  sendMessage,
+}) {
   var [isStart, setIsStart] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
+  var user = useSelector((state) => state.data);
 
   const recorderControls = useVoiceVisualizer();
   const {
@@ -64,8 +71,25 @@ export default function InputVioce(props) {
                 className="min-h-10 w-1/2 flex flex-row justify-center items-center rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
                 onClick={async () => {
                   if (!recordedBlob) return;
+                  console.log(recordedBlob);
                   let url = await uploadAudio(recordedBlob);
                   console.log(url);
+                  const content = {
+                    id: v4(),
+                    messageType: "AUDIO",
+                    sender: sender,
+                    receiver: receiver,
+                    seen: [
+                      {
+                        id: user.id,
+                      },
+                    ],
+                    size: recordedBlob.size,
+                    titleFile: "",
+                    url: url,
+                  };
+                  sendMessage(content);
+                  setIndex(receiver.id);
                   setIsStart(false);
                 }}
               >

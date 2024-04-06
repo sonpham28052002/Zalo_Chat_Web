@@ -7,23 +7,67 @@ import ImageMessage from "../message/ImageMessage";
 import RetrieveMessages from "../message/RetrieveMessages";
 import VideoMessage from "../message/VideoMessage";
 import FileMessage from "../message/FileMesage";
-export default function Conversation({ avt, item, index }) {
+import VioceMessage from "../message/VioceMessage";
+import { useState } from "react";
+import ModalSetting from "../setting/ModalSetting";
+export default function Conversation({
+  avt,
+  item,
+  index,
+  setIsOpenForwardMessage,
+}) {
   switch (item.messageType) {
     case "Text":
       return (
-        <TextMessage avt={avt} key={item.id} index={index} message={item} />
+        <TextMessage
+          avt={avt}
+          key={item.id}
+          index={index}
+          message={item}
+          setIsOpenForwardMessage={setIsOpenForwardMessage}
+        />
       );
     case "STICKER":
-      return <StickerMessage avt={avt} key={item.id} sticker={item} />;
+      return (
+        <StickerMessage
+          avt={avt}
+          key={item.id}
+          sticker={item}
+          setIsOpenForwardMessage={setIsOpenForwardMessage}
+        />
+      );
     case "PNG":
     case "JPEG":
     case "JPG":
     case "GIF":
-      return <ImageMessage avt={avt} key={item.id} image={item} />;
+      return (
+        <ImageMessage
+          avt={avt}
+          key={item.id}
+          image={item}
+          setIsOpenForwardMessage={setIsOpenForwardMessage}
+        />
+      );
     case "RETRIEVE":
       return <RetrieveMessages avt={avt} key={item.id} message={item} />;
     case "VIDEO":
-      return <VideoMessage avt={avt} key={item.id} message={item} />;
+      return (
+        <VideoMessage
+          avt={avt}
+          key={item.id}
+          video={item}
+          setIsOpenForwardMessage={setIsOpenForwardMessage}
+        />
+      );
+    case "AUDIO":
+      return (
+        <VioceMessage
+          avt={avt}
+          key={item.id}
+          vioce={item}
+          setIsOpenForwardMessage={setIsOpenForwardMessage}
+        />
+      );
     case "DOCX":
     case "DOC":
     case "PDF":
@@ -37,8 +81,22 @@ export default function Conversation({ avt, item, index }) {
     case "HTML":
     case "XLS":
     case "XLSX":
-      return <FileMessage avt={avt} key={item.id} file={item} />;
+      return (
+        <FileMessage
+          avt={avt}
+          key={item.id}
+          file={item}
+          setIsOpenForwardMessage={setIsOpenForwardMessage}
+        />
+      );
     default:
-      return <FileMessage avt={avt} key={item.id} file={item} />;
+      return (
+        <FileMessage
+          avt={avt}
+          key={item.id}
+          file={item}
+          setIsOpenForwardMessage={setIsOpenForwardMessage}
+        />
+      );
   }
 }

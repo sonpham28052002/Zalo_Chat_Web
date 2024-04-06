@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { BsCameraVideo } from "react-icons/bs";
 import { IoIosSearch } from "react-icons/io";
 import { PiTagSimpleFill } from "react-icons/pi";
@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { Virtuoso } from "react-virtuoso";
 import { useSubscription } from "react-stomp-hooks";
 import Loader from "../custom/loader";
+import ForwardMessage from "./ForwardMessage";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
@@ -107,8 +108,29 @@ export default function ChatRoom({ idConversation, setIndex }) {
     scrollToButtom();
   }, [messages.length]);
 
+  var [isOpenForwardMessage, setIsOpenForwardMessage] = useState(false);
+  var [forwardMessage, setForwardMessage] = useState(undefined);
+  var setIsOpenForwardMessageView = useCallback(
+    (message) => {
+      if (message) {
+        setForwardMessage(message);
+      }
+      setIsOpenForwardMessage(!isOpenForwardMessage);
+    },
+    [isOpenForwardMessage]
+  );
+
   return (
-    <div className="h-full w-10/12 flex flex-row">
+    <div className="h-full w-10/12 flex flex-row relative">
+      {isOpenForwardMessage && (
+        <div className="absolute z-50 h-full w-full ">
+          <ForwardMessage
+            setIsOpen={setIsOpenForwardMessage}
+            forwardMessage={forwardMessage}
+            isOpen={isOpenForwardMessage}
+          />
+        </div>
+      )}
       <div className={` h-full ${isExtent ? "w-9/12" : "w-full"} `}>
         <div className="border-b flex flex-row items-center justify-between px-4">
           <div className="flex flex-row w-1/5 py-2 ">
@@ -174,6 +196,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
                         conversation={conversation}
                         item={messages[index]}
                         index={index}
+                        setIsOpenForwardMessage={setIsOpenForwardMessageView}
                       />
                     );
                   }}

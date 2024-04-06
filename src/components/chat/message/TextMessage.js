@@ -4,9 +4,13 @@ import { useSelector } from "react-redux";
 
 import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
-import Embed from "react-embed";
 
-export default function TextMessage({ avt, message, conversation }) {
+export default function TextMessage({
+  avt,
+  message,
+  conversation,
+  setIsOpenForwardMessage,
+}) {
   var owner = useSelector((state) => state.data);
   var refMessage = useRef(null);
   let [messageLocal, setMessageLocal] = useState(message);
@@ -33,13 +37,14 @@ export default function TextMessage({ avt, message, conversation }) {
               refMessage={refMessage}
               message={message}
               setIsRetrieve={setIsRetrieve}
+              setIsOpenForwardMessage={setIsOpenForwardMessage}
             />
           )}
           <div className=" relative h-fit max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-col justify-start items-center border  shadow-lg p-2">
             <div className=" h-fit max-w-full flex flex-col items-start justify-around text-wrap  ">
               {/^(ftp|http|https):\/\/[^ "]+$/.test(messageLocal.content) ? (
                 <div className="w-96">
-                  <Embed url={messageLocal.content} />
+                  {/* <Embed url={messageLocal.content} /> */}
                   <a
                     target="_blank"
                     rel="noreferrer"
@@ -78,6 +83,7 @@ export default function TextMessage({ avt, message, conversation }) {
               refMessage={refMessage}
               message={message}
               setIsRetrieve={setIsRetrieve}
+              setIsOpenForwardMessage={setIsOpenForwardMessage}
             />
           )}
         </div>

@@ -6,7 +6,11 @@ import { useSelector } from "react-redux";
 import { stompClient } from "../../../socket/socket";
 import { useSubscription } from "react-stomp-hooks";
 
-export default function HandleMessage({ message, refMessage, setIsRetrieve }) {
+export default function HandleMessage({
+  message,
+  setIsRetrieve,
+  setIsOpenForwardMessage,
+}) {
   var owner = useSelector((state) => state.data);
 
   useSubscription("/user/" + message.id + "/retrieveMessage", (messages) => {
@@ -17,29 +21,28 @@ export default function HandleMessage({ message, refMessage, setIsRetrieve }) {
   });
 
   var handleDeleteMessage = async () => {
-    // refMessage.current.style.display = "none";
     const idGroup = "";
     const ownerId = owner.id;
     const text = { ...message, idGroup, ownerId };
     stompClient.send("/app/delete-message", {}, JSON.stringify(text));
-    refMessage.current.innerHTML = "";
-    refMessage.current.style.height = "0px";
-    refMessage.current.style.minHeight = "0px";
-    // gửi lên server đồng bộ
   };
   function handleRetrieveMessage() {
     setIsRetrieve(true);
     stompClient.send("/app/retrieve-message", {}, JSON.stringify(message));
-    // gửi lên server đồng bộ
   }
-  function handleShareMessage(message) {
-    refMessage.current.style.display = "none";
-    // gửi lên server đồng bộ
+  function handleShareMessage() {
+    console.log("son");
+    setIsOpenForwardMessage(message);
   }
   return (
     <div className="flex flex-row mx-5 text-gray-400">
       {message.messageType !== "RETRIEVE" && (
-        <div className="relative flex flex-col items-center group hover:text-white mx-[2px] hover:bg-slate-400 rounded-sm p-[2px]">
+        <div
+          className="relative flex flex-col items-center group hover:text-white mx-[2px] hover:bg-slate-400 rounded-sm p-[2px]"
+          onClick={() => {
+            handleShareMessage();
+          }}
+        >
           <IoIosShareAlt />
           <div className="absolute bottom-0 w-60 flex-col items-center hidden mb-6 group-hover:flex">
             <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-600 shadow-lg rounded-md">

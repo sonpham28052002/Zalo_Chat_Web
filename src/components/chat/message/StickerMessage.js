@@ -3,7 +3,11 @@ import { useSelector } from "react-redux";
 import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
 
-export default function StickerMessage({ avt, sticker }) {
+export default function StickerMessage({
+  avt,
+  sticker,
+  setIsOpenForwardMessage,
+}) {
   var owner = useSelector((state) => state.data);
   var refMessage = useRef(null);
   var [isRetrieve, setIsRetrieve] = useState(false);
@@ -28,6 +32,7 @@ export default function StickerMessage({ avt, sticker }) {
                 refMessage={refMessage}
                 message={sticker}
                 setIsRetrieve={setIsRetrieve}
+                setIsOpenForwardMessage={setIsOpenForwardMessage}
               />
             )}
           </div>
@@ -50,6 +55,7 @@ export default function StickerMessage({ avt, sticker }) {
               refMessage={refMessage}
               message={sticker}
               setIsRetrieve={setIsRetrieve}
+              setIsOpenForwardMessage={setIsOpenForwardMessage}
             />
           )}
         </div>

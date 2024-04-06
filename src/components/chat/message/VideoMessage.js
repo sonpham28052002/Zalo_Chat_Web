@@ -4,7 +4,12 @@ import { useSelector } from "react-redux";
 import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
 
-export default function VideoMessage({ avt, video, ownerID }) {
+export default function VideoMessage({
+  avt,
+  video,
+  ownerID,
+  setIsOpenForwardMessage,
+}) {
   let [messageLocal, setMessageLocal] = useState(video);
   var owner = useSelector((state) => state.data);
   var [isRetrieve, setIsRetrieve] = useState(false);
@@ -29,17 +34,20 @@ export default function VideoMessage({ avt, video, ownerID }) {
               refMessage={refMessage}
               message={video}
               setIsRetrieve={setIsRetrieve}
+              setIsOpenForwardMessage={setIsOpenForwardMessage}
             />
           )}
           <div className="relative h-full max-w-[40%] w-fit border shadow-lg rounded-md ">
             <div className="  h-fit flex flex-col items-start justify-around rounded-md ">
-              <img alt="#" />
               <video
                 className="overflow-hidden rounded-md min-w-60 h-52 w-auto "
                 controls
               >
                 <source src={video.url} type="video/mp4" />
               </video>
+              <a id="downloadLink" href={video.url} download="video.mp4">
+                Tải xuống video
+              </a>
             </div>
             <div className="flex flex-row justify-between items-center absolute w-full pt-1 ">
               <span className=" text-[12px] px-4 text-gray-400 ">{`${
@@ -64,6 +72,7 @@ export default function VideoMessage({ avt, video, ownerID }) {
               refMessage={refMessage}
               message={video}
               setIsRetrieve={setIsRetrieve}
+              setIsOpenForwardMessage={setIsOpenForwardMessage}
             />
           )}
         </div>

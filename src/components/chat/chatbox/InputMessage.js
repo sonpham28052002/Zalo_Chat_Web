@@ -224,7 +224,13 @@ export default function InputMessage({
         />
         <div className="flex flex-row justify-center items-start h-full pt-3 px-3">
           <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
-            <InputVioce />
+            <InputVioce
+              setIndex={setIndex}
+              conversation={conversation}
+              receiver={receiver}
+              sender={sender}
+              sendMessage={sendMessage}
+            />
           </div>
           <Emoji setText={setText} text={text} />
           <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2 hover:text-blue-600">
