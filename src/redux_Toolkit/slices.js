@@ -14,26 +14,29 @@ var getAPI = createAsyncThunk(
   }
 );
 
-var postAPI = createAsyncThunk(
-  "user/postAPI",
+var putAPI = createAsyncThunk(
+  "user/putAPI",
   async (arg, { rejectWithValue }) => {
-    // let newInforUser = { ...arg };
-
+    console.log("put");
+    console.log(arg);
+    let newInforUser = { ...arg };
     try {
-      //   const res = await fetch("http://localhost:8080/user", {
-      //     method: "post",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(newInforUser),
-      //   });
-      //   var data = await res.json();
-      var data = { ...arg };
+      const res = await fetch(
+        "https://deploybackend-production.up.railway.app/users/updateUser",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newInforUser),
+        }
+      );
+      var data = await res.json();
       if (data) {
         return data;
       }
     } catch (error) {
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -62,11 +65,12 @@ var reducer = createSlice({
       .addCase(getAPI.fulfilled, (state, action) => {
         state.data = action.payload;
       })
-      .addCase(postAPI.pending, (state, action) => {
-        return action.payload;
+      .addCase(putAPI.fulfilled, (state, action) => {
+        state.data = action.payload;
       });
   },
 });
+
 export default reducer;
 export const { addMessage } = reducer.actions;
-export { getAPI, postAPI };
+export { getAPI, putAPI };

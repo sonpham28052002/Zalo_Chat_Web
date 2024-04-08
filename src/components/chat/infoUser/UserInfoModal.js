@@ -4,15 +4,22 @@ import { CiCamera, CiEdit } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
 import { getInfoUserById } from "../../../services/User_service";
 import { useSelector } from "react-redux";
+import UpdateInfoModal from "./UpdateInfoModal";
+import { uploadFile } from "../../../services/Azure_Service";
+import AvtModal from "./AvtModal";
+import BgModal from "./BgModal";
 
 const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
   var [user, setUser] = useState(undefined);
   var owner = useSelector((state) => state.data);
+  const [isOpenUpdateInfoModal, setIsOpenUpdateInfoModal] = useState(false);
+  const [isOpenImageModal, setIsOpenImageModal] = useState(false);
+  const [isOpenBgModal, setIsOpenBgModal] = useState(false);
+  let [img, setImg] = useState("");
 
   useEffect(() => {
     getInfoUserById(userId, setUser);
-    // eslint-disable-next-line
-  }, [isOpen]);
+  }, [isOpen, userId]);
 
   return (
     <AnimatePresence>
@@ -22,6 +29,7 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
           className="bg-slate-900/20 backdrop-blur p-8 fixed inset-0 z-50 grid place-items-center overflow-y-scroll cursor-pointer "
         >
           <motion.div
+            key={"UserInfoModal"}
             initial={{ scale: 0, rotate: "45.5deg" }}
             animate={{ scale: 1, rotate: "0deg" }}
             exit={{ scale: 0, rotate: "-180deg" }}
@@ -38,12 +46,32 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                   }}
                 />
               </div>
-              <div className="m-0 h-52">
+              <div className="m-0 h-52 relative">
                 <img
                   alt="#"
                   className="h-full min-w-96 max-w-96 bg-cover bg-repeat-x"
                   src={user.coverImage}
                 />
+                {owner.id === user.id ? (
+                  <div className="absolute top-0 right-0 m-2 w-7 h-7 border flex flex-row items-center rounded-full justify-center bg-slate-300 hover:bg-slate-400">
+                    <input
+                      type="file"
+                      className="opacity-0 absolute inset-0 z-50 "
+                      title="Thay đổi ảnh bìa"
+                      onChange={async (e) => {
+                        if (e.target.files[0]) {
+                          const url = await uploadFile(e.target.files[0]);
+                          setImg(url);
+                          setIsOpen(!isOpen);
+                          setIsOpenBgModal(true);
+                        }
+                      }}
+                    />
+                    <CiCamera className=" text-xl text-black" />
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
               <div>
                 <div className="relative h-16 bg-white">
@@ -54,6 +82,19 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                   />
                   {owner.id === user.id ? (
                     <div className="absolute top-8 left-16 w-7 h-7 border flex flex-row items-center rounded-full justify-center bg-slate-300 hover:bg-slate-400">
+                      <input
+                        type="file"
+                        className="opacity-0 absolute inset-0 z-50 "
+                        title="Thay đổi ảnh đại diện"
+                        onChange={async (e) => {
+                          if (e.target.files[0]) {
+                            const url = await uploadFile(e.target.files[0]);
+                            setImg(url);
+                            setIsOpen(!isOpen);
+                            setIsOpenImageModal(true);
+                          }
+                        }}
+                      />
                       <CiCamera className=" text-xl text-black" />
                     </div>
                   ) : (
@@ -88,9 +129,7 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
                       Ngày sinh
                     </p>
-                    <p className="w-28 font-sans">
-                      {new Date(user.dob).toLocaleDateString()}
-                    </p>
+                    <p className="w-28 font-sans">{user.dob}</p>
                   </div>
                   <div className="h-8 px-1  flex flex-row items-center  ">
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
@@ -101,7 +140,13 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                 </div>
                 <div className="w-full bg-white py-2 px-4">
                   {owner.id === user.id ? (
-                    <button className="w-full h-8 rounded-md hover:bg-slate-200 flex flex-row items-center justify-center font-medium">
+                    <button
+                      className="w-full h-8 rounded-md hover:bg-slate-200 flex flex-row items-center justify-center font-medium"
+                      onClick={() => {
+                        setIsOpen(!isOpen);
+                        setIsOpenUpdateInfoModal(true);
+                      }}
+                    >
                       <CiEdit className="text-xl mr-1" /> Cập Nhật
                     </button>
                   ) : (
@@ -113,6 +158,25 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
           </motion.div>
         </motion.div>
       )}
+      <UpdateInfoModal
+        key={"UpdateInfoModal"}
+        isOpen={isOpenUpdateInfoModal}
+        setIsOpen={setIsOpenUpdateInfoModal}
+      ></UpdateInfoModal>
+
+      <AvtModal
+        key={"ImageModal"}
+        isOpen={isOpenImageModal}
+        setIsOpen={setIsOpenImageModal}
+        url={img}
+      />
+
+      <BgModal
+        key={"BgModal"}
+        isOpen={isOpenBgModal}
+        setIsOpen={setIsOpenBgModal}
+        url={img}
+      />
     </AnimatePresence>
   );
 };
