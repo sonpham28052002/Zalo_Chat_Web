@@ -41,7 +41,7 @@ export default function FileMessage({ avt, file, setIsOpenForwardMessage }) {
     } else if (type === "TXT") {
       return <BiSolidFileTxt className="text-8xl text-[#02c1f3]" />;
     } else if (type === "JSON") {
-      return <LuFileJson className="text-8xl text-[#7f8e25]" />;
+      return <LuFileJson className="text-8xl text-[#bcd049]" />;
     } else if (type === "CSV") {
       return <FaFileCsv className="text-8xl text-[#02c1f3]" />;
     } else if (type === "XLS" || type === "XLSX") {
@@ -51,8 +51,25 @@ export default function FileMessage({ avt, file, setIsOpenForwardMessage }) {
     }
   }
 
+  function addHoursAndFormatToHHMM(date, hoursToAdd) {
+    if (date) {
+      const newDate = new Date(date);
+      newDate.setHours(newDate.getHours() + hoursToAdd);
+      const hours = newDate.getHours();
+      const minutes = newDate.getMinutes();
+      const formattedHours = hours < 10 ? "0" + hours : hours;
+      const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+      if (formattedHours) {
+        return `${formattedHours}:${formattedMinutes}`;
+      } else {
+        return "đang gửi...";
+      }
+    }
+    return "đang gửi...";
+  }
+
   return (
-    <div className="h-fit">
+    <div className="h-40 ">
       {!isRetrieve ? (
         <div
           ref={refMessage}
@@ -95,22 +112,21 @@ export default function FileMessage({ avt, file, setIsOpenForwardMessage }) {
               </div>
               <div className="h-20  flex flex-col justify-end">
                 <div className="rounded-md hover:bg-slate-400 p-1 hover:text-white  ">
-                  <a href={file.url} download>
-                    <BsDownload className="text-xl font-medium " />
+                  <a
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                  >
+                    <BsDownload className="text-xl font-medium" />
                   </a>
                 </div>
               </div>
             </div>
             <div className="flex flex-row justify-between items-center absolute w-full pt-1 ">
-              <span className=" text-[12px] px-4 text-gray-400 ">{`${
-                new Date(file.senderDate).getHours() < 10
-                  ? "0" + new Date(file.senderDate).getHours()
-                  : new Date(file.senderDate).getHours()
-              }:${
-                new Date(file.senderDate).getMinutes() < 10
-                  ? "0" + new Date(file.senderDate).getMinutes()
-                  : new Date(file.senderDate).getMinutes()
-              }`}</span>
+              <span className=" text-[12px] px-4 text-gray-400 ">
+                {addHoursAndFormatToHHMM(new Date(file.senderDate), 7)}
+              </span>
               <NavIconInteract
                 check={owner.id === file.receiver.id}
                 icon={file.ract}

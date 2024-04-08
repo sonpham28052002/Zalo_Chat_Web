@@ -22,10 +22,14 @@ export default function VideoMessage({
     const minutes = newDate.getMinutes();
     const formattedHours = hours < 10 ? "0" + hours : hours;
     const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
-    return `${formattedHours}:${formattedMinutes}`;
+    if (formattedHours) {
+      return `${formattedHours}:${formattedMinutes}`;
+    } else {
+      return "đang gửi...";
+    }
   }
   return (
-    <>
+    <div className="h-fit">
       {!isRetrieve ? (
         <div
           ref={refMessage}
@@ -55,7 +59,13 @@ export default function VideoMessage({
               >
                 <source src={video.url} type="video/mp4" />
               </video>
-              <a id="downloadLink" href={video.url} download="video.mp4">
+              <a
+                id="downloadLink"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={video.url}
+                download
+              >
                 Tải xuống video
               </a>
             </div>
@@ -83,6 +93,6 @@ export default function VideoMessage({
       ) : (
         <RetrieveMessages message={video} avt={avt} />
       )}
-    </>
+    </div>
   );
 }

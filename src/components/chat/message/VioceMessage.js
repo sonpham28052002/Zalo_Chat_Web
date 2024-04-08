@@ -22,10 +22,14 @@ export default function VioceMessage({
     const minutes = newDate.getMinutes();
     const formattedHours = hours < 10 ? "0" + hours : hours;
     const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
-    return `${formattedHours}:${formattedMinutes}`;
+    if (formattedHours) {
+      return `${formattedHours}:${formattedMinutes}`;
+    } else {
+      return "đang gửi...";
+    }
   }
   return (
-    <>
+    <div className="h-fit">
       {!isRetrieve ? (
         <div
           ref={refMessage}
@@ -51,6 +55,7 @@ export default function VioceMessage({
             <div className="  h-fit flex flex-col items-start justify-around rounded-md ">
               <audio controls>
                 <source src={vioce.url} type="audio/mpeg" />
+                <source src={vioce.url} type="audio/3gp" />
               </audio>
             </div>
             <div className="flex flex-row justify-between  items-center absolute w-full pt-1 ">
@@ -77,6 +82,6 @@ export default function VioceMessage({
       ) : (
         <RetrieveMessages message={vioce} avt={avt} />
       )}
-    </>
+    </div>
   );
 }

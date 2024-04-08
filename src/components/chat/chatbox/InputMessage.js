@@ -54,6 +54,7 @@ export default function InputMessage({
     "audio/mpeg": "MP3",
     "application/pdf": "PDF",
     "application/msword": "DOC",
+    "application/x-zip-compressed": "ZIP",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
       "DOCX",
     "application/vnd.ms-powerpoint": "PPT",

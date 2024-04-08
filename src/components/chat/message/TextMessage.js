@@ -23,11 +23,15 @@ export default function TextMessage({
     const minutes = newDate.getMinutes();
     const formattedHours = hours < 10 ? "0" + hours : hours;
     const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
-    return `${formattedHours}:${formattedMinutes}`;
+    if (formattedHours) {
+      return `${formattedHours}:${formattedMinutes}`;
+    } else {
+      return "đang gửi...";
+    }
   }
 
   return (
-    <div>
+    <div className="h-fit">
       {!isRetrieve ? (
         <div
           ref={refMessage}
@@ -51,7 +55,7 @@ export default function TextMessage({
             />
           )}
           <div className=" relative h-fit max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-col justify-start items-center border  shadow-lg p-2">
-            <div className=" h-fit max-w-full flex flex-col items-start justify-around text-wrap  ">
+            <div className=" h-fit min-w-20 max-w-full flex flex-col items-start justify-around text-wrap  ">
               {/^(ftp|http|https):\/\/[^ "]+$/.test(messageLocal.content) ? (
                 <div className="w-96">
                   {/* <Embed url={messageLocal.content} /> */}

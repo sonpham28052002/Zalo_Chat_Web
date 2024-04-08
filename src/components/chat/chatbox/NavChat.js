@@ -5,7 +5,7 @@ import { getAPI } from "../../../redux_Toolkit/slices";
 import { useSubscription } from "react-stomp-hooks";
 import TabChat from "./TabChat";
 
-export default function NavChat({ indexSelect, setIndex }) {
+export default function NavChat({ indexSelect, setIndex, showSearch }) {
   var data = useSelector((state) => state.data);
   var [idConversation, setIdConversation] = useState(indexSelect);
   useSubscription("/user/" + data.id + "/singleChat", (messages) => {
@@ -19,7 +19,7 @@ export default function NavChat({ indexSelect, setIndex }) {
   var dispatch = useDispatch();
   return (
     <div className="h-full  w-2/12  border-r">
-      <HeaderNavChat />
+      <HeaderNavChat showSearch={showSearch} />
       <div className=" h-[860px] w-full py-1 select-none">
         {data.conversation.map((item, index) => {
           return (

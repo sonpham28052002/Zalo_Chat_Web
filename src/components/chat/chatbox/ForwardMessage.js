@@ -1,81 +1,236 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { IoMdClose } from "react-icons/io";
+import { IoLogoHtml5, IoMdClose } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Virtuoso } from "react-virtuoso";
-
-export default function ForwardMessage({ setIsOpen, forwardMessage, isOpen }) {
-  const [activeTab, setActiveTab] = useState("all");
+import Loader from "../custom/loader";
+import { FaFileCode, FaFileCsv, FaFileExcel, FaFileWord } from "react-icons/fa";
+import { BiSolidFilePdf, BiSolidFileTxt } from "react-icons/bi";
+import { AiFillFilePpt, AiFillFileZip } from "react-icons/ai";
+import { LuFileJson } from "react-icons/lu";
+import { stompClient } from "../../../socket/socket";
+export default function ForwardMessage({
+  setIsOpen,
+  forwardMessage,
+  isOpen,
+  friend,
+  allMember,
+  chats,
+}) {
+  const [activeTab, setActiveTab] = useState("select");
+  const [addSender, setAddSend] = useState([]);
+  const [text, setText] = useState(forwardMessage?.content);
 
   var owner = useSelector((state) => state.data);
-  var [chats, setChats] = useState([]);
-  var [friend, setFriend] = useState([]);
-  var [allUser, setAllUser] = useState([]);
 
-  function addToUniqueArray(arr, item) {
-    if (arr.indexOf(item) === -1) {
-      arr.push(item);
-    }
-    return arr;
-  }
+  var [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
-    let all = [];
-    let arrchat = [];
-    for (let index = 0; index < owner.conversation.length; index++) {
-      let user = {
-        id: undefined,
-        name: undefined,
-        avt: undefined,
-      };
-      if (owner.conversation[index].conversationType === "group") {
-        user.id = owner.conversation[index].idGroup + "";
-        user.name = owner.conversation[index].nameGroup + "";
-        user.avt = owner.conversation[index].avtGroup + "";
-        arrchat.push(user);
-      } else {
-        user.id = owner.conversation[index].user.id + "";
-        user.name = owner.conversation[index].user.userName + "";
-        user.avt = owner.conversation[index].user.avt + "";
-        arrchat.push(user);
-        all = [...addToUniqueArray(all, user)];
-      }
-    }
-    setChats(arrchat);
-
-    let arrFriend = [];
-    for (let index = 0; index < owner.friendList.length; index++) {
-      arrFriend.push({
-        id: owner.friendList[index].user.id,
-        name: owner.friendList[index].user.userName,
-        avt: owner.friendList[index].user.avt,
-      });
-      all = [
-        ...addToUniqueArray(all, {
-          id: owner.friendList[index].user.id,
-          name: owner.friendList[index].user.userName,
-          avt: owner.friendList[index].user.avt,
-        }),
-      ];
-    }
-    setFriend(arrFriend);
-    setAllUser(all);
-  }, [owner.conversation, owner.friendList]);
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
   };
+
+  useEffect(() => {
+    setIsLoaded(false);
+    setIsLoaded(true);
+  }, []);
+
+  function formatFileSize(size) {
+    if (size < 1024) {
+      return size.toFixed(2) + "B";
+    } else if (size < 1024 * 1024) {
+      return (size / 1024).toFixed(2) + "KB";
+    } else if (size < 1024 * 1024 * 1024) {
+      return (size / (1024 * 1024)).toFixed(2) + "MB";
+    } else {
+      return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB";
+    }
+  }
+
+  function isItemExistInArray(item) {
+    return addSender.some((element) => element.id === item.id);
+  }
+  function addToUniqueArray(newItem, actionType) {
+    if (actionType === "add") {
+      const exists = addSender.some((item) => item.id === newItem.id);
+      if (!exists) {
+        setAddSend([...addSender, newItem]);
+      }
+    } else if (actionType === "remove") {
+      setAddSend(addSender.filter((item) => item.id !== newItem.id));
+    }
+  }
+  function renderMessage(message) {
+    switch (message.messageType) {
+      case "Text":
+        return (
+          <div>
+            <input
+              type="text"
+              value={text}
+              onChange={(e) => {
+                setText(e.target.value);
+              }}
+              className="h-20 border w-full p-2"
+            />
+          </div>
+        );
+      case "STICKER":
+        return <img alt="." className="h-20" src={message.url}></img>;
+      case "PNG":
+      case "JPEG":
+      case "JPG":
+      case "GIF":
+        return <img alt="." className="h-20" src={message.url}></img>;
+      case "RETRIEVE":
+        return <></>;
+      case "VIDEO":
+        return (
+          <video className="overflow-hidden rounded-md  h-20 w-40 " controls>
+            <source src={message.url} type="video/mp4" />
+          </video>
+        );
+      case "AUDIO":
+        return (
+          <audio controls>
+            <source src={message.url} type="audio/mpeg" />
+            <source src={message.url} type="audio/3gp" />
+          </audio>
+        );
+      case "DOCX":
+      case "DOC":
+        return (
+          <div className="flex flex-row justify-start shadow-md mt-1 p-2 border">
+            <FaFileWord className="text-6xl  text-[#378ece]" />
+            <div className="flex flex-col justify-evenly">
+              <p>{message.titleFile}</p>
+              <p>{formatFileSize(message.size)}</p>
+            </div>
+          </div>
+        );
+      case "PDF":
+        return (
+          <div className="flex flex-row justify-start shadow-md mt-1 p-2 border">
+            <BiSolidFilePdf className="text-6xl  text-[#ff6350]" />
+            <div className="flex flex-col justify-evenly">
+              <p>{message.titleFile}</p>
+              <p>{formatFileSize(message.size)}</p>
+            </div>
+          </div>
+        );
+      case "PPT":
+      case "PPTX":
+        return (
+          <div className="flex flex-row justify-start shadow-md mt-1 p-2 border">
+            <AiFillFilePpt className="text-6xl  text-[#ff7e5c]" />
+            <div className="flex flex-col justify-evenly">
+              <p>{message.titleFile}</p>
+              <p>{formatFileSize(message.size)}</p>
+            </div>
+          </div>
+        );
+      case "TXT":
+        return (
+          <div className="flex flex-row justify-start shadow-md mt-1 p-2 border">
+            <BiSolidFileTxt className="text-6xl  text-[#02c1f3]" />
+            <div className="flex flex-col justify-evenly">
+              <p>{message.titleFile}</p>
+              <p>{formatFileSize(message.size)}</p>
+            </div>
+          </div>
+        );
+      case "RAR":
+      case "ZIP":
+        return (
+          <div className="flex flex-row justify-start shadow-md mt-1 p-2 border">
+            <AiFillFileZip className="text-6xl  text-[#cf81c8]" />
+            <div className="flex flex-col justify-evenly">
+              <p>{message.titleFile}</p>
+              <p>{formatFileSize(message.size)}</p>
+            </div>
+          </div>
+        );
+      case "JSON":
+        return (
+          <div className="flex flex-row justify-start shadow-md mt-1 p-2 border">
+            <LuFileJson className="text-6xl  text-[#bcd049]" />
+            <div className="flex flex-col justify-evenly">
+              <p>{message.titleFile}</p>
+              <p>{formatFileSize(message.size)}</p>
+            </div>
+          </div>
+        );
+      case "CSV":
+        return (
+          <div className="flex flex-row justify-start shadow-md mt-1 p-2 border">
+            <FaFileCsv className="text-6xl  text-[#02c1f3]" />
+            <div className="flex flex-col justify-evenly">
+              <p>{message.titleFile}</p>
+              <p>{formatFileSize(message.size)}</p>
+            </div>
+          </div>
+        );
+      case "HTML":
+        return (
+          <div className="flex flex-row justify-start shadow-md mt-1 p-2 border">
+            <IoLogoHtml5 className="text-6xl  text-[#d1ef29]" />
+            <div className="flex flex-col justify-evenly">
+              <p>{message.titleFile}</p>
+              <p>{formatFileSize(message.size)}</p>
+            </div>
+          </div>
+        );
+      case "XLS":
+      case "XLSX":
+        return (
+          <div className="flex flex-row justify-start shadow-md mt-1 p-2 border">
+            <FaFileExcel className="text-6xl  text-[#40ad65]" />
+            <div className="flex flex-col justify-evenly">
+              <p>{message.titleFile}</p>
+              <p>{formatFileSize(message.size)}</p>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <div className="flex flex-row justify-start shadow-md mt-1 p-2 border">
+            <FaFileCode className="text-6xl  text-[rgb(33,125,148)]" />
+            <div className="flex flex-col justify-evenly">
+              <p>{message.titleFile}</p>
+              <p>{formatFileSize(message.size)}</p>
+            </div>
+          </div>
+        );
+    }
+  }
 
   var itemRowchat = (item) => {
     return (
       <div className=" shadow-md my-1 p-1">
         <div className="flex flex-row items-center text-black">
-          <input type="checkbox" className="text-2xl h-4 w-4 accent-blue-500" />
-          <img
-            className="h-12 w-12 rounded-full m-1 border border-black shadow-2xl"
-            src={item.avt}
-            alt="#"
+          <input
+            type="checkbox"
+            checked={isItemExistInArray(item)}
+            className="text-2xl h-4 w-4 accent-blue-500"
+            id={item.id}
+            onChange={(e) => {
+              if (e.target.checked) {
+                addToUniqueArray(item, "add");
+              } else {
+                addToUniqueArray(item, "remove");
+              }
+            }}
           />
-          <div className="px-2 font-medium">{item.name}</div>
+          <label
+            className="flex flex-row items-center  w-full ml-2"
+            htmlFor={item.id}
+          >
+            <img
+              className="h-12 w-12 rounded-full m-1 border border-black shadow-2xl"
+              src={item.avt}
+              alt="#"
+            />
+            <div className="px-2 font-medium">{item.name}</div>
+          </label>
         </div>
       </div>
     );
@@ -118,6 +273,25 @@ export default function ForwardMessage({ setIsOpen, forwardMessage, isOpen }) {
               <div className="max-w-2xl mx-auto">
                 <div className=" mb-4">
                   <ul className="flex flex-wrap -mb-px" role="tablist">
+                    <li className="mr-2" role="presentation">
+                      <button
+                        className={`inline-block  ${
+                          activeTab === "select"
+                            ? "text-black border-gray-300 border-b-2"
+                            : "text-gray-500"
+                        } hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium text-center ${
+                          activeTab === "select" ? "" : "active"
+                        }`}
+                        id="profile-tab"
+                        onClick={() => handleTabClick("select")}
+                        type="button"
+                        role="tab"
+                        aria-controls="chat"
+                        aria-selected={activeTab === "select"}
+                      >
+                        Đã chọn
+                      </button>
+                    </li>
                     <li className="mr-2" role="presentation">
                       <button
                         className={`inline-block  ${
@@ -181,15 +355,31 @@ export default function ForwardMessage({ setIsOpen, forwardMessage, isOpen }) {
                 <div id="myTabContent">
                   <div
                     className={`bg-gray-50 p-4 rounded-lg dark:bg-gray-800 ${
+                      activeTab === "select" ? "" : "hidden"
+                    }`}
+                    role="tabpanel"
+                    aria-labelledby="chat-tab"
+                  >
+                    <Virtuoso
+                      initialTopMostItemIndex={0}
+                      className="w-full min-h-[425px] text-black "
+                      totalCount={addSender.length}
+                      data={addSender}
+                      itemContent={(_, item) => itemRowchat(item)}
+                    ></Virtuoso>
+                  </div>
+                  <div
+                    className={`bg-gray-50 p-4 rounded-lg dark:bg-gray-800 ${
                       activeTab === "all" ? "" : "hidden"
                     }`}
                     role="tabpanel"
                     aria-labelledby="chat-tab"
                   >
                     <Virtuoso
-                      className="w-full min-h-[425px] text-black"
-                      totalCount={100}
-                      data={allUser}
+                      initialTopMostItemIndex={0}
+                      className="w-full min-h-[425px] text-black "
+                      totalCount={allMember.length}
+                      data={allMember}
                       itemContent={(_, item) => itemRowchat(item)}
                     ></Virtuoso>
                   </div>
@@ -227,11 +417,11 @@ export default function ForwardMessage({ setIsOpen, forwardMessage, isOpen }) {
             </div>
             <div className="h-[17%] w-full border-t p-2 border-gray-500 text-black">
               <p>Nội dung chia sẻ:</p>
-              <div className=" w-full">a</div>
+              <div className=" w-full">{renderMessage(forwardMessage)}</div>
             </div>
             <div className="h-[8%] w-full border-t p-2 border-gray-500 flex flex-row justify-center items-center">
               <button
-                className="bg-[#dfe2e7] hover:bg-[#d2d9e9] h-10 w-32 rounded-lg mx-5 font-medium hover:text-white"
+                className={` h-10 w-32 rounded-lg mx-5 font-medium bg-[#d2d9e9] hover:bg-[#004bb9]`}
                 onClick={() => {
                   setIsOpen(false);
                 }}
@@ -239,12 +429,32 @@ export default function ForwardMessage({ setIsOpen, forwardMessage, isOpen }) {
                 Huỷ
               </button>
               <button
-                className="bg-[#004bb9] hover:bg-[#d2d9e9] h-10 w-32 rounded-lg mx-5 font-medium text-white"
+                disabled={addSender.length === 0}
+                className={` ${
+                  addSender.length === 0 ? "bg-[#d2d9e9]" : "bg-[#004bb9]"
+                } hover:bg-[#6581c4] h-10 w-32 rounded-lg mx-5 font-medium text-white`}
                 onClick={() => {
+                  setIsLoaded(false);
+                  let arrMess = [];
+                  for (let i = 0; i < addSender.length; i++) {
+                    let mess = { ...forwardMessage };
+                    if (forwardMessage?.content) {
+                      mess.content = text;
+                    }
+                    mess.receiver = { id: addSender[i].id };
+                    mess.sender = { id: owner.id };
+                    arrMess.push(mess);
+                  }
+                  stompClient.send(
+                    "/app/forward-message",
+                    {},
+                    JSON.stringify(arrMess)
+                  );
+                  setIsLoaded(true);
                   setIsOpen(false);
                 }}
               >
-                Chia sẻ
+                {isLoaded ? "Chia sẻ" : <Loader />}
               </button>
             </div>
           </motion.div>

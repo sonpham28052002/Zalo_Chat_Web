@@ -18,3 +18,16 @@
 .scrollbar-container * {
   direction: ltr;
 }
+.scrollbar-container-v2::-webkit-scrollbar {
+  width: 7px;
+  margin-right: 10px;
+}
+
+.scrollbar-container-v2::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.scrollbar-container:-v2:-webkit-scrollbar-track {
+  background-color: transparent;
+}

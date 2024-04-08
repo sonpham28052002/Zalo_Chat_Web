@@ -19,10 +19,15 @@ export default function StickerMessage({
     const minutes = newDate.getMinutes();
     const formattedHours = hours < 10 ? "0" + hours : hours;
     const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
-    return `${formattedHours}:${formattedMinutes}`;
+
+    if (formattedHours) {
+      return `${formattedHours}:${formattedMinutes}`;
+    }else{
+      return "đang gửi...";
+    }
   }
   return (
-    <>
+    <div className="h-fit">
       {!isRetrieve ? (
         <div
           className={` pr-5  h-fit w-full  flex  flex-row items-end rotate-180 ${
@@ -65,6 +70,6 @@ export default function StickerMessage({
       ) : (
         <RetrieveMessages message={sticker} avt={avt} />
       )}
-    </>
+    </div>
   );
 }

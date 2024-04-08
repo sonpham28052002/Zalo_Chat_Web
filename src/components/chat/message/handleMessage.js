@@ -13,6 +13,20 @@ export default function HandleMessage({
 }) {
   var owner = useSelector((state) => state.data);
 
+  function isOver24Hours(dateInput) {
+    const date = new Date(dateInput);
+    date.setHours(date.getHours() + 7);
+
+    const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000; // 24 giờ trong mili giây
+    const currentTime = new Date(); // Thời gian hiện tại
+    const timeDifference = currentTime - date; // Sự khác biệt giữa thời gian hiện tại và thời gian của đối tượng date
+    // Kiểm tra xem sự khác biệt thời gian có lớn hơn 24 giờ không
+    console.log(timeDifference);
+    console.log(twentyFourHoursInMilliseconds);
+
+    return timeDifference > twentyFourHoursInMilliseconds;
+  }
+
   useSubscription("/user/" + message.id + "/retrieveMessage", (messages) => {
     let mess = JSON.parse(messages.body);
     if (mess.messageType === "RETRIEVE") {
@@ -27,8 +41,14 @@ export default function HandleMessage({
     stompClient.send("/app/delete-message", {}, JSON.stringify(text));
   };
   function handleRetrieveMessage() {
-    setIsRetrieve(true);
-    stompClient.send("/app/retrieve-message", {}, JSON.stringify(message));
+    console.log(message.senderDate);
+    console.log(new Date().toLocaleTimeString());
+    if (isOver24Hours(message.senderDate)) {
+      alert("Tin nhắn đã quá 24h. bạn không thể xoá được.")
+    } else {
+      setIsRetrieve(true);
+      stompClient.send("/app/retrieve-message", {}, JSON.stringify(message));
+    }
   }
   function handleShareMessage() {
     console.log("son");
