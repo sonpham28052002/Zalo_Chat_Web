@@ -1,18 +1,38 @@
 import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment, useEffect, useState } from "react";
-import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
 import { MdOutlineKeyboardVoice } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
+import { useSelector } from "react-redux";
 
-export default function InputVioce(props) {
+import { RiSendPlaneFill } from "react-icons/ri";
+import { VoiceVisualizer, useVoiceVisualizer } from "react-voice-visualizer";
+import { uploadAudio } from "../../../services/Azure_Service";
+import { v4 } from "uuid";
+
+export default function InputVioce({
+  setIndex,
+  receiver,
+  sender,
+  sendMessage,
+}) {
   var [isStart, setIsStart] = useState(false);
+  var user = useSelector((state) => state.data);
 
-  const recorderControls = useAudioRecorder({});
+  const recorderControls = useVoiceVisualizer();
+  const {
+    // ... (Extracted controls and states, if necessary)
+    recordedBlob,
+    error,
+    audioRef,
+  } = recorderControls;
+
+  // Get the recorded audio blob
+
+  // Get the error when it occurs
   useEffect(() => {
-    if (isStart === false) {
-      recorderControls.stopRecording();
-    }
-  }, [isStart, recorderControls]);
+    if (!error) return;
+    console.error(error);
+  }, [error]);
   return (
     <>
       <Menu as="div" className="relative">
@@ -20,7 +40,6 @@ export default function InputVioce(props) {
           <Menu.Button
             className="h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
             onClick={() => {
-              recorderControls.startRecording();
               setIsStart(!isStart);
             }}
           >
@@ -29,23 +48,54 @@ export default function InputVioce(props) {
         </div>
         <Transition as={Fragment} show={isStart}>
           <Menu.Items className="absolute p-3 bottom-28 right-[500px] z-10 w-fit">
-            <div className="h-24 w-96 bg-white rounded-2xl shadow-2xl flex flex-row justify-center items-center">
+            <div className="h-64 w-96 bg-white rounded-2xl shadow-2xl flex flex-col justify-center items-center">
               <div className=" absolute -top-0 -right-1">
                 <IoMdClose
                   className="hover:text-red-600 text-xl"
                   onClick={() => {
                     setIsStart(false);
+                    recorderControls.stopRecording();
+                    recorderControls.mediaRecorder = undefined;
                   }}
                 />
               </div>
 
-              <AudioRecorder
-                onRecordingComplete={() => {
-                  console.log("aaaaaa");
-                }}
-                recorderControls={recorderControls}
-                showVisualizer={true}
+              <VoiceVisualizer
+                ref={audioRef}
+                height={20}
+                width={200}
+                controls={recorderControls}
+                mainBarColor="red"
               />
+              <button
+                className="min-h-10 w-1/2 flex flex-row justify-center items-center rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
+                onClick={async () => {
+                  if (!recordedBlob) return;
+                  console.log(recordedBlob);
+                  let url = await uploadAudio(recordedBlob);
+                  console.log(url);
+                  const content = {
+                    id: v4(),
+                    messageType: "AUDIO",
+                    sender: sender,
+                    receiver: receiver,
+                    seen: [
+                      {
+                        id: user.id,
+                      },
+                    ],
+                    size: recordedBlob.size,
+                    titleFile: "",
+                    url: url,
+                  };
+                  sendMessage(content);
+                  setIndex(receiver.id);
+                  setIsStart(false);
+                }}
+              >
+                Gửi ghi âm
+                <RiSendPlaneFill className="text-2xl mx-5" />
+              </button>
             </div>
           </Menu.Items>
         </Transition>

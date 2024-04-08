@@ -24,6 +24,7 @@ export default function InfoUser() {
               src={user.avt}
             ></img>
           </Menu.Button>
+
         </div>
 
         <Transition
@@ -70,7 +71,7 @@ export default function InfoUser() {
             </Menu.Item>
           </Menu.Items>
         </Transition>
-      </Menu>
+      </Menu>      
       <UserInfoModal
         isOpen={isOpenInforUser}
         setIsOpen={setIsOpenInforUser}

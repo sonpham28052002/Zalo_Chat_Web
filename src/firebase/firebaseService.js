@@ -37,6 +37,10 @@ var handleVertifi = async (inputPhone) => {
         inputPhone,
         window.recaptchaVerifier
       );
+    } else if (error.code === "auth/quota-exceeded") {
+      alert(
+        "Quá hạn ngạch của dịch vụ xác thực. hiện tại không thể thực hiện trong khoản thời gian này"
+      );
     }
   }
 };
