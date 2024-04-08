@@ -9,6 +9,7 @@ import { getAPI } from "../../redux_Toolkit/slices";
 import { handleGetValueCookie } from "../../services/Cookie_Service";
 import Loader from "../chat/custom/loader";
 import CountDownTimeLast from "./countDownTimeLast";
+import { getAccountByPhone } from "../../services/Account_Service";
 export default function ForgotPassword() {
   const history = useNavigate();
   var [phone, setPhone] = useState("84346676956");
@@ -115,19 +116,27 @@ export default function ForgotPassword() {
             setIsload(true);
             if (contentButton === "Gửi") {
               checkTimeRequestOtp();
-              await handleVertifi("+" + phone)
-                .then((e) => {
-                  if (e) {
-                    setOtpVertifi(e);
-                    setVertifi(true);
-                    setContentButton("Xác thực SMS");
-                  }
+              await getAccountByPhone(phone).then(async (res) => {
+                console.log(res);
+                if (res) {
+                  await handleVertifi("+" + phone)
+                    .then((e) => {
+                      if (e) {
+                        setOtpVertifi(e);
+                        setVertifi(true);
+                        setContentButton("Xác thực SMS");
+                      }
+                      setIsload(false);
+                    })
+                    .catch((Error) => {
+                      setIsload(false);
+                      console.log(Error);
+                    });
+                } else {
+                  alert("Số điện thoại chưa được đăng kí tài khoản");
                   setIsload(false);
-                })
-                .catch((Error) => {
-                  setIsload(false);
-                  console.log(Error);
-                });
+                }
+              });
             } else if (contentButton === "Xác thực SMS") {
               if (otp.length === 6) {
                 setIsload(true);

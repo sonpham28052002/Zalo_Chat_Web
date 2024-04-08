@@ -18,7 +18,14 @@ stompClient.connect({}, () => {
   console.log("run");
 });
 
-export default function InputMessage({ conversation, setIndex, receiver }) {
+export default function InputMessage({
+  conversation,
+  setIndex,
+  receiver,
+  setMessages,
+  messages,
+  setIsLoading,
+}) {
   var user = useSelector((state) => state.data);
 
   const sender = {
@@ -34,9 +41,44 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
         {},
         JSON.stringify(message)
       );
+      setMessages([message, ...messages]);
+      setIsLoading(false);
     }
   }
 
+  var mimeTypeMapping = {
+    "image/png": "PNG",
+    "image/jpeg": "JPEG",
+    "image/jpg": "JPG",
+    "image/gif": "GIF",
+    "audio/mpeg": "MP3",
+    "application/pdf": "PDF",
+    "application/msword": "DOC",
+    "application/x-zip-compressed": "ZIP",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+      "DOCX",
+    "application/vnd.ms-powerpoint": "PPT",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+      "PPTX",
+    "application/vnd.rar": "RAR",
+    "application/json": "JSON",
+    "application/xml": "XML",
+    "text/csv": "CSV",
+    "text/html": "HTML",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "XLSX",
+    "application/vnd.ms-excel": "XLS",
+    "application/zip": "ZIP",
+    "text/plain": "TXT",
+  };
+  function getFileTypeFromMimeType(mimeType) {
+    console.log(mimeType);
+    if (mimeType.startsWith("video/")) {
+      return "VIDEO";
+    } else if (mimeType.trim() === "") {
+      return "RAR";
+    }
+    return mimeTypeMapping[mimeType] || "UNKNOWN";
+  }
   return (
     <div className="flex flex-col h-28 border-t-2">
       <div className=" h-12 p-1 flex flex-row items-center justify-start border-b">
@@ -56,6 +98,7 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
               type="file"
               onChange={async (e) => {
                 if (e.target.files[0]) {
+                  setIsLoading(true);
                   const fileSize = e.target.files[0].size;
                   const url = await uploadFile(e.target.files[0]);
                   const typeFileArr = e.target.files[0].type.split("/");
@@ -92,18 +135,19 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
               type="file"
               onChange={async (e) => {
                 if (e.target.files[0]) {
-                  const fileSize = e.target.files[0].size;
+                  const file = e.target.files[0];
+                  const fileSize = file.size;
                   console.log("file");
                   if (fileSize >= 10485760) {
                     alert("Kích thước file không được quá 10MB");
+                    console.log(file);
                     e.target.value = "";
                     return;
                   }
+                  setIsLoading(true);
                   console.log(e.target.files[0]);
                   const url = await uploadFile(e.target.files[0]);
-                  const typeFileArr = e.target.files[0].type.split("/");
-                  const type =
-                    typeFileArr[typeFileArr.length - 1].toUpperCase();
+                  const type = getFileTypeFromMimeType(e.target.files[0].type);
                   const content = {
                     id: v4(),
                     messageType: type,
@@ -120,8 +164,8 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
                     url: url,
                   };
                   console.log(content);
-                  // setIndex(receiver.id);
-                  // sendMessage(content);
+                  setIndex(receiver.id);
+                  sendMessage(content);
                   e.target.value = "";
                 }
               }}
@@ -181,7 +225,13 @@ export default function InputMessage({ conversation, setIndex, receiver }) {
         />
         <div className="flex flex-row justify-center items-start h-full pt-3 px-3">
           <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
-            <InputVioce/>
+            <InputVioce
+              setIndex={setIndex}
+              conversation={conversation}
+              receiver={receiver}
+              sender={sender}
+              sendMessage={sendMessage}
+            />
           </div>
           <Emoji setText={setText} text={text} />
           <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2 hover:text-blue-600">

@@ -3,7 +3,7 @@ import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { HiOutlineUserAdd } from "react-icons/hi";
 import { IoIosSearch } from "react-icons/io";
 
-export default function HeaderNavChat(props) {
+export default function HeaderNavChat({ showSearch }) {
   return (
     <div className="h-20 flex flex-col justify-between border-b  p-3">
       <div className="flex flex-row justify-evenly items-center">
@@ -15,6 +15,7 @@ export default function HeaderNavChat(props) {
             readOnly
             className=" w-full  h-8 border p-1 text-xs rounded pl-7 bg-[#eaedf0] focus:outline-none"
             onClick={() => {
+              showSearch();
               console.log("con");
             }}
           />

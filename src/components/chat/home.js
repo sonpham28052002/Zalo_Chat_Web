@@ -14,7 +14,7 @@ export default function Home() {
 
   return (
     <div className="min-w-screen-md  min-h-dvh flex flex-row">
-      <div className=" bg-[#3883ac]  w-16 h-svh flex flex-col items-center justify-between">
+      <div className=" bg-[#0091ff]  w-16 h-svh flex flex-col items-center justify-between">
         <div className="flex flex-col items-center h-96 w-full pt-7 ">
           <InfoUser />
           <div className="w-full flex flex-col items-center">
@@ -27,7 +27,7 @@ export default function Home() {
                 setIndexSelect(0);
               }}
             >
-              <BsChatTextFill className=" text-white text-3xl" />
+              <BsChatTextFill className=" text-white text-2xl" />
             </Link>
             <Link
               to="/home/Contact"
@@ -38,7 +38,7 @@ export default function Home() {
                 setIndexSelect(1);
               }}
             >
-              <TiContacts className="text-white text-3xl" />
+              <TiContacts className="text-white text-2xl" />
             </Link>
             <Link
               to="/home/Todos"
@@ -49,7 +49,7 @@ export default function Home() {
                 setIndexSelect(2);
               }}
             >
-              <IoIosCheckboxOutline className="text-white text-3xl" />
+              <IoIosCheckboxOutline className="text-white text-2xl" />
             </Link>
           </div>
         </div>
@@ -58,13 +58,13 @@ export default function Home() {
             to="/chat2"
             className="w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center"
           >
-            <IoCloudOutline className="text-white text-3xl" />
+            <IoCloudOutline className="text-white text-2xl" />
           </Link>
           <Link
             to="/chat2"
             className="w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center"
           >
-            <PiToolboxBold className="text-white text-3xl" />
+            <PiToolboxBold className="text-white text-2xl" />
           </Link>
 
           <NavMenuSetting />

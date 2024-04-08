@@ -1,8 +1,6 @@
-/* styles.css */
 .scrollbar-container::-webkit-scrollbar {
   width: 7px;
   margin-right: 10px;
-
 }
 
 .scrollbar-container::-webkit-scrollbar-thumb {
@@ -11,5 +9,25 @@
 }
 
 .scrollbar-container::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.scrollbar-container {
+  direction: rtl;
+  overflow-x: hidden;
+}
+.scrollbar-container * {
+  direction: ltr;
+}
+.scrollbar-container-v2::-webkit-scrollbar {
+  width: 7px;
+  margin-right: 10px;
+}
+
+.scrollbar-container-v2::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.scrollbar-container:-v2:-webkit-scrollbar-track {
   background-color: transparent;
 }
