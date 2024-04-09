@@ -1,10 +1,11 @@
+import { getAPI } from "../../../redux_Toolkit/slices";
+import { updateUserInfo } from "../../../services/User_service";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { getInfoUserById } from "../../../services/User_service";
-import { useDispatch } from "react-redux";
-import { putAPI } from "../../../redux_Toolkit/slices";
+import { useDispatch } from 'react-redux';
 
 export default function UpdateInfoModal({ isOpen, setIsOpen }) {
   var [user, setUser] = useState(undefined);
@@ -16,13 +17,20 @@ export default function UpdateInfoModal({ isOpen, setIsOpen }) {
   const yearRef = useRef(null);
   const [gender, setGender] = useState(owner.gender);
   const dispatch = useDispatch();
-  const updateUser = (newUserInfo) => {
-    dispatch(putAPI(newUserInfo));
+
+  const updateUser = async (newUserInfo) => {
+    try {
+      await updateUserInfo(newUserInfo);
+      dispatch(getAPI(owner.id)).then(alert("Cập nhật thành công"));
+    } catch (error) {
+      alert("Thao tác thất bại, vui lòng thử lại sau");
+      return;
+    }
   };
 
   useEffect(() => {
     getInfoUserById(owner.id, setUser);
-    if (typeof user == "undefined") {
+    if (typeof (user) == "undefined") {
       return;
     }
     const [year, month, day] = user.dob.split("-");
@@ -35,16 +43,16 @@ export default function UpdateInfoModal({ isOpen, setIsOpen }) {
     if (yearRef.current) {
       yearRef.current.value = year;
     }
-  }, [isOpen, owner, user]);
+  }, [isOpen, owner]);
   return (
     <AnimatePresence>
-      {isOpen && typeof user !== "undefined" && (
+      {(isOpen && (typeof (user) !== "undefined"|| typeof (user) !== "undefined")) && (
         <motion.div
           onClick={() => setIsOpen(false)}
           className="bg-slate-900/20 backdrop-blur p-8 fixed inset-0 z-50 grid place-items-center overflow-y-scroll cursor-pointer "
         >
           <motion.div
-            key={"UpdateInfoModal"}
+            key={'UpdateInfoModal'}
             initial={{ scale: 0, rotate: "45.5deg" }}
             animate={{ scale: 1, rotate: "0deg" }}
             exit={{ scale: 0, rotate: "-180deg" }}
@@ -77,7 +85,7 @@ export default function UpdateInfoModal({ isOpen, setIsOpen }) {
                           return;
                         }
                         setNote("");
-                        setFullName(e.target.value);
+                        setFullName(e.target.value)
                       }}
                       className="h-10 w-full rounded-md focus:outline-none border border-gray border-solid p-1"
                     />
@@ -98,13 +106,11 @@ export default function UpdateInfoModal({ isOpen, setIsOpen }) {
                           <option value="" disabled>
                             Ngày
                           </option>
-                          {Array.from({ length: 31 }, (_, i) => i + 1).map(
-                            (day) => (
-                              <option key={day} value={day}>
-                                {day}
-                              </option>
-                            )
-                          )}
+                          {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+                            <option key={day} value={day}>
+                              {day}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div>
@@ -132,16 +138,11 @@ export default function UpdateInfoModal({ isOpen, setIsOpen }) {
                           <option value="" disabled>
                             Năm
                           </option>
-                          {[...Array(new Date().getFullYear() - 1900 + 1)].map(
-                            (_, i) => (
-                              <option
-                                key={i}
-                                value={new Date().getFullYear() - i}
-                              >
-                                {new Date().getFullYear() - i}
-                              </option>
-                            )
-                          )}
+                          {[...Array(new Date().getFullYear() - 1900 + 1)].map((_, i) => (
+                            <option key={i} value={new Date().getFullYear() - i}>
+                              {new Date().getFullYear() - i}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </div>
@@ -170,16 +171,16 @@ export default function UpdateInfoModal({ isOpen, setIsOpen }) {
                         monthRef.current.value - 1,
                         parseInt(dayRef.current.value, 10) + 1
                       );
-                      let formattedDob = date.toISOString().split("T")[0];
-                      let infoUpdateUser = { ...owner };
-                      infoUpdateUser.userName = fullName;
-                      infoUpdateUser.dob = formattedDob;
-                      infoUpdateUser.gender = gender;
+                      let formattedDob = date.toISOString().split('T')[0];
+                      let infoUpdateUser = { ...owner }
+                      infoUpdateUser.userName = fullName
+                      infoUpdateUser.dob = formattedDob
+                      infoUpdateUser.gender = gender
                       try {
                         updateUser(infoUpdateUser);
                         getInfoUserById(owner.id, setUser);
                       } catch (error) {
-                        alert("Thao tác thất bại, vui lòng thử lại sau");
+                        alert("Thao tác thất bại, vui lòng thử lại sau")
                       }
                       setIsOpen(!isOpen);
                     }}
@@ -193,7 +194,12 @@ export default function UpdateInfoModal({ isOpen, setIsOpen }) {
             </div>
           </motion.div>
         </motion.div>
-      )}
-    </AnimatePresence>
+      )
+      }
+    </AnimatePresence >
   );
 }
+
+
+
+
