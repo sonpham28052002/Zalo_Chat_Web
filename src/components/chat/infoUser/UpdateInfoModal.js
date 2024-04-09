@@ -15,7 +15,7 @@ export default function UpdateInfoModal({ isOpen, setIsOpen }) {
   const dayRef = useRef(null);
   const monthRef = useRef(null);
   const yearRef = useRef(null);
-  const [gender, setGender] = useState(owner.gender);
+  const genderRef = useRef(null);
   const dispatch = useDispatch();
 
   const updateUser = async (newUserInfo) => {
@@ -43,7 +43,11 @@ export default function UpdateInfoModal({ isOpen, setIsOpen }) {
     if (yearRef.current) {
       yearRef.current.value = year;
     }
-  }, [isOpen, owner]);
+    if (genderRef.current){
+      genderRef.current.value = user.gender;
+    }
+
+  }, [isOpen, owner,user]);
   return (
     <AnimatePresence>
       {(isOpen && (typeof (user) !== "undefined"|| typeof (user) !== "undefined")) && (
@@ -151,8 +155,7 @@ export default function UpdateInfoModal({ isOpen, setIsOpen }) {
                   <div className="pb-5">
                     <label className="font-medium">Giới tính: </label>
                     <select
-                      value={user.gender}
-                      onChange={(e) => setGender(e.target.value)}
+                      ref={genderRef}
                       className="h-10 rounded-md focus:outline-none border border-gray border-solid p-1"
                     >
                       <option value="Nam">Nam</option>
@@ -175,7 +178,7 @@ export default function UpdateInfoModal({ isOpen, setIsOpen }) {
                       let infoUpdateUser = { ...owner }
                       infoUpdateUser.userName = fullName
                       infoUpdateUser.dob = formattedDob
-                      infoUpdateUser.gender = gender
+                      infoUpdateUser.gender = genderRef.current.value
                       try {
                         updateUser(infoUpdateUser);
                         getInfoUserById(owner.id, setUser);
