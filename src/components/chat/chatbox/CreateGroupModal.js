@@ -9,9 +9,9 @@ import { useRef } from 'react';
 export default function CreateGroupModal({ isOpen, setIsOpen }) {
     var user = useSelector((state) => state.data);
     var list = user.friendList;
-    const [img, setImg] = useState(null);
-    const [selectedFile, setSelectedFile] = useState(null);
-    var nameRef = useRef(null);
+    const [img, setImg] = useState(undefined);
+    const [selectedFile, setSelectedFile] = useState(undefined);
+    var nameRef = useRef(undefined);
     const [activeTab, setActiveTab] = useState("select");
     const [addSender, setAddSend] = useState([]);
     const handleTabClick = (tabId) => {
