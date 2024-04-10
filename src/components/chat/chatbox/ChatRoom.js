@@ -55,20 +55,28 @@ export default function ChatRoom({ idConversation, setIndex }) {
   useSubscription("/user/" + owner.id + "/singleChat", (message) => {
     let mess = JSON.parse(message.body);
     console.log(mess);
-    if (
-      mess.receiver.id === idConversation 
-    ) {
-      console.log(idConversation);
-      console.log(mess.sender.id);
-      console.log(mess.receiver.id);
-
-      console.log(mess);
-      getMessageByIdSenderAndIsReceiver(owner.id, idConversation, (data) => {
-        setMessages(data.slice().reverse());
-      });
+    if (conversation.conversationType === "single") {
+      if (mess.receiver.id === idConversation) {
+        getMessageByIdSenderAndIsReceiver(owner.id, idConversation, (data) => {
+          setMessages(data.slice().reverse());
+        });
+      }
     }
   });
 
+  useSubscription("/user/" + owner.id + "/groupChat", (message) => {
+    let mess = JSON.parse(message.body);
+    console.log(mess);
+    if (conversation.conversationType === "group") {
+      getMessageAndMemberByIdSenderAndIdGroup(
+        owner.id,
+        idConversation,
+        (data) => {
+          setMessages(data.slice().reverse());
+        }
+      );
+    }
+  });
   useSubscription("/user/" + owner.id + "/deleteMessage", (message) => {
     let mess = JSON.parse(message.body);
     setMessages(messages.filter((item) => item.id !== mess.id));

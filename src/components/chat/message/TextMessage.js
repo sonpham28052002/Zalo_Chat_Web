@@ -63,6 +63,7 @@ export default function TextMessage({
               message={message}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
             />
           )}
           <div className=" relative h-fit max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-col justify-start items-center border  shadow-lg p-2">
@@ -103,6 +104,7 @@ export default function TextMessage({
               message={message}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
             />
           )}
         </div>

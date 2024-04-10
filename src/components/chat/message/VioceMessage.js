@@ -9,6 +9,7 @@ export default function VioceMessage({
   vioce,
   ownerID,
   setIsOpenForwardMessage,
+  conversation,
 }) {
   let [messageLocal, setMessageLocal] = useState(vioce);
   var owner = useSelector((state) => state.data);
@@ -28,6 +29,16 @@ export default function VioceMessage({
       return "đang gửi...";
     }
   }
+
+  function getImageUserChat(userId, conversation) {
+    if (conversation.conversationType === "group") {
+      return conversation.members.filter((item) => item.member.id === userId)[0]
+        .member.avt;
+    } else {
+      return avt;
+    }
+  }
+
   return (
     <div className="h-fit">
       {!isRetrieve ? (
@@ -41,7 +52,11 @@ export default function VioceMessage({
           key={vioce.id}
         >
           {owner.id !== vioce.sender.id && (
-            <img src={avt} alt="#" className="h-12 w-12 rounded-full mr-3" />
+            <img
+              src={getImageUserChat(vioce.sender.id, conversation)}
+              alt="#"
+              className="h-12 w-12 rounded-full mr-3"
+            />
           )}
           {owner.id === vioce.sender.id && (
             <HandleMessage
@@ -49,6 +64,7 @@ export default function VioceMessage({
               message={vioce}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
             />
           )}
           <div className="relative h-full max-w-[40%] w-fit bg-transparent border-0  shadow-lg rounded-md ">
@@ -63,7 +79,7 @@ export default function VioceMessage({
                 {addHoursAndFormatToHHMM(new Date(vioce.senderDate), 7)}
               </span>
               <NavIconInteract
-                check={ownerID === vioce.receiver.id}
+                check={ownerID !== vioce.sender.id}
                 icon={vioce.ract}
                 setMessage={setMessageLocal}
                 message={messageLocal}
@@ -76,11 +92,15 @@ export default function VioceMessage({
               message={vioce}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
             />
           )}
         </div>
       ) : (
-        <RetrieveMessages message={vioce} avt={avt} />
+        <RetrieveMessages
+          message={vioce}
+          avt={getImageUserChat(vioce.sender.id, conversation)}
+        />
       )}
     </div>
   );

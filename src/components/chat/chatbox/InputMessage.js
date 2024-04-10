@@ -35,14 +35,36 @@ export default function InputMessage({
   var [text, setText] = useState("");
 
   function sendMessage(message) {
-    if (stompClient && stompClient.connected) {
-      stompClient.send(
-        "/app/private-single-message",
-        {},
-        JSON.stringify(message)
-      );
-      setMessages([message, ...messages]);
-      setIsLoading(false);
+    if (conversation.conversationType === "group") {
+      let mess = {
+        ...message,
+        idGroup: conversation.idGroup,
+        receiver: undefined,
+      };
+      console.log(mess);
+      if (stompClient && stompClient.connected) {
+        stompClient.send(
+          "/app/private-single-message",
+          {},
+          JSON.stringify(mess)
+        );
+        setMessages([mess, ...messages]);
+        setIsLoading(false);
+      }
+    } else {
+      if (stompClient && stompClient.connected) {
+        let mess = {
+          ...message,
+          idGroup: "",
+        };
+        stompClient.send(
+          "/app/private-single-message",
+          {},
+          JSON.stringify(mess)
+        );
+        setMessages([mess, ...messages]);
+        setIsLoading(false);
+      }
     }
   }
 

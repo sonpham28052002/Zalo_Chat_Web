@@ -411,7 +411,6 @@ export default function ForwardMessage({
                       itemContent={(_, item) => itemRowchat(item)}
                     ></Virtuoso>
                   </div>
-                  {/* Add similar divs for other tab contents */}
                 </div>
               </div>
             </div>
@@ -438,11 +437,16 @@ export default function ForwardMessage({
                   let arrMess = [];
                   for (let i = 0; i < addSender.length; i++) {
                     let mess = { ...forwardMessage };
+                    console.log(addSender[i]);
                     if (forwardMessage?.content) {
                       mess.content = text;
                     }
-                    mess.receiver = { id: addSender[i].id };
                     mess.sender = { id: owner.id };
+                    if (addSender[i].type === "single") {
+                      mess.receiver = { id: addSender[i].id };
+                    } else {
+                      mess.receiver = { id: "group_" + addSender[i].id };
+                    }
                     arrMess.push(mess);
                   }
                   stompClient.send(

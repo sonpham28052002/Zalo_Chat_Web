@@ -31,6 +31,7 @@ var getMemberByIdSenderAndIdGroup = async (idSender, idGroup) => {
     const res = await fetch(
       `${host}/messages/getMemberByIdSenderAndIdGroup?idSender=${idSender}&idGroup=${idGroup}`
     );
+    console.log(res);
     if (!res.ok) {
       throw new Error("Network response was not ok");
     }
