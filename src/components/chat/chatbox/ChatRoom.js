@@ -7,7 +7,11 @@ import "../../../style/scrollBar.css";
 import Conversation from "./Conversation";
 import InputMessage from "./InputMessage";
 import UserInfoModal from "../infoUser/UserInfoModal";
-import { getMessageByIdSenderAndIsReceiver } from "../../../services/Message_Service";
+import {
+  getMessageByIdSenderAndIsReceiver,
+  getMemberByIdSenderAndIdGroup,
+  getMessageAndMemberByIdSenderAndIdGroup,
+} from "../../../services/Message_Service";
 import { useSelector } from "react-redux";
 import { Virtuoso } from "react-virtuoso";
 import { useSubscription } from "react-stomp-hooks";
@@ -52,10 +56,13 @@ export default function ChatRoom({ idConversation, setIndex }) {
     let mess = JSON.parse(message.body);
     console.log(mess);
     if (
-      mess.receiver.id === idConversation ||
-      mess.sender.id === owner.id ||
-      mess.receiver.id === owner.id
+      mess.receiver.id === idConversation 
     ) {
+      console.log(idConversation);
+      console.log(mess.sender.id);
+      console.log(mess.receiver.id);
+
+      console.log(mess);
       getMessageByIdSenderAndIsReceiver(owner.id, idConversation, (data) => {
         setMessages(data.slice().reverse());
       });
@@ -93,6 +100,25 @@ export default function ChatRoom({ idConversation, setIndex }) {
         item.conversationType === "group" &&
         item.idGroup === idConversation
       ) {
+        getInfo(item);
+        console.log(item);
+        await getMessageAndMemberByIdSenderAndIdGroup(
+          owner.id,
+          item.idGroup,
+          async (mess) => {
+            console.log(mess);
+            scrollToButtom();
+            let members = await getMemberByIdSenderAndIdGroup(
+              owner.id,
+              item.idGroup
+            );
+
+            console.log(members);
+            setMessages(mess.slice().reverse());
+            setConversation({ ...item, members: members });
+            setIsLoad(true);
+          }
+        );
         return item;
       } else if (
         item.conversationType === "single" &&
@@ -104,17 +130,16 @@ export default function ChatRoom({ idConversation, setIndex }) {
           item.user.id,
           (mess) => {
             console.log(mess);
-
             setMessages(mess.slice().reverse());
             setIsLoad(true);
+            scrollToButtom();
+            setConversation(conversation[0]);
           }
         );
         return item;
       }
     });
 
-    scrollToButtom();
-    setConversation(conversation[0]);
     // eslint-disable-next-line
   }, [idConversation]);
 
@@ -238,6 +263,10 @@ export default function ChatRoom({ idConversation, setIndex }) {
 
   function getInfo(conversation) {
     if (conversation?.conversationType === "group") {
+      console.log(conversation.avtGroup);
+      setAvtMember(conversation.avtGroup);
+      setNameConversation(conversation.nameGroup);
+      setReceiver({ id: conversation.idGroup });
     } else if (conversation?.conversationType === "single") {
       setAvtMember(conversation.user.avt);
       setNameConversation(conversation.user.userName);
@@ -403,7 +432,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
                 />
               </div>
               {showImageVideo && (
-                <div className="bg-slate-200 h-fit flex flex-row flex-wrap">
+                <div className="bg-slate-200 h-1000 flex flex-row flex-wrap">
                   {filterImageVideo(messages).map((item) => {
                     if (item.messageType === "VIDEO") {
                       return (

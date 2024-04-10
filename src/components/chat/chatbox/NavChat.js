@@ -11,6 +11,17 @@ export default function NavChat({ indexSelect, setIndex, showSearch }) {
   useSubscription("/user/" + data.id + "/singleChat", (messages) => {
     dispatch(getAPI(data.id));
   });
+
+  useSubscription("/user/" + data.id + "/deleteConversation", (messages) => {
+    const mess = JSON.parse(messages.body);
+    if (!mess.conversationType) {
+      alert("Xoá không thành công");
+    } else {
+      dispatch(getAPI(data.id));
+    }
+
+    // dispatch(getAPI(data.id));
+  });
   useEffect(() => {
     setIndex(idConversation);
     // eslint-disable-next-line
