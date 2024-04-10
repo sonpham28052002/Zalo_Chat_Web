@@ -56,7 +56,7 @@ function ViewFriendRequests() {
         return (
             <div className="flex flex-row w-full flex-wrap">
                 {list.map(item => (
-                    <button key={item.id} className="flex flex-col justify-around bg-white rounded mb-2 p-3 h-[150px] request-item">
+                    <div key={item.id} className="flex flex-col justify-around bg-white rounded mb-2 p-3 h-[150px] request-item cursor-pointer">
                         <div className="flex flex-row items-center">
                             <div className="img-avatar rounded-full bg-cover bg-center mr-4" style={{ backgroundImage: `url(${item.path})` }}></div>
                             <div className="flex flex-col items-start" >
@@ -73,7 +73,7 @@ function ViewFriendRequests() {
                                 <p className="font-semibold">Kết bạn</p>
                             </button>
                         </div>
-                    </button>
+                    </div>
                 ))}
             </div>
         )

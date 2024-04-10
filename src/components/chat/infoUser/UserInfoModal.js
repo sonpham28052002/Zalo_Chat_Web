@@ -59,6 +59,10 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                       title="Thay đổi ảnh bìa"
                       onChange={async (e) => {
                         if (e.target.files[0]) {
+                          if (e.target.files[0].size > 10 * 1024 * 1024) {
+                            alert("File quá lớn, vui lòng chọn file <10MB");
+                            return;
+                        }
                           const url = await uploadFile(e.target.files[0]);
                           setImg(url);
                           setIsOpen(!isOpen);
@@ -87,6 +91,10 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                         title="Thay đổi ảnh đại diện"
                         onChange={async (e) => {
                           if (e.target.files[0]) {
+                            if (e.target.files[0].size > 10 * 1024 * 1024) {
+                              alert("File quá lớn, vui lòng chọn file <10MB");
+                              return;
+                          }
                             const url = await uploadFile(e.target.files[0]);
                             setImg(url);
                             setIsOpen(!isOpen);

@@ -2,21 +2,24 @@ import { AnimatePresence, motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux';
-import { putAPI } from "../../../redux_Toolkit/slices";
+import { getAPI } from "../../../redux_Toolkit/slices";
+import { updateUserInfo } from "../../../services/User_service";
 export default function AvtModal({ isOpen, setIsOpen, url }) {
     const dispatch = useDispatch();
     var owner = useSelector((state) => state.data);
-    const handleUpdateAvt = () => {
-        let infoUpdateUser = { ...owner }
+
+    const handleUpdateAvt = async () => {
+        let infoUpdateUser = { ...owner };
         infoUpdateUser.avt = url;
         try {
-            dispatch(putAPI(infoUpdateUser));                 
+          await updateUserInfo(infoUpdateUser);
+          dispatch(getAPI(owner.id)).then(alert("Cập nhật thành công"));
         } catch (error) {
-            alert("Thao tác thất bại, vui lòng thử lại sau")
-            return;
+          alert("Thao tác thất bại, vui lòng thử lại sau");
+          return;
         }
-        alert("Cập nhật thành công")
-    }
+      };
+
 
     return (
         <AnimatePresence>
