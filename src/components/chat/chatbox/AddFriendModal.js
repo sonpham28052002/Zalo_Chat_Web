@@ -36,16 +36,18 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
     }
 
     function FriendView() {
-        console.log(friend)
         return (
             <div className="flex flex-col items-center justify-center h-40 w-full">
-                <div className="flex flex-col items-center justify-center h-40 w-full">
-                    <img alt="User Avatar" src={friend.avt} className="h-20 w-20 rounded-full" />
+
+                <p className='self-start font-semibold text-xl m-2 mt-14'>Thông tin người dùng</p>
+                <div className="flex flex-col items-center justify-center h-48 w-full m-1">
+                    <div className='bg-black h-[1px] w-2/3 self-start'></div>
+                    <img alt="User Avatar" src={friend.avt} className="h-32 w-32 rounded-full" />
                     <p className="font-semibold text-center">{friend.userName}</p>
                     <p className="text-center">{"+" + friend.phone}</p>
                 </div>
 
-                <div className='flex flex-row justify-end h-10 w-2/3 mt-5 '>
+                <div className='flex flex-row  h-10 w-2/3 mt-3 '>
                     {checkFriend()
                         ?
                         <button className="btn-request rounded mr-5 text-center items-center justify-between h-8 bg-green-100" onClick={() => { closeModal() }}>
@@ -91,7 +93,7 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
                             zIndex: 1000,
                         }}
                     >
-                        <div className='flex flex-col h-[400] w-[350px]'>
+                        <div className='flex flex-col h-[470px] w-[350px]'>
                             <div className='flex flex-col'>
                                 <div className="pl-6 bg-white flex flex-row justify-between mb-2">
                                     <p className="font-medium">Thêm bạn</p>
@@ -140,7 +142,7 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
                                         FriendView(friend)
                                     )}
 
-                                <div className='bg-gray-300 h-[2px] mb-2 mt-14'></div>
+                                <div className='bg-gray-300 h-[2px] mb-2 mt-32'></div>
 
                                 <div className="flex flex-row h-10 w-2/3 mt-auto self-end ">
                                     <button className="btn-request btn-blur-gray rounded mr-5 text-center items-center justify-between" onClick={() => { closeModal() }}>
