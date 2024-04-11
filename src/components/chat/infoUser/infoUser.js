@@ -19,12 +19,11 @@ export default function InfoUser() {
         <div>
           <Menu.Button className="inline-flex w-full justify-center ">
             <img
-              className="rounded-full h-12 mb-4 border border-white"
+              className="rounded-full h-12 w-12 mb-4 border border-white"
               alt="#"
               src={user.avt}
             ></img>
           </Menu.Button>
-
         </div>
 
         <Transition
@@ -71,7 +70,7 @@ export default function InfoUser() {
             </Menu.Item>
           </Menu.Items>
         </Transition>
-      </Menu>      
+      </Menu>
       <UserInfoModal
         isOpen={isOpenInforUser}
         setIsOpen={setIsOpenInforUser}

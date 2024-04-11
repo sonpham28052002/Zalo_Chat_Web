@@ -15,6 +15,16 @@ export default function RetrieveMessages({ avt, message, conversation }) {
     const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
     return `${formattedHours}:${formattedMinutes}`;
   }
+
+  function getImageUserChat(userId, conversation) {
+    if (conversation.conversationType === "group") {
+      return conversation.members.filter((item) => item.member.id === userId)[0]
+        .member.avt;
+    } else {
+      return avt;
+    }
+  }
+
   return (
     <div
       ref={refMessage}
@@ -26,10 +36,10 @@ export default function RetrieveMessages({ avt, message, conversation }) {
       key={message.id}
     >
       {owner.id === message.sender.id && (
-        <HandleMessage message={message} refMessage={refMessage} />
+        <HandleMessage message={message} refMessage={refMessage} conversation={conversation}/>
       )}
       {owner.id !== message.sender.id && (
-        <img src={avt} alt="#" className="h-12 w-12 rounded-full mr-3" />
+        <img src={getImageUserChat(message.sender.id, conversation)} alt="#" className="h-12 w-12 rounded-full mr-3" />
       )}
 
       <div className=" relative h-fit max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-col justify-start items-center border  shadow-lg p-2 ">
@@ -45,7 +55,7 @@ export default function RetrieveMessages({ avt, message, conversation }) {
         </div>
       </div>
       {owner.id !== message.sender.id && (
-        <HandleMessage message={message} refMessage={refMessage} />
+        <HandleMessage message={message} refMessage={refMessage} conversation={conversation} />
       )}
     </div>
   );

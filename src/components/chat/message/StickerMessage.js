@@ -7,6 +7,7 @@ export default function StickerMessage({
   avt,
   sticker,
   setIsOpenForwardMessage,
+  conversation,
 }) {
   var owner = useSelector((state) => state.data);
   var refMessage = useRef(null);
@@ -22,8 +23,17 @@ export default function StickerMessage({
 
     if (formattedHours) {
       return `${formattedHours}:${formattedMinutes}`;
-    }else{
+    } else {
       return "đang gửi...";
+    }
+  }
+
+  function getImageUserChat(userId, conversation) {
+    if (conversation.conversationType === "group") {
+      return conversation.members.filter((item) => item.member.id === userId)[0]
+        .member.avt;
+    } else {
+      return avt;
     }
   }
   return (
@@ -38,7 +48,11 @@ export default function StickerMessage({
           key={sticker.id}
         >
           {owner.id !== sticker.sender.id && (
-            <img src={avt} alt="#" className="h-12 w-12 rounded-full mr-3" />
+            <img
+              src={getImageUserChat(sticker.sender.id, conversation)}
+              alt="#"
+              className="h-12 w-12 rounded-full mr-3"
+            />
           )}
           <div className="mb-4">
             {owner.id === sticker.sender.id && (
@@ -47,6 +61,7 @@ export default function StickerMessage({
                 message={sticker}
                 setIsRetrieve={setIsRetrieve}
                 setIsOpenForwardMessage={setIsOpenForwardMessage}
+                conversation={conversation}
               />
             )}
           </div>
@@ -64,11 +79,15 @@ export default function StickerMessage({
               message={sticker}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
             />
           )}
         </div>
       ) : (
-        <RetrieveMessages message={sticker} avt={avt} />
+        <RetrieveMessages
+          message={sticker}
+          avt={getImageUserChat(sticker.sender.id, conversation)}
+        />
       )}
     </div>
   );

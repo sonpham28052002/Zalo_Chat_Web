@@ -20,7 +20,6 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
   useEffect(() => {
     getInfoUserById(userId, setUser);
   }, [isOpen, userId]);
-
   return (
     <AnimatePresence>
       {isOpen && (

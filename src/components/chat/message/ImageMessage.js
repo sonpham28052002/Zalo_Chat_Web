@@ -9,6 +9,7 @@ export default function ImageMessage({
   image,
   ownerID,
   setIsOpenForwardMessage,
+  conversation,
 }) {
   let [messageLocal, setMessageLocal] = useState(image);
   var owner = useSelector((state) => state.data);
@@ -21,8 +22,22 @@ export default function ImageMessage({
     const minutes = newDate.getMinutes();
     const formattedHours = hours < 10 ? "0" + hours : hours;
     const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
-    return `${formattedHours}:${formattedMinutes}`;
+    if (formattedHours) {
+      return `${formattedHours}:${formattedMinutes}`;
+    } else {
+      return "đang gửi...";
+    }
   }
+
+  function getImageUserChat(userId, conversation) {
+    if (conversation.conversationType === "group") {
+      return conversation.members.filter((item) => item.member.id === userId)[0]
+        .member.avt;
+    } else {
+      return avt;
+    }
+  }
+
   return (
     <div className="h-fit">
       {!isRetrieve ? (
@@ -36,7 +51,11 @@ export default function ImageMessage({
           key={image.id}
         >
           {owner.id !== image.sender.id && (
-            <img src={avt} alt="#" className="h-12 w-12 rounded-full mr-3" />
+            <img
+              src={getImageUserChat(image.sender.id, conversation)}
+              alt="#"
+              className="h-12 w-12 rounded-full mr-3"
+            />
           )}
           {owner.id === image.sender.id && (
             <HandleMessage
@@ -44,6 +63,8 @@ export default function ImageMessage({
               message={image}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
+
             />
           )}
           <div className="relative h-full max-w-[40%] w-fit border shadow-lg rounded-md ">
@@ -59,7 +80,7 @@ export default function ImageMessage({
                 {addHoursAndFormatToHHMM(new Date(image.senderDate), 7)}
               </span>
               <NavIconInteract
-                check={ownerID === image.receiver.id}
+                check={ownerID !== image.sender.id}
                 icon={image.interact}
                 setMessage={setMessageLocal}
                 message={messageLocal}
@@ -72,11 +93,16 @@ export default function ImageMessage({
               message={image}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
+
             />
           )}
         </div>
       ) : (
-        <RetrieveMessages message={image} avt={avt} />
+        <RetrieveMessages
+          message={image}
+          avt={getImageUserChat(image.sender.id, conversation)}
+        />
       )}
     </div>
   );

@@ -10,7 +10,12 @@ import { BsDownload } from "react-icons/bs";
 import { IoLogoHtml5 } from "react-icons/io";
 import { LuFileJson } from "react-icons/lu";
 
-export default function FileMessage({ avt, file, setIsOpenForwardMessage }) {
+export default function FileMessage({
+  avt,
+  file,
+  setIsOpenForwardMessage,
+  conversation,
+}) {
   let [messageLocal, setMessageLocal] = useState(file);
   var owner = useSelector((state) => state.data);
   var [isRetrieve, setIsRetrieve] = useState(false);
@@ -25,6 +30,14 @@ export default function FileMessage({ avt, file, setIsOpenForwardMessage }) {
       return (size / (1024 * 1024)).toFixed(2) + "MB";
     } else {
       return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB";
+    }
+  }
+  function getImageUserChat(userId, conversation) {
+    if (conversation.conversationType === "group") {
+      return conversation.members.filter((item) => item.member.id === userId)[0]
+        .member.avt;
+    } else {
+      return avt;
     }
   }
   function renderIconFile(type) {
@@ -81,7 +94,11 @@ export default function FileMessage({ avt, file, setIsOpenForwardMessage }) {
           key={file.id}
         >
           {owner.id !== file.sender.id && (
-            <img src={avt} alt="#" className="h-12 w-12 rounded-full mr-3" />
+            <img
+              src={getImageUserChat(file.sender.id, conversation)}
+              alt="#"
+              className="h-12 w-12 rounded-full mr-3"
+            />
           )}
           {owner.id === file.sender.id && (
             <HandleMessage
@@ -89,6 +106,7 @@ export default function FileMessage({ avt, file, setIsOpenForwardMessage }) {
               message={file}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
             />
           )}
           <div className="relative h-full max-w-[40%] w-fit border shadow-lg rounded-md bg-[#e5efff]">
@@ -128,7 +146,7 @@ export default function FileMessage({ avt, file, setIsOpenForwardMessage }) {
                 {addHoursAndFormatToHHMM(new Date(file.senderDate), 7)}
               </span>
               <NavIconInteract
-                check={owner.id === file.receiver.id}
+                check={owner.id === file.sender.id}
                 icon={file.ract}
                 setMessage={setMessageLocal}
                 message={messageLocal}
@@ -141,11 +159,15 @@ export default function FileMessage({ avt, file, setIsOpenForwardMessage }) {
               message={file}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
             />
           )}
         </div>
       ) : (
-        <RetrieveMessages message={file} avt={avt} />
+        <RetrieveMessages
+          message={file}
+          avt={getImageUserChat(file.sender.id, conversation)}
+        />
       )}
     </div>
   );

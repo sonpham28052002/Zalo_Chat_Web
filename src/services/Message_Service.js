@@ -8,6 +8,40 @@ var getMessageByIdSenderAndIsReceiver = (idSender, idReceiver, callBack) => {
       callBack(data);
     });
 };
+var getMessageAndMemberByIdSenderAndIdGroup = (idSender, idGroup, callBack) => {
+  fetch(
+    `${host}/messages/getMessageAndMemberByIdSenderAndIdGroup?idSender=${idSender}&idGroup=${idGroup}`
+  )
+    .then((resp) => resp.json())
+    .then((data) => {
+      if (data && data.length > 0) {
+        callBack(data);
+      } else {
+        callBack([]);
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching message:", error);
+      callBack(false, null);
+    });
+};
+
+var getMemberByIdSenderAndIdGroup = async (idSender, idGroup) => {
+  try {
+    const res = await fetch(
+      `${host}/messages/getMemberByIdSenderAndIdGroup?idSender=${idSender}&idGroup=${idGroup}`
+    );
+    console.log(res);
+    if (!res.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching member data:", error);
+    throw error; // Ném lỗi để bên gọi có thể xử lý
+  }
+};
 
 const deleteMessageByIdOrGroupId = async (message, ownerId, idGroup) => {
   try {
@@ -24,7 +58,6 @@ const deleteMessageByIdOrGroupId = async (message, ownerId, idGroup) => {
     if (!res.ok) {
       throw new Error("Something went wrong");
     }
-
     return res.json();
   } catch (error) {
     console.error("Error:", error);
@@ -32,4 +65,9 @@ const deleteMessageByIdOrGroupId = async (message, ownerId, idGroup) => {
   }
 };
 
-export { getMessageByIdSenderAndIsReceiver, deleteMessageByIdOrGroupId };
+export {
+  getMessageByIdSenderAndIsReceiver,
+  deleteMessageByIdOrGroupId,
+  getMessageAndMemberByIdSenderAndIdGroup,
+  getMemberByIdSenderAndIdGroup,
+};

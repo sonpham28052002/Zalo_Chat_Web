@@ -1,6 +1,6 @@
 import React from "react";
-import { BsThreeDots } from "react-icons/bs";
 import { useSelector } from "react-redux";
+import NavChatOption from "./NavChatOption";
 
 export default function TabChat({ conversation, indexSelect, setIndex }) {
   var owner = useSelector((state) => state.data);
@@ -51,9 +51,7 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
         <span className="text-slate-400">{viewLastMessage}</span>
       </div>
       <div className="flex flex-row justify-center items-center w-1/6">
-        <div className=" flex flex-row justify-center items-center h-7 w-7 rounded-md hover:bg-slate-200">
-          <BsThreeDots className="text-gray-400" />
-        </div>
+        <NavChatOption conversation={conversation} ownerId={owner.id} />
       </div>
     </div>
   );
