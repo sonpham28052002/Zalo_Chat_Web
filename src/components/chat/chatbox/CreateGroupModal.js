@@ -13,7 +13,7 @@ export default function CreateGroupModal({ isOpen, setIsOpen }) {
     const [selectedFile, setSelectedFile] = useState(null);
     var nameRef = useRef(null);
     const [activeTab, setActiveTab] = useState("select");
-    const [addSender, setAddSend] = useState([]);
+    // const [addSender, setAddSend] = useState([]);
     const handleTabClick = (tabId) => {
         setActiveTab(tabId);
     };
@@ -168,7 +168,7 @@ export default function CreateGroupModal({ isOpen, setIsOpen }) {
                                 ) : (
                                     <FriendList className="scrollable-div h-[80px] overflow-auto" list={list} />
                                 )} */}
-                                <FriendList className="scrollable-div h-[80px] overflow-auto" list={addSender} />
+                                <FriendList className="scrollable-div h-[80px] overflow-auto" list={list} />
                                 
 
                                 
