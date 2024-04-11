@@ -9,6 +9,7 @@ export default function VideoMessage({
   video,
   ownerID,
   setIsOpenForwardMessage,
+  conversation,
 }) {
   let [messageLocal, setMessageLocal] = useState(video);
   var owner = useSelector((state) => state.data);
@@ -28,6 +29,16 @@ export default function VideoMessage({
       return "đang gửi...";
     }
   }
+
+  function getImageUserChat(userId, conversation) {
+    if (conversation.conversationType === "group") {
+      return conversation.members.filter((item) => item.member.id === userId)[0]
+        .member.avt;
+    } else {
+      return avt;
+    }
+  }
+
   return (
     <div className="h-fit">
       {!isRetrieve ? (
@@ -41,7 +52,11 @@ export default function VideoMessage({
           key={video.id}
         >
           {owner.id !== video.sender.id && (
-            <img src={avt} alt="#" className="h-12 w-12 rounded-full mr-3" />
+            <img
+              src={getImageUserChat(video.sender.id, conversation)}
+              alt="#"
+              className="h-12 w-12 rounded-full mr-3"
+            />
           )}
           {owner.id === video.sender.id && (
             <HandleMessage
@@ -49,6 +64,7 @@ export default function VideoMessage({
               message={video}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
             />
           )}
           <div className="relative h-full max-w-[40%] w-fit border shadow-lg rounded-md ">
@@ -74,7 +90,7 @@ export default function VideoMessage({
                 {addHoursAndFormatToHHMM(new Date(video.senderDate), 7)}
               </span>
               <NavIconInteract
-                check={ownerID === video.receiver.id}
+                check={ownerID !== video.sender.id}
                 icon={video.ract}
                 setMessage={setMessageLocal}
                 message={messageLocal}
@@ -87,11 +103,15 @@ export default function VideoMessage({
               message={video}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
             />
           )}
         </div>
       ) : (
-        <RetrieveMessages message={video} avt={avt} />
+        <RetrieveMessages
+          message={video}
+          avt={getImageUserChat(video.sender.id, conversation)}
+        />
       )}
     </div>
   );

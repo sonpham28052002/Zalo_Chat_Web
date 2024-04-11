@@ -10,6 +10,7 @@ export default function HandleMessage({
   message,
   setIsRetrieve,
   setIsOpenForwardMessage,
+  conversation,
 }) {
   var owner = useSelector((state) => state.data);
 
@@ -35,20 +36,37 @@ export default function HandleMessage({
   });
 
   var handleDeleteMessage = async () => {
-    const idGroup = "";
-    const ownerId = owner.id;
-    const text = { ...message, idGroup, ownerId };
-    stompClient.send("/app/delete-message", {}, JSON.stringify(text));
+    console.log(conversation);
+    if (conversation.conversationType === "group") {
+      const idGroup = conversation.idGroup;
+      const ownerId = owner.id;
+      const text = { ...message, idGroup, ownerId };
+      stompClient.send("/app/delete-message", {}, JSON.stringify(text));
+    } else {
+      const idGroup = "";
+      const ownerId = owner.id;
+      const text = { ...message, idGroup, ownerId };
+      stompClient.send("/app/delete-message", {}, JSON.stringify(text));
+    }
   };
   function handleRetrieveMessage() {
     console.log(message.senderDate);
     console.log(new Date().toLocaleTimeString());
-    if (isOver24Hours(message.senderDate)) {
-      alert("Tin nhắn đã quá 24h. bạn không thể xoá được.")
+    if (conversation.conversationType === "group") {
+      message.receiver = { id: "group_" + conversation.idGroup };
+      stompClient.send("/app/retrieve-message", {}, JSON.stringify(message));
+      setIsRetrieve(true);
     } else {
       setIsRetrieve(true);
       stompClient.send("/app/retrieve-message", {}, JSON.stringify(message));
     }
+
+    // if (isOver24Hours(message.senderDate)) {
+    //   alert("Tin nhắn đã quá 24h. bạn không thể xoá được.");
+    // } else {
+    //   setIsRetrieve(true);
+    //   stompClient.send("/app/retrieve-message", {}, JSON.stringify(message));
+    // }
   }
   function handleShareMessage() {
     console.log("son");

@@ -11,6 +11,7 @@ export default function Conversation({
   avt,
   item,
   index,
+  conversation,
   setIsOpenForwardMessage,
 }) {
   switch (item.messageType) {
@@ -21,6 +22,7 @@ export default function Conversation({
           key={item.id}
           index={index}
           message={item}
+          conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
         />
       );
@@ -30,6 +32,7 @@ export default function Conversation({
           avt={avt}
           key={item.id}
           sticker={item}
+          conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
         />
       );
@@ -42,17 +45,26 @@ export default function Conversation({
           avt={avt}
           key={item.id}
           image={item}
+          conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
         />
       );
     case "RETRIEVE":
-      return <RetrieveMessages avt={avt} key={item.id} message={item} />;
+      return (
+        <RetrieveMessages
+          avt={avt}
+          key={item.id}
+          message={item}
+          conversation={conversation}
+        />
+      );
     case "VIDEO":
       return (
         <VideoMessage
           avt={avt}
           key={item.id}
           video={item}
+          conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
         />
       );
@@ -62,6 +74,7 @@ export default function Conversation({
           avt={avt}
           key={item.id}
           vioce={item}
+          conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
         />
       );
@@ -83,6 +96,7 @@ export default function Conversation({
           avt={avt}
           key={item.id}
           file={item}
+          conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
         />
       );
@@ -92,6 +106,7 @@ export default function Conversation({
           avt={avt}
           key={item.id}
           file={item}
+          conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
         />
       );

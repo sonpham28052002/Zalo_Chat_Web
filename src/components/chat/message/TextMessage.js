@@ -11,6 +11,16 @@ export default function TextMessage({
   conversation,
   setIsOpenForwardMessage,
 }) {
+  function getImageUserChat(userId, conversation) {
+    console.log(conversation);
+    if (conversation.conversationType === "group") {
+      console.log("avt");
+      return conversation.members.filter((item) => item.member.id === userId)[0]
+        .member.avt;
+    }
+    console.log(avt);
+    return avt;
+  }
   var owner = useSelector((state) => state.data);
   var refMessage = useRef(null);
   let [messageLocal, setMessageLocal] = useState(message);
@@ -31,7 +41,7 @@ export default function TextMessage({
   }
 
   return (
-    <div className="h-fit">
+    <div className="min-h-5 py-1">
       {!isRetrieve ? (
         <div
           ref={refMessage}
@@ -43,15 +53,19 @@ export default function TextMessage({
           key={message.id}
         >
           {owner.id !== message.sender.id && (
-            <img src={avt} alt="#" className="h-12 w-12 rounded-full mr-3" />
+            <img
+              src={getImageUserChat(message.sender.id, conversation)}
+              alt="#"
+              className="h-12 w-12 rounded-full mr-3"
+            />
           )}
-
           {owner.id === message.sender.id && (
             <HandleMessage
               refMessage={refMessage}
               message={message}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
             />
           )}
           <div className=" relative h-fit max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-col justify-start items-center border  shadow-lg p-2">
@@ -92,11 +106,15 @@ export default function TextMessage({
               message={message}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              conversation={conversation}
             />
           )}
         </div>
       ) : (
-        <RetrieveMessages avt={avt} message={message} />
+        <RetrieveMessages
+          avt={getImageUserChat(message.sender.id, conversation)}
+          message={message}
+        />
       )}
     </div>
   );
