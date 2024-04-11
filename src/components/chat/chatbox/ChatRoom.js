@@ -141,7 +141,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
             setMessages(mess.slice().reverse());
             setIsLoad(true);
             scrollToButtom();
-            setConversation(conversation[0]);
+            setConversation({...item});
           }
         );
         return item;
@@ -263,6 +263,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
         id: owner.friendList[index].user.id,
         name: owner.friendList[index].user.userName,
         avt: owner.friendList[index].user.avt,
+        type: "single",
       });
     }
     setFriend(arrFriend);
@@ -270,6 +271,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
   }, [owner.conversation, owner.friendList]);
 
   function getInfo(conversation) {
+    console.log(conversation)
     if (conversation?.conversationType === "group") {
       console.log(conversation.avtGroup);
       setAvtMember(conversation.avtGroup);

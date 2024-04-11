@@ -36,7 +36,7 @@ export default function RetrieveMessages({ avt, message, conversation }) {
       key={message.id}
     >
       {owner.id === message.sender.id && (
-        <HandleMessage message={message} refMessage={refMessage} />
+        <HandleMessage message={message} refMessage={refMessage} conversation={conversation}/>
       )}
       {owner.id !== message.sender.id && (
         <img src={getImageUserChat(message.sender.id, conversation)} alt="#" className="h-12 w-12 rounded-full mr-3" />

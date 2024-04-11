@@ -50,7 +50,14 @@ export default function Conversation({
         />
       );
     case "RETRIEVE":
-      return <RetrieveMessages avt={avt} key={item.id} message={item} />;
+      return (
+        <RetrieveMessages
+          avt={avt}
+          key={item.id}
+          message={item}
+          conversation={conversation}
+        />
+      );
     case "VIDEO":
       return (
         <VideoMessage
