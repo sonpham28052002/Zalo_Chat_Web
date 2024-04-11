@@ -37,28 +37,55 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
 
     function FriendView() {
         return (
-            <div className="flex flex-col items-center justify-center h-40 w-full">
+            <div className="flex flex-col items-center justify-center h-60 w-full">
+                <img alt="User Avatar" src={friend.avt} className="h-32 w-32 rounded-full mt-10" />                
+                <div className="bg-white w-full mt-1 text-black px-12">
+                    <h1 className="font-semibold text-lg mb-2">Thông tin tài khoản</h1>
+                    <div className="h-6 px-1  flex flex-row items-center">
+                        <p className="w-28 text-sm font-sans  font-medium text-gray-400">
+                            Tên
+                        </p>
+                        <p className="w-28 font-sans text-sm">{friend.userName}</p>
+                    </div>
 
-                <p className='self-start font-semibold text-xl m-2 mt-14'>Thông tin người dùng</p>
-                <div className="flex flex-col items-center justify-center h-48 w-full m-1">
-                    <div className='bg-black h-[1px] w-2/3 self-start'></div>
-                    <img alt="User Avatar" src={friend.avt} className="h-32 w-32 rounded-full" />
-                    <p className="font-semibold text-center">{friend.userName}</p>
-                    <p className="text-center">{"+" + friend.phone}</p>
+                    <div className="h-6 px-1  flex flex-row items-center">
+                        <p className="w-28 text-sm font-sans  font-medium text-gray-400">
+                            Bio
+                        </p>
+                        <p className="w-28 font-sans text-sm">{friend.bio}</p>
+                    </div>
+                    <div className="h-6 px-1  flex flex-row items-center">
+                        <p className="w-28 text-sm font-sans  font-medium text-gray-400">
+                            Giới tính
+                        </p>
+                        <p className="w-28 font-sans text-sm">{friend.gender}</p>
+                    </div>
+                    <div className="h-6 px-1  flex flex-row items-center">
+                        <p className="w-28 text-sm font-sans  font-medium text-gray-400">
+                            Ngày sinh
+                        </p>
+                        <p className="w-28 font-sans text-sm">{friend.dob}</p>
+                    </div>
+                    <div className="h-6 px-1  flex flex-row items-center  ">
+                        <p className="w-28 text-sm font-sans  font-medium text-gray-400">
+                            Điện thoại
+                        </p>
+                        <p className="w-32 font-sans text-sm">+{friend.phone}</p>
+                    </div>
                 </div>
 
-                <div className='flex flex-row  h-10 w-2/3 mt-3 '>
+                <div className='flex flex-row h-12 w-2/3 mt-4 '>
                     {checkFriend()
                         ?
-                        <button className="btn-request rounded mr-5 text-center items-center justify-between h-8 bg-green-100" onClick={() => { closeModal() }}>
+                        <button className="btn-request rounded mr-5 text-center items-center justify-between h-10 bg-green-100">
                             <p className="font-semibold text-green-500">Đã là bạn bè</p>
                         </button>
                         :
-                        <button className="btn-request btn-blur-gray rounded mr-5 text-center items-center justify-between h-8" onClick={() => { closeModal() }}>
+                        <button className="btn-request btn-blur-gray rounded mr-5 text-center items-center justify-between h-10" onClick={() => { closeModal() }}>
                             <p className="font-semibold ">Kết bạn</p>
                         </button>
                     }
-                    <button className=' btn-request rounded btn-add-friend h-8' onClick={() => checkFriend()}>
+                    <button className=' btn-request rounded btn-add-friend h-10' onClick={() => checkFriend()}>
                         <p className="font-semibold ">Nhắn tin</p>
                     </button>
                 </div>
@@ -84,7 +111,7 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
                         exit={{ opacity: 0, y: -100 }}
                         style={{
                             position: 'fixed',
-                            top: '12%',
+                            top: '18%',
                             left: leftValue,
                             transform: 'translate(-50%, -50%)',
                             backgroundColor: 'white',
@@ -93,7 +120,7 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
                             zIndex: 1000,
                         }}
                     >
-                        <div className='flex flex-col h-[470px] w-[350px]'>
+                        <div className='flex flex-col h-[450px] w-[350px]'>
                             <div className='flex flex-col'>
                                 <div className="pl-6 bg-white flex flex-row justify-between mb-2">
                                     <p className="font-medium">Thêm bạn</p>
@@ -105,8 +132,8 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
                                     </div>
                                 </div>
                                 <div className='bg-gray-300 h-[1px]'></div>
-                                <div className='flex flex-row justify-between items-center h-24' >
-                                    <p className="font-semibold w-32">Nhập SĐT:</p>
+                                <div className='flex flex-row justify-center items-center h-24' >
+                                    <p className="font-semibold w-40">Nhập SĐT:</p>
                                     <PhoneInput
                                         country={"vn"}
                                         value={phone}
@@ -115,17 +142,20 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
                                         placeholder="xxx xxx xxx"
                                         inputStyle={{
                                             height: 20,
-                                            width: 200,
+                                            width: 180,
                                             fontWeight: "500",
                                             borderRadius: 6,
-                                            paddingTop: 20,
-                                            paddingBottom: 20,
+                                            paddingTop: 18,
+                                            paddingBottom: 15,
                                         }}
                                         buttonStyle={{
                                             borderBottomLeftRadius: 6,
                                             borderTopLeftRadius: 6,
                                         }}
                                     />
+                                    <button className="btn-blur-blue rounded h-8 w-20 mr-5" >
+                                        <p className="font-semibold text-white" onClick={() => { getUserByPhone() }}>Tìm</p>
+                                    </button>
                                 </div>
 
 
@@ -141,17 +171,6 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
                                         :
                                         FriendView(friend)
                                     )}
-
-                                <div className='bg-gray-300 h-[2px] mb-2 mt-32'></div>
-
-                                <div className="flex flex-row h-10 w-2/3 mt-auto self-end ">
-                                    <button className="btn-request btn-blur-gray rounded mr-5 text-center items-center justify-between" onClick={() => { closeModal() }}>
-                                        <p className="font-semibold ">Hủy</p>
-                                    </button>
-                                    <button className="btn-request btn-blur-blue rounded" >
-                                        <p className="font-semibold text-white" onClick={() => { getUserByPhone() }}>Tìm kiếm</p>
-                                    </button>
-                                </div>
                             </div>
                         </div>
 
