@@ -3,7 +3,14 @@ var getInfoUserById = (id, callBack) => {
   fetch(`${host}/users/getInfoUserById?id=${id}`)
     .then((resp) => resp.json())
     .then((data) => {
-      callBack(data);
+      if (data.id) {
+        callBack(data);
+      } else {
+        callBack(undefined);
+      }
+    })
+    .catch((e) => {
+      callBack(undefined);
     });
 };
 
@@ -50,9 +57,29 @@ const updateUserInfo = async (user) => {
     console.error(error);
     return false;
   }
-}
+};
 
+const getFriendRequestListByOwnerId = async (ownerId) => {
+  try {
+    const response = await fetch(
+      `${host}/users/getFriendRequestListByOwnerId?owner=${ownerId}`
+    );
+    const data = await response.json();
+    if (data && data.length > 0) {
+      return data;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
 
-
-
-export { getInfoUserById,insertUser, getUserById, updateUserInfo };
+export {
+  getInfoUserById,
+  insertUser,
+  getUserById,
+  updateUserInfo,
+  getFriendRequestListByOwnerId,
+};

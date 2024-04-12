@@ -6,25 +6,58 @@ import { uploadFile } from "../../../services/Azure_Service";
 import { useRef } from "react";
 import { IoCameraOutline } from "react-icons/io5";
 import { Virtuoso } from "react-virtuoso";
-
+import { v4 } from "uuid";
+import { stompClient } from "../../../socket/socket";
+import Loader from "../custom/loader";
 export default function CreateGroupModal({ isOpen, setIsOpen }) {
   var user = useSelector((state) => state.data);
-  const [img, setImg] = useState(undefined);
   const [selectedFile, setSelectedFile] = useState(undefined);
   var nameRef = useRef(undefined);
   const [activeTab, setActiveTab] = useState("select");
   const [addSender, setAddSend] = useState([]);
+  const [isLoad, setIsLoad] = useState(false);
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
   };
 
   function closeModal() {
     setIsOpen(false);
-    // setImg(null);
-    // setSelectedFile(null);
+    setSelectedFile(null);
+    setAddSend([]);
   }
 
   useEffect(() => {}, []);
+
+  var createGroup = async () => {
+    setIsLoad(true);
+    let url = undefined;
+    if (selectedFile) {
+      url = await uploadFile(selectedFile);
+    }
+    var array = [];
+    for (var i = 0; i < addSender.length; i++) {
+      const member = {
+        member: { id: addSender[i].id },
+        memberType: "MEMBER",
+      };
+      array.push(member);
+    }
+    const member = {
+      member: { id: user.id },
+      memberType: "GROUP_LEADER",
+    };
+    array.push(member);
+    var group = {
+      conversationType: "group",
+      idGroup: v4(),
+      members: array,
+      avtGroup: url,
+      nameGroup: nameRef.current.value,
+      status: "READ_ONLY",
+    };
+    stompClient.send("/app/createGroup", {}, JSON.stringify(group));
+    setIsLoad(false);
+  };
 
   function addToUniqueArray(newItem, actionType) {
     if (actionType === "add") {
@@ -38,9 +71,6 @@ export default function CreateGroupModal({ isOpen, setIsOpen }) {
   }
 
   function isItemExistInArray(item) {
-    console.log(addSender);
-    console.log(item.id);
-
     return addSender.some((element) => element.id === item.id);
   }
 
@@ -110,7 +140,7 @@ export default function CreateGroupModal({ isOpen, setIsOpen }) {
                 <div className="pl-6 bg-white w-full flex flex-row justify-between mb-2 border-b">
                   <p className="font-medium">Tạo nhóm</p>
                   <div
-                    className=" flex text-xl font-medium mr-2 justify-center items-center h-7 w-7 btn-close"
+                    className=" flex text-xl font-medium mr-2  justify-center items-center h-7 w-7 btn-close"
                     onClick={() => {
                       closeModal();
                     }}
@@ -124,11 +154,11 @@ export default function CreateGroupModal({ isOpen, setIsOpen }) {
                     htmlFor="avtGroup"
                     className="rounded-full h-14 w-14 flex flex-row justify-center items-center bg-slate-400 mr-2  hover:text-white"
                   >
-                    {img === undefined ? (
+                    {selectedFile === undefined ? (
                       <IoCameraOutline className=" text-2xl " />
                     ) : (
                       <img
-                        src={URL.createObjectURL(img)}
+                        src={URL.createObjectURL(selectedFile)}
                         className="w-full h-full rounded-full"
                         alt="."
                       />
@@ -146,7 +176,6 @@ export default function CreateGroupModal({ isOpen, setIsOpen }) {
                           return;
                         }
                         setSelectedFile(e.target.files[0]);
-                        setImg(e.target.files[0]);
                       }
                     }}
                   />
@@ -257,7 +286,6 @@ export default function CreateGroupModal({ isOpen, setIsOpen }) {
                   <button
                     className="btn-request btn-blur-blue rounded"
                     onClick={async () => {
-                      var array = [];
                       if (addSender.length < 2) {
                         alert("Nhóm phải có ít nhất 3 người");
                         return;
@@ -266,21 +294,15 @@ export default function CreateGroupModal({ isOpen, setIsOpen }) {
                         alert("Tên nhóm không được để trống");
                         return;
                       }
-                      const url = await uploadFile(selectedFile);
-                      for (var i = 0; i < addSender.length; i++) {
-                        console.log(addSender[i].value);
-                        array.push(addSender[i].value);
-                      }
-                      let group = {
-                        nameGroup: nameRef.current.value,
-                        members: array,
-                        avtGroup: url,
-                      };
-                      console.log(group);
+                      await createGroup();
                       closeModal();
                     }}
                   >
-                    <p className="font-semibold text-white">Tạo nhóm</p>
+                    {isLoad ? (
+                      <Loader />
+                    ) : (
+                      <p className="font-semibold text-white">Tạo nhóm</p>
+                    )}
                   </button>
                 </div>
               </div>
