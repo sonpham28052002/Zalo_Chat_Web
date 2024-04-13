@@ -16,15 +16,18 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
   const [isOpenUpdateInfoModal, setIsOpenUpdateInfoModal] = useState(false);
   const [isOpenImageModal, setIsOpenImageModal] = useState(false);
   const [isOpenBgModal, setIsOpenBgModal] = useState(false);
-  const [isOpenChangePasswordModal, setIsOpenChangePasswordModal] = useState(false)
+  const [isOpenChangePasswordModal, setIsOpenChangePasswordModal] =
+    useState(false);
   let [img, setImg] = useState("");
 
   useEffect(() => {
-    getInfoUserById(userId, setUser);
+    if (isOpen) {
+      getInfoUserById(userId, setUser);
+    }
   }, [isOpen, userId]);
   return (
     <AnimatePresence>
-      {isOpen && (
+      {isOpen && user && (
         <motion.div
           onClick={() => setIsOpen(false)}
           className="bg-slate-900/20 backdrop-blur p-8 fixed inset-0 z-50 grid place-items-center overflow-y-scroll cursor-pointer "
@@ -51,7 +54,7 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                 <img
                   alt="#"
                   className="h-full min-w-96 max-w-96 bg-cover bg-repeat-x"
-                  src={user.coverImage}
+                  src={user?.coverImage}
                 />
                 {owner.id === user.id ? (
                   <div className="absolute top-0 right-0 m-2 w-7 h-7 border flex flex-row items-center rounded-full justify-center bg-slate-300 hover:bg-slate-400">
@@ -168,7 +171,8 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                       >
                         Thay đổi mật khẩu
                       </button> */}
-                      <button className="h-10 w-1/2 bg-blue-600 text-white rounded-md  hover:bg-blue-700 self-center m-5"
+                      <button
+                        className="h-10 w-1/2 bg-blue-600 text-white rounded-md  hover:bg-blue-700 self-center m-5"
                         onClick={() => {
                           setIsOpen(!isOpen);
                           setIsOpenUpdateInfoModal(true);
@@ -176,7 +180,8 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                       >
                         Cập nhật thông tin
                       </button>
-                      <button className="h-10 w-1/2 bg-blue-600 text-white rounded-md hover:bg-blue-700 self-center"
+                      <button
+                        className="h-10 w-1/2 bg-blue-600 text-white rounded-md hover:bg-blue-700 self-center"
                         onClick={() => {
                           setIsOpen(!isOpen);
                           setIsOpenChangePasswordModal(true);

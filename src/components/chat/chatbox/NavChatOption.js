@@ -2,7 +2,7 @@ import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { stompClient } from "../../../socket/socket";
-export default function NavChatOption({ conversation, ownerId }) {
+export default function NavChatOption({ conversation, ownerId, setIndex }) {
   function deleteConversation(ownerId) {
     const con = { ownerId: ownerId, idUser: "", idGroup: "" };
     if (conversation.conversationType === "group") {
@@ -11,6 +11,7 @@ export default function NavChatOption({ conversation, ownerId }) {
       con.idUser = conversation.user.id;
     }
     stompClient.send("/app/deleteConversation", {}, JSON.stringify(con));
+    setIndex(-1);
   }
   return (
     <Menu

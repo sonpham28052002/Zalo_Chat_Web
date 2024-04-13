@@ -4,44 +4,30 @@ import { IoSearch } from "react-icons/io5";
 import { TbArrowsSort } from "react-icons/tb";
 import { FaChevronDown } from "react-icons/fa6";
 import { LuFilter } from "react-icons/lu";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Menu } from "@headlessui/react";
 import { PiUserListLight } from "react-icons/pi";
 import { removeAccents, filterList } from "./Function";
 import UserInfoModal from "./../infoUser/UserInfoModal";
 import { MdLabel } from "react-icons/md";
-
-const allContact = [
-  { id: 1, name: "An", path: require("./asset/avatar1.png") },
-  { id: 2, name: "Cường", path: require("./asset/avatar2.png") },
-  { id: 3, name: "Nam", path: require("./asset/avatar3.png") },
-  { id: 4, name: "Em Hoa ", path: require("./asset/avatar4.png") },
-  { id: 5, name: "Lan", path: require("./asset/avatar5.png") },
-  { id: 6, name: "Nho", path: require("./asset/avatar6.png") },
-  { id: 7, name: "Én ", path: require("./asset/avatar7.png") },
-  { id: 8, name: "Kiên", path: require("./asset/avatar8.png") },
-  { id: 9, name: "Phú Quý", path: require("./asset/avatar9.png") },
-  { id: 10, name: "Phước", path: require("./asset/avatar10.png") },
-  {
-    id: 11,
-    name: "Ánh",
-    path: "https://img.pikbest.com/origin/09/19/03/61zpIkbEsTGjk.jpg!w700wp",
-  },
-];
-allContact.sort((a, b) => a.name.localeCompare(b.name));
-
-var alpha = [];
-for (var i = 65; i <= 90; i++) {
-  alpha.push(String.fromCharCode(i));
-}
+import { useSelector } from "react-redux";
+import { getInfoUserById } from "../../../services/User_service";
+import { stompClient } from "../../../socket/socket";
+import { useSubscription } from "react-stomp-hooks";
 
 function ViewListFriend() {
-  const [contacts, setContacts] = useState(allContact);
+  var user = useSelector((state) => state.data);
+
+  const [contacts, setContacts] = useState(
+    user.friendList
+      .slice()
+      .sort((a, b) => a.user.userName.localeCompare(b.user.userName))
+  );
   const [sortNameOption, setSortNameOption] = useState("ins");
   const [selectedOptionLabel, setSelectedOptionLabel] = useState(0);
   const [textFilter, setTextFilter] = useState("");
   const [isOpenUserInfoModal, setIsOpenUserInfoModal] = useState(false);
-
+  let [userSelect, setUserSelect] = useState(undefined);
   const labels = [
     { id: 0, label: "Tất cả", value: "all", color: "gray" },
     { id: 1, label: "Khách hàng", value: "customer", color: "red" },
@@ -51,20 +37,28 @@ function ViewListFriend() {
     { id: 5, label: "Trả lời sau", value: "reply-later", color: "purple" },
     { id: 6, label: "Đồng nghiệp", value: "colleagues", color: "orange" },
   ];
-  useEffect(() => {}, []);
 
   function CharacterText({ text }) {
     return <div className="text-base font-semibold pl-5 pt-8">{text}</div>;
   }
 
+  function unFriend(item) {
+    var mess = { ownerId: user.id, userId: item.user.id };
+    stompClient.send("/app/unfriend", {}, JSON.stringify(mess));
+  }
+
+  useSubscription("/user/" + user.id + "/unfriend", (messages) => {
+    let mess = JSON.parse(messages.body);
+    setContacts(contacts.filter((item) => item.user.id !== mess.user.id));
+  });
   function ListContact({ list }) {
     return list.map((item, index) => {
       return (
-        <div key={item.id} className="flex flex-col">
+        <div key={index} className="flex flex-col">
           {(index === 0 ||
-            removeAccents(item.name[0]) !==
-              removeAccents(list[index - 1].name[0])) && (
-            <CharacterText text={removeAccents(item.name[0])} />
+            removeAccents(item.user.userName[0]) !==
+              removeAccents(list[index - 1].user.userName[0])) && (
+            <CharacterText text={removeAccents(item.user.userName[0])} />
           )}
           <div className="flex flex-col">
             <div
@@ -73,13 +67,16 @@ function ViewListFriend() {
                 alert("light");
               }}
             >
-              <div
+              <img
                 className="img-avatar rounded-full bg-cover bg-center mr-4"
-                style={{ backgroundImage: `url(${item.path})` }}
-              ></div>
+                src={item.user.avt}
+                alt="."
+              ></img>
               <div className="w-full">
                 <div className="flex flex-row items-center justify-between h-20">
-                  <p className="text-base font-semibold">{item.name}</p>
+                  <p className="text-base font-semibold">
+                    {item.user.userName}
+                  </p>
                   <div
                     className="w-8 h-8 m-4 flex justify-center items-center cursor-pointer blur-item-dark"
                     onClick={(e) => {
@@ -105,7 +102,11 @@ function ViewListFriend() {
                                     ? "bg-gray-100 text-gray-900"
                                     : "text-gray-700"
                                 } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                                onClick={() => {
+                                onClick={async () => {
+                                  await getInfoUserById(
+                                    item.user.id,
+                                    setUserSelect
+                                  );
                                   setIsOpenUserInfoModal(true);
                                 }}
                               >
@@ -166,7 +167,9 @@ function ViewListFriend() {
                                     ? "bg-gray-100 text-gray-900"
                                     : "text-gray-700"
                                 } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                                onClick={() => {}}
+                                onClick={() => {
+                                  unFriend(item);
+                                }}
                               >
                                 Xóa bạn
                               </button>
@@ -213,7 +216,7 @@ function ViewListFriend() {
                   onChange={(event) => {
                     setTextFilter(event.target.value);
                     document.getElementById("search-input").focus();
-                    let tmp = filterList(allContact, event.target.value);
+                    let tmp = filterList(contacts, event.target.value);
                     setContacts(tmp);
                   }}
                 />
@@ -335,6 +338,7 @@ function ViewListFriend() {
             <UserInfoModal
               isOpen={isOpenUserInfoModal}
               setIsOpen={setIsOpenUserInfoModal}
+              user={userSelect}
             ></UserInfoModal>
           </div>
         </div>

@@ -21,10 +21,6 @@ export default function HandleMessage({
     const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000; // 24 giờ trong mili giây
     const currentTime = new Date(); // Thời gian hiện tại
     const timeDifference = currentTime - date; // Sự khác biệt giữa thời gian hiện tại và thời gian của đối tượng date
-    // Kiểm tra xem sự khác biệt thời gian có lớn hơn 24 giờ không
-    console.log(timeDifference);
-    console.log(twentyFourHoursInMilliseconds);
-
     return timeDifference > twentyFourHoursInMilliseconds;
   }
 
@@ -36,7 +32,6 @@ export default function HandleMessage({
   });
 
   var handleDeleteMessage = async () => {
-    console.log(conversation);
     if (conversation.conversationType === "group") {
       const idGroup = conversation.idGroup;
       const ownerId = owner.id;
@@ -50,8 +45,6 @@ export default function HandleMessage({
     }
   };
   function handleRetrieveMessage() {
-    console.log(message.senderDate);
-    console.log(new Date().toLocaleTimeString());
     if (conversation.conversationType === "group") {
       message.receiver = { id: "group_" + conversation.idGroup };
       stompClient.send("/app/retrieve-message", {}, JSON.stringify(message));
@@ -69,7 +62,6 @@ export default function HandleMessage({
     // }
   }
   function handleShareMessage() {
-    console.log("son");
     setIsOpenForwardMessage(message);
   }
   return (
