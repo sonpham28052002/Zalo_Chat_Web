@@ -22,7 +22,7 @@ export default function CreateGroupModal({ isOpen, setIsOpen }) {
 
   function closeModal() {
     setIsOpen(false);
-    setSelectedFile(null);
+    setSelectedFile(undefined);
     setAddSend([]);
   }
 
@@ -53,7 +53,7 @@ export default function CreateGroupModal({ isOpen, setIsOpen }) {
       members: array,
       avtGroup: url,
       nameGroup: nameRef.current.value,
-      status: "READ_ONLY",
+      status: "ACTIVE",
     };
     stompClient.send("/app/createGroup", {}, JSON.stringify(group));
     setIsLoad(false);
@@ -70,9 +70,7 @@ export default function CreateGroupModal({ isOpen, setIsOpen }) {
     }
   }
 
-  function isItemExistInArray(item) {
-    return addSender.some((element) => element.id === item.id);
-  }
+  function isItemExistInArray(item) {}
 
   var itemRowchat = (item) => {
     return (

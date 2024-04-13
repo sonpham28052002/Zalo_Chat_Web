@@ -20,6 +20,13 @@ export default function NavChat({ indexSelect, setIndex, showSearch }) {
     dispatch(getAPI(data.id));
   });
 
+  useSubscription("/user/" + data.id + "/grantRoleMember", (messages) => {
+    dispatch(getAPI(data.id));
+  });
+
+  useSubscription("/user/" + data.id + "/disbandConversation", (message) => {
+    dispatch(getAPI(data.id));
+  });
   useSubscription("/user/" + data.id + "/deleteConversation", (messages) => {
     const mess = JSON.parse(messages.body);
     if (!mess.conversationType) {

@@ -22,14 +22,15 @@ import {
 import { LuFileJson } from "react-icons/lu";
 import { useSelector } from "react-redux";
 import { GrResources } from "react-icons/gr";
+import { stompClient } from "../../../socket/socket";
 
 export default function OptionChat({
   conversation,
   nameConversation,
   avtMember,
   messages,
+  showGrantMemberView,
 }) {
-  console.log(conversation);
   var owner = useSelector((state) => state.data);
 
   var [showImageVideo, setShowImageVideo] = useState(false);
@@ -129,7 +130,26 @@ export default function OptionChat({
     }
   }
 
-  function disbandGroup(conversation) {}
+  function checkRole(role) {
+    const mb = conversation.members.filter(
+      (item) => item.member.id === owner.id
+    )[0];
+    console.log(mb.memberType);
+    if (mb.memberType === role) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function disbandGroup() {
+    stompClient.send(
+      "/app/disbandConversation",
+      {},
+      JSON.stringify(conversation)
+    );
+  }
+
   return (
     <>
       {showManageGroup && conversation.conversationType !== "single" ? (
@@ -146,10 +166,21 @@ export default function OptionChat({
             Quản lý nhóm
           </div>
           <div className="max-h-[95%] h-[95%] p-3 overflow-y-auto overflow-x-hidden pb-20 scrollbar-container-v2 bg-white">
-            <div className="w-full bg-[#dfe2e7] hover:bg-slate-300 h-10 text-lg flex flex-row justify-center items-center font-medium  mb-5">
+            <div
+              className="w-full bg-[#dfe2e7] hover:bg-slate-300 h-10 text-lg flex flex-row justify-center items-center font-medium  mb-5"
+              onClick={() => {
+                console.log("soibn");
+                showGrantMemberView(true);
+              }}
+            >
               Thêm phó nhóm
             </div>
-            <div className="w-full text-red-600 bg-[#f4dfdf] hover:bg-[#f9cdcd] h-10 text-lg flex flex-row justify-center items-center font-medium  mb-5">
+            <div
+              className="w-full text-red-600 bg-[#f4dfdf] hover:bg-[#f9cdcd] h-10 text-lg flex flex-row justify-center items-center font-medium  mb-5"
+              onClick={() => {
+                disbandGroup();
+              }}
+            >
               Giải tán nhóm
             </div>
           </div>
@@ -193,26 +224,31 @@ export default function OptionChat({
                     </div>
                     <p className="text-xs text-center">Thành viên nhóm</p>
                   </div>
-                  <div className="h-full w-20 flex flex-col justify-start items-center">
-                    <div
-                      className="h-9 w-9 mb-1 rounded-full bg-slate-100 hover:bg-slate-300 flex flex-row justify-center items-center"
-                      onClick={() => {
-                        setShowManageGroup(true);
-                      }}
-                    >
-                      <AiOutlineUsergroupAdd />
+                  {checkRole("GROUP_LEADER") && (
+                    <div className="h-full w-20 flex flex-col justify-start items-center">
+                      <div
+                        className="h-9 w-9 mb-1 rounded-full bg-slate-100 hover:bg-slate-300 flex flex-row justify-center items-center"
+                        onClick={() => {
+                          setShowManageGroup(true);
+                        }}
+                      >
+                        <AiOutlineUsergroupAdd />
+                      </div>
+                      <p className="text-xs text-center">Quản lý nhóm</p>
                     </div>
-                    <p className="text-xs text-center">Quản lý nhóm</p>
-                  </div>
+                  )}
                 </div>
               )}
             </div>
             {showMember ? (
               <div className=" h-fit w-full">
-                {conversation.members.map((item) => {
+                {conversation.members.map((item, index) => {
                   if (item.memberType !== " LEFT_MEMBER") {
                     return (
-                      <div className="w-full h-16 text-sm flex flex-row items-center justify-between px-2 hover:bg-slate-200">
+                      <div
+                        key={index}
+                        className="w-full h-16 text-sm flex flex-row items-center justify-between px-2 hover:bg-slate-200"
+                      >
                         <div className="w-4/5 flex flex-row items-center">
                           <img
                             src={item.member.avt}

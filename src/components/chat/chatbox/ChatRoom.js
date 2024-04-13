@@ -18,6 +18,7 @@ import { useSubscription } from "react-stomp-hooks";
 import Loader from "../custom/loader";
 import ForwardMessage from "./ForwardMessage";
 import OptionChat from "./OptionChat";
+import GrantMember from "./GrantMember";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
@@ -26,6 +27,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var [isOpenInforUser, setIsOpenInforUser] = useState(false);
   var [isLoad, setIsLoad] = useState(false);
   var [isLoading, setIsLoading] = useState(false);
+  var [showGrantMember, setShowGrantMember] = useState(false);
 
   var [isExtent, setIsExtend] = useState(false);
   var [receiver, setReceiver] = useState(undefined);
@@ -43,6 +45,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
       setMessages([...messages]);
     }
   });
+
   useSubscription("/user/" + owner.id + "/singleChat", (message) => {
     let mess = JSON.parse(message.body);
     if (conversation.conversationType === "single") {
@@ -54,7 +57,14 @@ export default function ChatRoom({ idConversation, setIndex }) {
     }
   });
 
+  useSubscription("/user/" + owner.id + "/grantRoleMember", (messages) => {
+    let mess = JSON.parse(messages.body);
+    setConversation(mess);
+  });
+
   useSubscription("/user/" + owner.id + "/groupChat", (message) => {
+    let mess = JSON.parse(message.body);
+    console.log(mess);
     if (conversation.conversationType === "group") {
       getMessageAndMemberByIdSenderAndIdGroup(
         owner.id,
@@ -69,6 +79,27 @@ export default function ChatRoom({ idConversation, setIndex }) {
   useSubscription("/user/" + owner.id + "/deleteMessage", (message) => {
     let mess = JSON.parse(message.body);
     setMessages(messages.filter((item) => item.id !== mess.id));
+  });
+
+  useSubscription("/user/" + owner.id + "/retrieveMessage", (message) => {
+    let mess = JSON.parse(message.body);
+    if (mess.messageType === "RETRIEVE") {
+      const index = [...messages].findIndex((item) => item.id === mess.id);
+      messages[index] = mess;
+      setMessages([...messages]);
+    }
+  });
+
+  var showGrantMemberView = useCallback(
+    (value) => {
+      setShowGrantMember(value);
+    },
+     // eslint-disable-next-line 
+    [showGrantMember]
+  );
+  useSubscription("/user/" + owner.id + "/disbandConversation", (message) => {
+    let mess = JSON.parse(message.body);
+    setConversation(mess);
   });
 
   var [conversation, setConversation] = useState(
@@ -147,9 +178,6 @@ export default function ChatRoom({ idConversation, setIndex }) {
     return mergedArray;
   }
 
-  function removeDuplicates(arrayA, arrayB) {
-    return arrayB.filter((itemB) => !arrayA.includes(itemB));
-  }
 
   useEffect(() => {
     let arrchat = [];
@@ -349,7 +377,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
               </div>
             )}
           </div>
-          {checkInputConversation() ? (
+          {checkInputConversation() && conversation.status !== "DISBANDED" ? (
             <InputMessage
               conversation={conversation}
               setIndex={setIndex}
@@ -379,6 +407,17 @@ export default function ChatRoom({ idConversation, setIndex }) {
           nameConversation={nameConversation}
           avtMember={avtMember}
           messages={messages}
+          showGrantMemberView={showGrantMemberView}
+        />
+      )}
+      {showGrantMember && (
+        <GrantMember
+          conversation={conversation}
+          nameConversation={nameConversation}
+          avtMember={avtMember}
+          messages={messages}
+          isOpen={showGrantMember}
+          setIsOpen={showGrantMemberView}
         />
       )}
     </div>
