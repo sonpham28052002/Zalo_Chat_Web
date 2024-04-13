@@ -9,8 +9,18 @@ import { HomeRouter } from "../../router/router";
 
 import NavMenuSetting from "./setting/NavMenuSetting";
 import InfoUser from "./infoUser/infoUser";
+import { useSubscription } from "react-stomp-hooks";
+import { getAPI } from "../../redux_Toolkit/slices";
+import { useDispatch, useSelector } from "react-redux";
 export default function Home() {
   var [indexSelect, setIndexSelect] = useState(0);
+  var data = useSelector((state) => state.data);
+
+  var dispatch = useDispatch();
+
+  useSubscription("/user/" + data.id + "/unfriend", (messages) => {
+    dispatch(getAPI(data.id));
+  });
 
   return (
     <div className="min-w-screen-md  min-h-dvh flex flex-row">

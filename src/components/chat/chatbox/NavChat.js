@@ -7,6 +7,8 @@ import TabChat from "./TabChat";
 
 export default function NavChat({ indexSelect, setIndex, showSearch }) {
   var data = useSelector((state) => state.data);
+  var dispatch = useDispatch();
+
   var [idConversation, setIdConversation] = useState(indexSelect);
   useSubscription("/user/" + data.id + "/singleChat", (messages) => {
     dispatch(getAPI(data.id));
@@ -14,7 +16,17 @@ export default function NavChat({ indexSelect, setIndex, showSearch }) {
   useSubscription("/user/" + data.id + "/groupChat", (messages) => {
     dispatch(getAPI(data.id));
   });
+  useSubscription("/user/" + data.id + "/createGroup", (messages) => {
+    dispatch(getAPI(data.id));
+  });
 
+  useSubscription("/user/" + data.id + "/grantRoleMember", (messages) => {
+    dispatch(getAPI(data.id));
+  });
+
+  useSubscription("/user/" + data.id + "/disbandConversation", (message) => {
+    dispatch(getAPI(data.id));
+  });
   useSubscription("/user/" + data.id + "/deleteConversation", (messages) => {
     const mess = JSON.parse(messages.body);
     if (!mess.conversationType) {
@@ -30,7 +42,6 @@ export default function NavChat({ indexSelect, setIndex, showSearch }) {
     // eslint-disable-next-line
   }, [idConversation]);
 
-  var dispatch = useDispatch();
   return (
     <div className="h-full  w-2/12  border-r">
       <HeaderNavChat showSearch={showSearch} />

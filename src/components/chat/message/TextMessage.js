@@ -12,13 +12,10 @@ export default function TextMessage({
   setIsOpenForwardMessage,
 }) {
   function getImageUserChat(userId, conversation) {
-    console.log(conversation);
     if (conversation.conversationType === "group") {
-      console.log("avt");
       return conversation.members.filter((item) => item.member.id === userId)[0]
         .member.avt;
     }
-    console.log(avt);
     return avt;
   }
   var owner = useSelector((state) => state.data);

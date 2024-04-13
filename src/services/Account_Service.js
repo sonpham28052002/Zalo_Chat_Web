@@ -90,10 +90,31 @@ var checkNumberPhoneExist = async (phone) => {
   }
 };
 
+var changePassword = async (phone, oldPassword, newPassword) => {
+  try {
+    const response = await fetch(
+      `${host}/account/updatePasswordAccount?phone=${phone}&passwordOld=${oldPassword}&passwordNew=${newPassword}`,
+      {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+
 export {
   getAccount,
   forgotPasswordAccount,
   registerAccount,
   checkNumberPhoneExist,
   getAccountByPhone,
+  changePassword
 };
