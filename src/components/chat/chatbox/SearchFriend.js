@@ -114,13 +114,14 @@ export default function SearchFriend({ setIndex, showSearch }) {
                       },
                     ],
                     content: person,
+                    idGroup: "",
                   };
                   stompClient.send(
                     "/app/private-single-message",
                     {},
                     JSON.stringify(content)
                   );
-                  setIndex(item.id);
+                  setIndex(-1);
                 }
                 // setIndex(item.id);
               }}

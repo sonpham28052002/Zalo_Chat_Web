@@ -22,8 +22,8 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
     const lastMessage = conversation.lastMessage;
     if (lastMessage.messageType === "Text") {
       viewLastMessage = `${owner.id === lastMessage.sender.id ? "Bạn: " : ""} ${
-        lastMessage.content.length > 15
-          ? lastMessage.content.substring(0, 15) + "..."
+        lastMessage.content.length > 10
+          ? lastMessage.content.substring(0, 10) + "..."
           : lastMessage.content.substring(0, 15)
       }`;
     }
@@ -46,15 +46,19 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
       />
       <div className="flex flex-col justify-center w-4/6  ml-2">
         <p className="font-medium text-nowrap max-w-44 overflow-hidden">
-          {nameConversation < 10
+          {nameConversation.length < 25
             ? nameConversation
-            : nameConversation.substring(0, 10) + "..."}
+            : nameConversation.substring(0, 25) + "..."}
         </p>
 
         <span className="text-slate-400">{viewLastMessage}</span>
       </div>
       <div className="flex flex-row justify-center items-center w-1/6">
-        <NavChatOption conversation={conversation} ownerId={owner.id} setIndex={setIndex} />
+        <NavChatOption
+          conversation={conversation}
+          ownerId={owner.id}
+          setIndex={setIndex}
+        />
       </div>
     </div>
   );

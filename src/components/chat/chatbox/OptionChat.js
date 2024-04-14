@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AiFillFilePpt,
   AiFillFileZip,
@@ -23,6 +23,7 @@ import { LuFileJson } from "react-icons/lu";
 import { useSelector } from "react-redux";
 import { GrResources } from "react-icons/gr";
 import { stompClient } from "../../../socket/socket";
+import { useSubscription } from "react-stomp-hooks";
 
 export default function OptionChat({
   conversation,
@@ -30,6 +31,7 @@ export default function OptionChat({
   avtMember,
   messages,
   showGrantMemberView,
+  showAddMember,
 }) {
   var owner = useSelector((state) => state.data);
 
@@ -38,6 +40,15 @@ export default function OptionChat({
   var [showTextLink, setTextLink] = useState(false);
   var [showManageGroup, setShowManageGroup] = useState(false);
   var [showMember, setShowMember] = useState(false);
+  var [members, setMembers] = useState([]);
+
+  useEffect(() => {
+    if (conversation.conversationType === "group") {
+      setMembers(
+        conversation.members.filter((item) => item.memberType !== "LEFT_MEMBER")
+      );
+    }
+  }, [conversation?.members]);
 
   function formatFileSize(size) {
     if (size < 1024) {
@@ -107,23 +118,35 @@ export default function OptionChat({
     }
   }
 
-  function deleteMemberGroup(memberTypeUser) {
+  function deleteMemberGroup(user) {
     const iam = conversation.members.filter(
       (item) => item.member.id === owner.id
     )[0];
-    console.log(iam);
-    if (iam.memberType === "GROUP_LEADER") {
+    if (
+      iam.memberType === "GROUP_LEADER" &&
+      user.memberType !== "GROUP_LEADER"
+    ) {
       return (
-        <div className="h-7 w-7 hover:bg-slate-100 flex flex-row justify-center items-center rounded-md">
+        <div
+          className="h-7 w-7 hover:bg-slate-100 flex flex-row justify-center items-center rounded-md"
+          onClick={() => {
+            removeMemberInGroup(user.member.id);
+          }}
+        >
           <IoPersonRemoveOutline />
         </div>
       );
     } else if (
       iam.memberType === "DEPUTY_LEADER" &&
-      memberTypeUser === "MEMBER"
+      user.memberType === "MEMBER"
     ) {
       return (
-        <div className="h-7 w-7 hover:bg-slate-100 flex flex-row justify-center items-center rounded-md">
+        <div
+          className="h-7 w-7 hover:bg-slate-100 flex flex-row justify-center items-center rounded-md"
+          onClick={() => {
+            removeMemberInGroup(user.member.id);
+          }}
+        >
           <IoPersonRemoveOutline />
         </div>
       );
@@ -134,7 +157,6 @@ export default function OptionChat({
     const mb = conversation.members.filter(
       (item) => item.member.id === owner.id
     )[0];
-    console.log(mb.memberType);
     if (mb.memberType === role) {
       return true;
     } else {
@@ -149,6 +171,14 @@ export default function OptionChat({
       JSON.stringify(conversation)
     );
   }
+
+  var removeMemberInGroup = async (userId) => {
+    stompClient.send(
+      "/app/removeMemberInGroup",
+      {},
+      JSON.stringify({ userId: userId, idGroup: conversation.idGroup })
+    );
+  };
 
   return (
     <>
@@ -165,23 +195,54 @@ export default function OptionChat({
             </div>
             Quản lý nhóm
           </div>
-          <div className="max-h-[95%] h-[95%] p-3 overflow-y-auto overflow-x-hidden pb-20 scrollbar-container-v2 bg-white">
-            <div
-              className="w-full bg-[#dfe2e7] hover:bg-slate-300 h-10 text-lg flex flex-row justify-center items-center font-medium  mb-5"
-              onClick={() => {
-                console.log("soibn");
-                showGrantMemberView(true);
-              }}
-            >
-              Thêm phó nhóm
+          <div className="max-h-[95%] h-[95%] pt-3 overflow-y-auto overflow-x-hidden pb-20 scrollbar-container-v2 bg-white">
+            <div className="pb-2">
+              <div className="px-1 border-b border-gray-200">
+                Chỉ cho phép thành viên trong nhóm thực hiện
+              </div>
+              <div
+                className="flex flex-row justify-between font-medium
+               items-center px-4 h-10 hover:bg-slate-200"
+              >
+                <label
+                  htmlFor="1"
+                  className="h-full w-full flex flex-row items-center"
+                >
+                  Gửi tin nhắn
+                </label>
+                <input id="1" type="checkbox" />
+              </div>
+              <div
+                className="flex flex-row justify-between font-medium
+               items-center px-4 h-10 hover:bg-slate-200"
+              >
+                <label
+                  htmlFor="2"
+                  className="h-full w-full flex flex-row items-center"
+                >
+                  Thay đổi ảnh và tên nhóm
+                </label>
+                <input id="2" type="checkbox" />
+              </div>
             </div>
-            <div
-              className="w-full text-red-600 bg-[#f4dfdf] hover:bg-[#f9cdcd] h-10 text-lg flex flex-row justify-center items-center font-medium  mb-5"
-              onClick={() => {
-                disbandGroup();
-              }}
-            >
-              Giải tán nhóm
+            <div className="border-t border-gray-400 p-3 ">
+              <div
+                className="w-full bg-[#dfe2e7] hover:bg-slate-300 h-10 text-lg flex flex-row justify-center items-center font-medium  mb-5"
+                onClick={() => {
+                  console.log("soibn");
+                  showGrantMemberView(true);
+                }}
+              >
+                Phân quyền
+              </div>
+              <div
+                className="w-full text-red-600 bg-[#f4dfdf] hover:bg-[#f9cdcd] h-10 text-lg flex flex-row justify-center items-center font-medium  mb-5"
+                onClick={() => {
+                  disbandGroup();
+                }}
+              >
+                Giải tán nhóm
+              </div>
             </div>
           </div>
         </div>
@@ -208,7 +269,13 @@ export default function OptionChat({
                     <p className="text-xs text-center">Tài nguyên</p>
                   </div>
                   <div className="h-full w-20 flex flex-col justify-start items-center">
-                    <div className="h-9 w-9 mb-1 rounded-full bg-slate-100 hover:bg-slate-300 flex flex-row justify-center items-center">
+                    <div
+                      className="h-9 w-9 mb-1 rounded-full bg-slate-100 hover:bg-slate-300 flex flex-row justify-center items-center"
+                      onClick={() => {
+                        console.log("clclclc");
+                        showAddMember(true);
+                      }}
+                    >
                       <AiOutlineUsergroupAdd />
                     </div>
                     <p className="text-xs text-center">Thêm thành viên mới</p>
@@ -242,43 +309,34 @@ export default function OptionChat({
             </div>
             {showMember ? (
               <div className=" h-fit w-full">
-                {conversation.members.map((item, index) => {
-                  if (item.memberType !== " LEFT_MEMBER") {
-                    return (
-                      <div
-                        key={index}
-                        className="w-full h-16 text-sm flex flex-row items-center justify-between px-2 hover:bg-slate-200"
-                      >
-                        <div className="w-4/5 flex flex-row items-center">
-                          <img
-                            src={item.member.avt}
-                            alt="."
-                            className="h-10 w-10 mx-2 rounded-full"
-                          />
-                          <div>
-                            <p className="font-medium">
-                              {item.member.userName}
-                            </p>
-                            {item.memberType === "GROUP_LEADER" && (
-                              <p className="text-xs text-gray-500">
-                                Trưởng nhóm
-                              </p>
-                            )}
-                            {item.memberType === "DEPUTY_LEADER" && (
-                              <p className="text-xs text-gray-500">Phó nhóm</p>
-                            )}
-                            {item.memberType === "MEMBER" && (
-                              <p className="text-xs text-gray-500">
-                                Thành viên
-                              </p>
-                            )}
-                          </div>
+                {members.map((item, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="w-full h-16 text-sm flex flex-row items-center justify-between px-2 hover:bg-slate-200"
+                    >
+                      <div className="w-4/5 flex flex-row items-center">
+                        <img
+                          src={item.member.avt}
+                          alt="."
+                          className="h-10 w-10 mx-2 rounded-full"
+                        />
+                        <div>
+                          <p className="font-medium">{item.member.userName}</p>
+                          {item.memberType === "GROUP_LEADER" && (
+                            <p className="text-xs text-gray-500">Trưởng nhóm</p>
+                          )}
+                          {item.memberType === "DEPUTY_LEADER" && (
+                            <p className="text-xs text-gray-500">Phó nhóm</p>
+                          )}
+                          {item.memberType === "MEMBER" && (
+                            <p className="text-xs text-gray-500">Thành viên</p>
+                          )}
                         </div>
-                        {deleteMemberGroup(item.memberType)}
                       </div>
-                    );
-                  }
-                  return null;
+                      {deleteMemberGroup(item)}
+                    </div>
+                  );
                 })}
               </div>
             ) : (

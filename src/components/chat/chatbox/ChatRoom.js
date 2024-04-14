@@ -19,6 +19,7 @@ import Loader from "../custom/loader";
 import ForwardMessage from "./ForwardMessage";
 import OptionChat from "./OptionChat";
 import GrantMember from "./GrantMember";
+import AddMemberModal from "./AddMemberModal";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
@@ -28,7 +29,9 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var [isLoad, setIsLoad] = useState(false);
   var [isLoading, setIsLoading] = useState(false);
   var [showGrantMember, setShowGrantMember] = useState(false);
+  var [showAddMember, setShowAddMember] = useState(false);
 
+  var [listMember, setListMember] = useState([]);
   var [isExtent, setIsExtend] = useState(false);
   var [receiver, setReceiver] = useState(undefined);
   var [messages, setMessages] = useState([]);
@@ -59,6 +62,14 @@ export default function ChatRoom({ idConversation, setIndex }) {
 
   useSubscription("/user/" + owner.id + "/grantRoleMember", (messages) => {
     let mess = JSON.parse(messages.body);
+    console.log(mess);
+    // eslint-disable-next-line
+    mess.members.map((item, index) => {
+      listMember[index].memberType = item.memberType;
+    });
+    mess.members = [...listMember];
+    console.log(mess);
+
     setConversation(mess);
   });
 
@@ -94,14 +105,22 @@ export default function ChatRoom({ idConversation, setIndex }) {
     (value) => {
       setShowGrantMember(value);
     },
-     // eslint-disable-next-line 
+    // eslint-disable-next-line
     [showGrantMember]
   );
   useSubscription("/user/" + owner.id + "/disbandConversation", (message) => {
     let mess = JSON.parse(message.body);
     setConversation(mess);
+    setIsExtend(false);
   });
-
+  useSubscription("/user/" + owner.id + "/removeMemberInGroup", (messages) => {
+    let mess = JSON.parse(messages.body);
+    mess.members.map((item, index) => {
+      listMember[index].memberType = item.memberType;
+    });
+    mess.members = [...listMember];
+    setConversation(mess);
+  });
   var [conversation, setConversation] = useState(
     // eslint-disable-next-line
     owner.conversation.filter((item) => {
@@ -140,6 +159,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
               item.idGroup
             );
             setMessages(mess.slice().reverse());
+            setListMember(members);
             setConversation({ ...item, members: members });
             setIsLoad(true);
           }
@@ -177,7 +197,6 @@ export default function ChatRoom({ idConversation, setIndex }) {
     const mergedArray = Array.from(map.values());
     return mergedArray;
   }
-
 
   useEffect(() => {
     let arrchat = [];
@@ -281,6 +300,24 @@ export default function ChatRoom({ idConversation, setIndex }) {
       }
     }
   }
+
+  function checkNotificationInput() {
+    const iam = conversation.members.filter(
+      (item) => item.member.id === owner.id
+    )[0];
+    if (iam.memberType === "LEFT_MEMBER") {
+      return "Bạn không còn là thành viên của nhóm này, bạn chỉ có thể đọc được tin nhắn trước đó.";
+    }
+    if (conversation?.status === "DISBANDED") {
+      return "Nhóm đã giải tán";
+    } else if (
+      conversation?.status === "READ_ONLY" &&
+      iam.memberType === "MEMBER"
+    ) {
+      return "Chỉ có trường nhóm và phó nhóm mới có thể gửi tin nhắn.";
+    }
+  }
+
   return (
     <div className="h-full w-10/12 flex flex-row relative">
       {isOpenForwardMessage && (
@@ -331,7 +368,14 @@ export default function ChatRoom({ idConversation, setIndex }) {
             <div
               className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2 "
               onClick={() => {
-                setIsExtend(!isExtent);
+                if (
+                  conversation.conversationType === "group" &&
+                  conversation.status !== "DISBANDED"
+                ) {
+                  setIsExtend(!isExtent);
+                } else if (conversation.conversationType === "single") {
+                  setIsExtend(!isExtent);
+                }
               }}
             >
               <VscLayoutSidebarRightOff className="text-xl " />
@@ -408,6 +452,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
           avtMember={avtMember}
           messages={messages}
           showGrantMemberView={showGrantMemberView}
+          showAddMember={setShowAddMember}
         />
       )}
       {showGrantMember && (
@@ -418,6 +463,16 @@ export default function ChatRoom({ idConversation, setIndex }) {
           messages={messages}
           isOpen={showGrantMember}
           setIsOpen={showGrantMemberView}
+        />
+      )}
+      {showAddMember && (
+        <AddMemberModal
+          conversation={conversation}
+          nameConversation={nameConversation}
+          avtMember={avtMember}
+          messages={messages}
+          isOpen={showAddMember}
+          setIsOpen={setShowAddMember}
         />
       )}
     </div>
