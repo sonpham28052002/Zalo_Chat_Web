@@ -2,7 +2,7 @@ import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { stompClient } from "../../../socket/socket";
-export default function NavChatOption({ conversation, ownerId, setIndex }) {
+export default function NavChatOption({ conversation, ownerId }) {
   function deleteConversation(ownerId) {
     const con = { ownerId: ownerId, idUser: "", idGroup: "" };
     if (conversation.conversationType === "group") {
@@ -11,7 +11,6 @@ export default function NavChatOption({ conversation, ownerId, setIndex }) {
       con.idUser = conversation.user.id;
     }
     stompClient.send("/app/deleteConversation", {}, JSON.stringify(con));
-    setIndex(-1);
   }
   return (
     <Menu
@@ -35,10 +34,10 @@ export default function NavChatOption({ conversation, ownerId, setIndex }) {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute p-3 top-9 left-12 z-10 mt-2 w-52 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="absolute p-1 top-9 -left-32 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <Menu.Item>
             <div
-              className="py-1 hover:bg-slate-400 hover:text-white px-2 hover:font-medium"
+              className=" hover:bg-slate-400 text-sm hover:text-white px-2 hover:font-medium"
               onClick={() => {
                 deleteConversation(ownerId);
               }}

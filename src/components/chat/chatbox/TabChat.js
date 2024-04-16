@@ -57,7 +57,6 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
         <NavChatOption
           conversation={conversation}
           ownerId={owner.id}
-          setIndex={setIndex}
         />
       </div>
     </div>

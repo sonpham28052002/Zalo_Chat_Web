@@ -108,19 +108,52 @@ export default function ChatRoom({ idConversation, setIndex }) {
     // eslint-disable-next-line
     [showGrantMember]
   );
+
   useSubscription("/user/" + owner.id + "/disbandConversation", (message) => {
     let mess = JSON.parse(message.body);
     setConversation(mess);
     setIsExtend(false);
   });
+
   useSubscription("/user/" + owner.id + "/removeMemberInGroup", (messages) => {
     let mess = JSON.parse(messages.body);
+    console.log(mess);
     mess.members.map((item, index) => {
       listMember[index].memberType = item.memberType;
     });
     mess.members = [...listMember];
     setConversation(mess);
+    setIsExtend(false);
   });
+
+  useSubscription("/user/" + owner.id + "/outGroup", (messages) => {
+    let mess = JSON.parse(messages.body);
+    mess.members.map((item, index) => {
+      listMember[index].memberType = item.memberType;
+    });
+    console.log(mess);
+    mess.members = [...listMember];
+    setConversation(mess);
+    setIsExtend(false);
+  });
+
+  useSubscription("/user/" + owner.id + "/changeStatusGroup", (messages) => {
+    let mess = JSON.parse(messages.body);
+    mess.members = [...listMember];
+    setConversation(mess);
+  });
+
+  useSubscription(
+    "/user/" + owner.id + "/addMemberIntoGroup",
+    async (messages) => {
+      let mess = JSON.parse(messages.body);
+      console.log("mess");
+      setIsExtend(false);
+      let members = await getMemberByIdSenderAndIdGroup(owner.id, mess.idGroup);
+      setListMember(members);
+      setConversation({ ...mess, members: members });
+    }
+  );
   var [conversation, setConversation] = useState(
     // eslint-disable-next-line
     owner.conversation.filter((item) => {
@@ -142,7 +175,6 @@ export default function ChatRoom({ idConversation, setIndex }) {
     // eslint-disable-next-line
     setIsLoad(false);
     setIsExtend(false);
-
     owner.conversation.filter(async (item) => {
       if (
         item.conversationType === "group" &&
@@ -279,6 +311,18 @@ export default function ChatRoom({ idConversation, setIndex }) {
       const iam = conversation.members.filter(
         (item) => item.member.id === owner.id
       )[0];
+      if (iam.memberType === "LEFT_MEMBER") {
+        return false;
+      }
+      if (iam.memberType === "MEMBER" && conversation.status === "READ_ONLY") {
+        return false;
+      }
+      if (
+        iam.memberType === "MEMBER" &&
+        conversation.status === "CHANGE_IMAGE_AND_NAME_ONLY"
+      ) {
+        return false;
+      }
       if (
         iam.memberType === "GROUP_LEADER" &&
         conversation.status !== "DISBANDED"
@@ -382,61 +426,64 @@ export default function ChatRoom({ idConversation, setIndex }) {
             </div>
           </div>
         </div>
-        <div className="h-[877px]">
-          <div
-            className="bg-image bg-cover bg-center relative h-[765px] w-full"
-            style={{
-              backgroundImage: `url(${avtMember})`,
-            }}
-          >
-            <div className="absolute inset-0 opacity-65 bg-white "></div>
-            {isLoad ? (
-              <div className="absolute bottom-0 max-h-[764px] w-full flex flex-col overflow-scroll justify-items-end overflow-y-auto overflow-x-hidden  py-2 my-2">
-                <Virtuoso
-                  ref={scrollContainerRef}
-                  className="w-full min-h-[740px] scrollbar-container rotate-180"
-                  totalCount={messages.length}
-                  initialTopMostItemIndex={0}
-                  itemContent={(index) => {
-                    return (
-                      <Conversation
-                        ownerId={owner.id}
-                        key={index}
-                        avt={avtMember}
-                        conversation={conversation}
-                        item={messages[index]}
-                        index={index}
-                        setIsOpenForwardMessage={setIsOpenForwardMessageView}
-                      />
-                    );
-                  }}
-                />
-              </div>
+        {isLoad ? (
+          <div className="h-[877px]">
+            <div
+              className="bg-image bg-cover bg-center relative h-[765px] w-full"
+              style={{
+                backgroundImage: `url(${avtMember})`,
+              }}
+            >
+              <div className="absolute inset-0 opacity-50 bg-black "></div>
+              <>
+                <div className="absolute bottom-0 max-h-[764px] w-full flex flex-col overflow-scroll justify-items-end overflow-y-auto overflow-x-hidden  py-2 my-2">
+                  <Virtuoso
+                    ref={scrollContainerRef}
+                    className="w-full min-h-[740px] scrollbar-container rotate-180"
+                    totalCount={messages.length}
+                    initialTopMostItemIndex={0}
+                    itemContent={(index) => {
+                      return (
+                        <Conversation
+                          ownerId={owner.id}
+                          key={index}
+                          avt={avtMember}
+                          conversation={conversation}
+                          item={messages[index]}
+                          index={index}
+                          setIsOpenForwardMessage={setIsOpenForwardMessageView}
+                        />
+                      );
+                    }}
+                  />
+                </div>
+              </>
+
+              {isLoading && (
+                <div className="absolute bottom-0 w-full flex flex-row justify-center items-center pb-2 ">
+                  <Loader />
+                </div>
+              )}
+            </div>
+            {checkInputConversation() && conversation.status !== "DISBANDED" ? (
+              <InputMessage
+                conversation={conversation}
+                setIndex={setIndex}
+                receiver={receiver}
+                setMessages={setMessages}
+                messages={messages}
+                setIsLoading={setIsLoading}
+              />
             ) : (
-              <Loader />
-            )}
-            {isLoading && (
-              <div className="absolute bottom-0 w-full flex flex-row justify-center items-center pb-2 ">
-                <Loader />
+              <div className="flex flex-row justify-center items-center h-20 text-xl font-normal text-red-500">
+                <PiWarningCircleLight className="text-2xl mr-2" />
+                Không thể gửi tin nhắn
               </div>
             )}
           </div>
-          {checkInputConversation() && conversation.status !== "DISBANDED" ? (
-            <InputMessage
-              conversation={conversation}
-              setIndex={setIndex}
-              receiver={receiver}
-              setMessages={setMessages}
-              messages={messages}
-              setIsLoading={setIsLoading}
-            />
-          ) : (
-            <div className="flex flex-row justify-center items-center h-20 text-xl font-normal text-red-500">
-              <PiWarningCircleLight className="text-2xl mr-2" />
-              Không thể gửi tin nhắn
-            </div>
-          )}
-        </div>
+        ) : (
+          <Loader />
+        )}
         {receiver && conversation.conversationType !== "group" && (
           <UserInfoModal
             isOpen={isOpenInforUser}

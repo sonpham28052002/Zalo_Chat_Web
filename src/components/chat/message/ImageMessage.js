@@ -72,7 +72,7 @@ export default function ImageMessage({
               <img
                 src={image.url}
                 alt="#"
-                className="overflow-hidden rounded-md min-w-60 h-52 w-auto "
+                className="overflow-hidden rounded-md min-w-60 max-h-80 w-auto "
               />
             </div>
             <div className="flex flex-row justify-between items-center absolute w-full pt-1 ">

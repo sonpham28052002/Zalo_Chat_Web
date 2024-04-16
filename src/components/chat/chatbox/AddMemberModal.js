@@ -56,6 +56,7 @@ export default function AddMemberModal({ conversation, isOpen, setIsOpen }) {
       ownerID: owner.id,
       members: arr,
     };
+    stompClient.send("/app/addMemberIntoGroup", {}, JSON.stringify(con));
   };
 
   useEffect(() => {
