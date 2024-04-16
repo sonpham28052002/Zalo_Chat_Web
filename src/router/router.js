@@ -20,7 +20,7 @@ export function LoginRouter() {
     <Routes>
       <Route element={<LoginByNumberPhone />} path="/"></Route>
       <Route element={<LoginByQRCode />} path="/qr"></Route>
-      <Route element={<LoginBySMS />} path="/sms"></Route>
+      <Route element={<LoginBySMS />} path="/SMS"></Route>
       <Route element={<ForgotPassword />} path="/forgot"></Route>
       <Route element={<SignUp />} path="/signup*"></Route>
     </Routes>
