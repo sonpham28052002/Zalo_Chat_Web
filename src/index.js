@@ -15,7 +15,7 @@ root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <StompSessionProvider url={`${host}/ws`}>
-        <BrowserRouter basename="/">
+        <BrowserRouter basename="/Zalo_Chat_Web">
           <App />
         </BrowserRouter>
       </StompSessionProvider>

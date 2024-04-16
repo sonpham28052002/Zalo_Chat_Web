@@ -18,7 +18,7 @@ import SignUpPreviewInfoForm from "../components/login/SignUpPreviewInfoForm";
 export function LoginRouter() {
   return (
     <Routes>
-      <Route element={<LoginByNumberPhone />} path="/"></Route>
+      <Route element={<LoginByNumberPhone />} path="/Zalo_Chat_Web"></Route>
       <Route element={<LoginByQRCode />} path="/qr"></Route>
       <Route element={<LoginBySMS />} path="/SMS"></Route>
       <Route element={<ForgotPassword />} path="/forgot"></Route>
@@ -57,7 +57,7 @@ export function SignUpRouter() {
 export function AcceptRouter() {
   return (
     <Routes>
-      <Route element={<Login />} path="/*"></Route>
+      <Route element={<Login />} path="/Zalo_Chat_Web*"></Route>
       <Route element={<Home />} path="/home*"></Route>
     </Routes>
   );
