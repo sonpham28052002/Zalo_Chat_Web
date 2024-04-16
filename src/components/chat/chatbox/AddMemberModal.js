@@ -5,119 +5,84 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Virtuoso } from "react-virtuoso";
 import { stompClient } from "../../../socket/socket";
 import Loader from "../custom/loader";
-
-export default function GrantMember({ isOpen, setIsOpen, conversation }) {
+export default function AddMemberModal({ conversation, isOpen, setIsOpen }) {
   var owner = useSelector((state) => state.data);
-  const [activeTab, setActiveTab] = useState("phonhom");
   const leftValue = `calc((100vw - 450px) / 2)`;
-  const [memberList, setMemberList] = useState([]);
-  const [deputyList, setDeputyList] = useState([]);
 
-  const [deputyListOld, setIsupdatedOld] = useState([]);
+  const [activeTab, setActiveTab] = useState("selected");
+  var [listFriend, setListFriend] = useState([]);
+  var [listSelect, setListSelect] = useState([]);
+
   const [isLoad, setIsLoad] = useState(false);
+
   function closeModal() {
     setIsOpen(false);
-    setMemberList([]);
-    setDeputyList([]);
+    setListFriend([]);
+    setListSelect([]);
   }
-
-  useEffect(() => {
-    let arrMember = [];
-    let arrDeputy = [];
-    // eslint-disable-next-line
-    conversation.members.slice().map((item) => {
-      if (
-        item.memberType !== "GROUP_LEADER" &&
-        item.memberType !== "LEFT_MEMBER"
-      ) {
-        arrMember.push(item);
-      }
-      if (item.memberType === "DEPUTY_LEADER") {
-        arrDeputy.push(item);
-      }
-    });
-    console.log(arrMember);
-    setMemberList([...arrMember]);
-    setDeputyList([...arrDeputy]);
-    setIsupdatedOld([...arrDeputy]);
-  }, [conversation.members]);
 
   function isItemExistInArray(item) {
-    return deputyList.some((element) => element.member.id === item.member.id);
+    return listSelect.some((element) => element.user.id === item.user.id);
   }
 
-  function addToUniqueArray(newItem, actionType) {
-    if (actionType === "add") {
-      const exists = deputyList.some(
-        (item) => item.member.id === newItem.member.id
-      );
-      if (!exists) {
-        setDeputyList([...deputyList, newItem]);
+  function checAddMemberNotExist(user) {
+    var members = conversation.members.slice();
+    for (let index = 0; index < members.length; index++) {
+      const element = members[index];
+      if (element.member.id === user.user.id) {
+        if (element.memberType === "LEFT_MEMBER") {
+          console.log("true");
+          return true;
+        } else {
+          console.log("false");
+          return false;
+        }
       }
-    } else if (actionType === "remove") {
-      setDeputyList(
-        deputyList.filter((item) => item.member.id !== newItem.member.id)
-      );
     }
+    return true;
   }
 
-  // eslint-disable-next-line
-  var handleGrantMember = async () => {
-    setIsLoad(true);
-    let mbListConversation = conversation.members.slice();
-    // eslint-disable-next-line
-    await mbListConversation.map((item, index) => {
-      let indexContaint = deputyList.findIndex(
-        (i) => i.member.id === item.member.id
-      );
-      console.log(item.memberType + " " + item.member.userName);
-      if (
-        indexContaint !== -1 &&
-        item.member.id === deputyList[indexContaint].member.id
-      ) {
-        let mb = { ...mbListConversation[index] };
-        mb.memberType = "DEPUTY_LEADER";
-        mbListConversation[index] = { ...mb };
-      } else if (
-        owner.id !== mbListConversation[index].member.id &&
-        mbListConversation[index].memberType !== "LEFT_MEMBER"
-      ) {
-        let memb = { ...mbListConversation[index] };
-        memb.memberType = "MEMBER";
-        mbListConversation[index] = { ...memb };
-        console.log(mbListConversation[index].memberType);
-      }
-    });
-    console.log(mbListConversation);
-    conversation.members = [...mbListConversation];
-    console.log("conversation");
-    console.log(conversation);
-    stompClient.send("/app/grantRoleMember", {}, JSON.stringify(conversation));
-    setIsLoad(false);
-  };
-
-  var handleGrantMemberV2 = async () => {
+  var handleAddMember = async () => {
     let arr = [];
     // eslint-disable-next-line
-    deputyList.slice().map((item) => {
+    listSelect.slice().map((item) => {
       let member = {
-        member: { id: item.member.id },
+        member: { id: item.user.id },
       };
       arr.push(member);
     });
-
     let con = {
       idGroup: conversation.idGroup,
       ownerID: owner.id,
       members: arr,
     };
-    console.log(con);
-    stompClient.send(
-      "/app/grantRoleMember_DEPUTY_LEADER",
-      {},
-      JSON.stringify(con)
-    );
+    stompClient.send("/app/addMemberIntoGroup", {}, JSON.stringify(con));
   };
+
+  useEffect(() => {
+    var arr = [];
+    owner.friendList.map((item) => {
+      if (checAddMemberNotExist(item)) {
+        arr.push(item);
+      }
+    });
+    setListFriend([...arr]);
+  }, [owner.friendLis]);
+
+  function addToUniqueArray(newItem, actionType) {
+    if (actionType === "add") {
+      const exists = listSelect.some(
+        (item) => item.user.id === newItem.user.id
+      );
+      if (!exists) {
+        setListSelect([...listSelect, newItem]);
+      }
+    } else if (actionType === "remove") {
+      setListSelect(
+        listSelect.filter((item) => item.user.id !== newItem.user.id)
+      );
+    }
+  }
 
   var itemRowchat = (item) => {
     return (
@@ -127,7 +92,7 @@ export default function GrantMember({ isOpen, setIsOpen, conversation }) {
             type="checkbox"
             checked={isItemExistInArray(item)}
             className="text-2xl h-4 w-4 accent-blue-500"
-            id={item.member.id}
+            id={item.user.id}
             onChange={(e) => {
               if (e.target.checked) {
                 addToUniqueArray(item, "add");
@@ -138,14 +103,14 @@ export default function GrantMember({ isOpen, setIsOpen, conversation }) {
           />
           <label
             className="flex flex-row items-center  w-full ml-2"
-            htmlFor={item.member.id}
+            htmlFor={item.user.id}
           >
             <img
               className="h-12 w-12 rounded-full m-1 border border-black shadow-2xl"
-              src={item.member.avt}
+              src={item.user.avt}
               alt="#"
             />
-            <div className="px-2 font-medium">{item.member.userName}</div>
+            <div className="px-2 font-medium">{item.user.userName}</div>
           </label>
         </div>
       </div>
@@ -205,22 +170,22 @@ export default function GrantMember({ isOpen, setIsOpen, conversation }) {
                       >
                         <button
                           className={`inline-block justify-center items-center text-center text-black border-gray-300 
-                           hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium
-                           ${
-                             activeTab === "phonhom"
-                               ? "text-black border-gray-300 border-b-2"
-                               : "text-gray-500"
-                           } `}
+                                   hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium
+                                   ${
+                                     activeTab === "selected"
+                                       ? "text-black border-gray-300 border-b-2"
+                                       : "text-gray-500"
+                                   } `}
                           onClick={() => {
-                            setActiveTab("phonhom");
+                            setActiveTab("selected");
                           }}
                           id="profile-tab"
                           type="button"
                           role="tab"
                           aria-controls="chat"
-                          aria-selected={activeTab === "phonhom"}
+                          aria-selected={activeTab === "selected"}
                         >
-                          Phó nhóm
+                          Đã chọn
                         </button>
                       </li>
                       <li
@@ -229,21 +194,21 @@ export default function GrantMember({ isOpen, setIsOpen, conversation }) {
                       >
                         <button
                           className={`inline-block justify-center items-center text-center text-black border-gray-300 
-                           hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium  ${
-                             activeTab === "member"
-                               ? "text-black border-gray-300 border-b-2"
-                               : "text-gray-500"
-                           } `}
+                                   hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium  ${
+                                     activeTab === "friend"
+                                       ? "text-black border-gray-300 border-b-2"
+                                       : "text-gray-500"
+                                   } `}
                           id="profile-tab"
                           onClick={() => {
-                            setActiveTab("member");
+                            setActiveTab("friend");
                           }}
                           type="button"
                           role="tab"
                           aria-controls="chat"
-                          aria-selected={activeTab === "member"}
+                          aria-selected={activeTab === "friend"}
                         >
-                          Thành viên
+                          Bạn bè
                         </button>
                       </li>
                     </ul>
@@ -251,7 +216,7 @@ export default function GrantMember({ isOpen, setIsOpen, conversation }) {
                   <div id="myTabContent">
                     <div
                       className={`bg-gray-50 p-4 rounded-lg dark:bg-gray-800 ${
-                        activeTab === "phonhom" ? "" : "hidden"
+                        activeTab === "selected" ? "" : "hidden"
                       }`}
                       role="tabpanel"
                       aria-labelledby="chat-tab"
@@ -259,14 +224,14 @@ export default function GrantMember({ isOpen, setIsOpen, conversation }) {
                       <Virtuoso
                         initialTopMostItemIndex={0}
                         className="w-full min-h-[370px] text-black "
-                        totalCount={deputyList.length}
-                        data={deputyList}
+                        totalCount={listSelect.length}
+                        data={listSelect}
                         itemContent={(_, item) => itemRowchat(item)}
                       ></Virtuoso>
                     </div>
                     <div
                       className={`bg-gray-50 p-4 rounded-lg dark:bg-gray-800 ${
-                        activeTab === "member" ? "" : "hidden"
+                        activeTab === "friend" ? "" : "hidden"
                       }`}
                       role="tabpanel"
                       aria-labelledby="chat-tab"
@@ -274,8 +239,8 @@ export default function GrantMember({ isOpen, setIsOpen, conversation }) {
                       <Virtuoso
                         initialTopMostItemIndex={0}
                         className="w-full min-h-[370px] text-black "
-                        totalCount={memberList.length}
-                        data={memberList}
+                        totalCount={listFriend.length}
+                        data={listFriend}
                         itemContent={(_, item) => itemRowchat(item)}
                       ></Virtuoso>
                     </div>
@@ -292,18 +257,12 @@ export default function GrantMember({ isOpen, setIsOpen, conversation }) {
                     <p className="font-semibold ">Hủy</p>
                   </button>
                   <button
-                    disabled={
-                      JSON.stringify(deputyList) ===
-                      JSON.stringify(deputyListOld)
-                    }
+                    disabled={listSelect.length === 0}
                     className={`btn-request rounded  ${
-                      JSON.stringify(deputyList) ===
-                      JSON.stringify(deputyListOld)
-                        ? "bg-gray-300"
-                        : "btn-blur-blue"
+                      listSelect.length === 0 ? "bg-gray-300" : "btn-blur-blue"
                     }`}
                     onClick={async () => {
-                      await handleGrantMemberV2();
+                      await handleAddMember();
                       closeModal();
                     }}
                   >
