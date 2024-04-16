@@ -1,7 +1,7 @@
 {
   "name": "zalochat",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "homepage": "https://sonpham28052002.github.io/Zalo_Chat_Web",
   "dependencies": {
     "@headlessui/react": "^1.7.18",
