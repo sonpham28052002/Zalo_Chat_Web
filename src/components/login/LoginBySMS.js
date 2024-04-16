@@ -33,7 +33,7 @@ export default function ForgotPassword() {
     handleGetValueCookie(
       "lastRequestOtp",
       (value) => {
-        if (value.time) {
+        if (value?.time) {
           var differenceInSeconds = Math.floor(
             (new Date() - new Date(value.time)) / 1000
           );
