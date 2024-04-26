@@ -20,6 +20,7 @@ import ForwardMessage from "./ForwardMessage";
 import OptionChat from "./OptionChat";
 import GrantMember from "./GrantMember";
 import AddMemberModal from "./AddMemberModal";
+import ReplyMessage from "../replyMessage/replyMessage";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
@@ -119,7 +120,6 @@ export default function ChatRoom({ idConversation, setIndex }) {
     let mess = JSON.parse(message.body);
     setConversation(mess);
     setIsExtend(false);
-    setIndex(-1);
   });
 
   useSubscription("/user/" + owner.id + "/removeMemberInGroup", (messages) => {
@@ -322,6 +322,18 @@ export default function ChatRoom({ idConversation, setIndex }) {
     [replyMessage]
   );
 
+  var forcusMessage = useCallback(
+    (message) => {
+      const index = messages.findIndex((item) => item.id === message.id);
+      scrollContainerRef.current?.scrollToIndex({
+        index: index, // Sử dụng index cuối cùng của mảng tin nhắn
+        align: "start",
+        behavior: "auto",
+      });
+    },
+    // eslint-disable-next-line
+    [replyMessage]
+  );
   function checkInputConversation() {
     if (conversation.conversationType === "single") {
       return true;
@@ -473,28 +485,16 @@ export default function ChatRoom({ idConversation, setIndex }) {
                           index={index}
                           setIsOpenForwardMessage={setIsOpenForwardMessageView}
                           setReplyMessage={setReplyMessageConversation}
+                          forcusMessage={forcusMessage}
                         />
                       );
                     }}
                   />
                   {replyMessage && (
-                    <div className="w-full h-52 px-2 -mb-2 relative">
-                      <div
-                        className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
-                        onClick={() => {
-                          setReplyMessage(undefined);
-                        }}
-                      >
-                        <IoMdCloseCircleOutline />
-                      </div>
-                      <div className="w-full bg-gray-400 h-full py-1 flex flex-row justify-start">
-                        <div className="h-full w-[2px] bg-blue-500 ml-3 py-1"></div>
-                        <div className="mx-2 flex flex-col justify-between">
-                          <p className="font-medium">{replyMessage?.content}</p>
-                          <p className="text-xs">{replyMessage?.id}</p>
-                        </div>
-                      </div>
-                    </div>
+                    <ReplyMessage
+                      replyMessage={replyMessage}
+                      setReplyMessage={setReplyMessage}
+                    />
                   )}
                 </div>
               </>
@@ -513,6 +513,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
                 messages={messages}
                 setIsLoading={setIsLoading}
                 replyMessage={replyMessage}
+                setReplyMessageConversation={setReplyMessageConversation}
               />
             ) : (
               <div className="flex flex-row justify-center items-center h-20 text-xl font-normal text-red-500">

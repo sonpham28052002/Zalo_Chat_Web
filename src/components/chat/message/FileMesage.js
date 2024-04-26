@@ -15,6 +15,8 @@ export default function FileMessage({
   file,
   setIsOpenForwardMessage,
   conversation,
+  setReplyMessage,
+  forcusMessage,
 }) {
   let [messageLocal, setMessageLocal] = useState(file);
   var owner = useSelector((state) => state.data);
@@ -107,6 +109,7 @@ export default function FileMessage({
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
               conversation={conversation}
+              setReplyMessage={setReplyMessage}
             />
           )}
           <div className="relative h-full max-w-[40%] w-fit border shadow-lg rounded-md bg-[#e5efff]">
@@ -160,6 +163,7 @@ export default function FileMessage({
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
               conversation={conversation}
+              setReplyMessage={setReplyMessage}
             />
           )}
         </div>

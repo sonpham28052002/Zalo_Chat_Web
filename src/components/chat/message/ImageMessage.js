@@ -10,6 +10,8 @@ export default function ImageMessage({
   ownerID,
   setIsOpenForwardMessage,
   conversation,
+  setReplyMessage,
+  forcusMessage,
 }) {
   let [messageLocal, setMessageLocal] = useState(image);
   var owner = useSelector((state) => state.data);
@@ -64,10 +66,10 @@ export default function ImageMessage({
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
               conversation={conversation}
-
+              setReplyMessage={setReplyMessage}
             />
           )}
-          <div className="relative h-full max-w-[40%] w-fit border shadow-lg rounded-md ">
+          <div className="relative h-full max-w-[40%] w-fit shadow-lg rounded-md ">
             <div className="  h-fit flex flex-col items-start justify-around rounded-md ">
               <img
                 src={image.url}
@@ -94,7 +96,7 @@ export default function ImageMessage({
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
               conversation={conversation}
-
+              setReplyMessage={setReplyMessage}
             />
           )}
         </div>
