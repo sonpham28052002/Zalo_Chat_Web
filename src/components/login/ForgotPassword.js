@@ -35,7 +35,7 @@ export default function ForgotPassword() {
 
   return (
     <div
-      className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative"
+      className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative "
       style={{ WebkitUserSelect: "none" }}
     >
       <img
