@@ -10,6 +10,8 @@ export default function TextMessage({
   message,
   conversation,
   setIsOpenForwardMessage,
+  setReplyMessage,
+  forcusMessage,
 }) {
   function getImageUserChat(userId, conversation) {
     if (conversation.conversationType === "group") {
@@ -62,10 +64,44 @@ export default function TextMessage({
               message={message}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              setReplyMessage={setReplyMessage}
               conversation={conversation}
             />
           )}
           <div className=" relative h-fit max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-col justify-start items-center border  shadow-lg p-2">
+            {messageLocal.replyMessage && (
+              <div
+                className="   h-fit min-w-full max-w-full flex flex-col items-start justify-around text-wrap bg-[#c7e0ff] p-2  border-l-2 border-blue-500"
+                onClick={() => {
+                  forcusMessage(messageLocal.replyMessage);
+                }}
+              >
+                {messageLocal.replyMessage?.sender.id === owner.id ? (
+                  <p className="font-medium text-sm">{owner.userName}</p>
+                ) : (
+                  <p className="font-medium text-sm">
+                    {conversation.user.userName}
+                  </p>
+                )}
+                {/^(ftp|http|https):\/\/[^ "]+$/.test(messageLocal.content) ? (
+                  <div className="w-96">
+                    {/* <Embed url={messageLocal.content} /> */}
+                    <a
+                      target="_blank"
+                      rel="noreferrer"
+                      className="whitespace-wrap break-words max-w-96 text-xs"
+                      href={messageLocal.replyMessage?.content}
+                    >
+                      {messageLocal.replyMessage?.content}
+                    </a>
+                  </div>
+                ) : (
+                  <p className="whitespace-wrap break-words max-w-96 text-xs">
+                    {messageLocal.replyMessage?.content}
+                  </p>
+                )}
+              </div>
+            )}
             <div className=" h-fit min-w-20 max-w-full flex flex-col items-start justify-around text-wrap  ">
               {/^(ftp|http|https):\/\/[^ "]+$/.test(messageLocal.content) ? (
                 <div className="w-96">
@@ -104,6 +140,7 @@ export default function TextMessage({
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
               conversation={conversation}
+              setReplyMessage={setReplyMessage}
             />
           )}
         </div>

@@ -24,7 +24,6 @@ import { LuFileJson } from "react-icons/lu";
 import { useSelector } from "react-redux";
 import { GrResources } from "react-icons/gr";
 import { stompClient } from "../../../socket/socket";
-import { useSubscription } from "react-stomp-hooks";
 export default function OptionChat({
   conversation,
   nameConversation,
@@ -34,7 +33,7 @@ export default function OptionChat({
   showAddMember,
 }) {
   var owner = useSelector((state) => state.data);
-
+  console.log(messages);
   var [showImageVideo, setShowImageVideo] = useState(false);
   var [showFile, setShowFile] = useState(false);
   var [showTextLink, setTextLink] = useState(false);
@@ -54,7 +53,7 @@ export default function OptionChat({
       setMembers(
         conversation.members.filter((item) => item.memberType !== "LEFT_MEMBER")
       );
-    }
+    } // eslint-disable-next-line
   }, [conversation?.members]);
 
   function formatFileSize(size) {
@@ -89,14 +88,14 @@ export default function OptionChat({
       "STICKER",
     ];
     const filteredMessages = mess.filter(
-      (message) => !allowedTypes.includes(message.messageType)
+      (message) => !allowedTypes.includes(message?.messageType)
     );
     return filteredMessages;
   }
   function filterLink(mess) {
     const filteredMessages = mess.filter(
       (message) =>
-        message.messageType === "Text" &&
+        message?.messageType === "Text" &&
         /^(ftp|http|https):\/\/[^ "]+$/.test(message.content)
     );
     return filteredMessages;
@@ -547,20 +546,21 @@ export default function OptionChat({
                     </div>
                   )}
                 </div>
-                {conversation.members.filter(
-                  (item) => item.member.id === owner.id
-                )[0].memberType !== "GROUP_LEADER" && (
-                  <div className="h-10 w-full p-2">
-                    <div
-                      className="flex flex-row justify-center items-center w-full h-10 rounded-md bg-red-300"
-                      onClick={async () => {
-                        await handleOutGroup();
-                      }}
-                    >
-                      <CiLogout /> rời nhóm
+                {conversation.conversationType === "group" &&
+                  conversation?.members.filter(
+                    (item) => item.member.id === owner.id
+                  )[0].memberType !== "GROUP_LEADER" && (
+                    <div className="h-10 w-full p-2">
+                      <div
+                        className="flex flex-row justify-center items-center w-full h-10 rounded-md bg-red-300"
+                        onClick={async () => {
+                          await handleOutGroup();
+                        }}
+                      >
+                        <CiLogout /> rời nhóm
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             )}
           </div>
