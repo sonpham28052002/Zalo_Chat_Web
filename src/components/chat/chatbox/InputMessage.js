@@ -26,6 +26,8 @@ export default function InputMessage({
   messages,
   setIsLoading,
   replyMessage,
+  setReplyMessageConversation,
+  forcusMessage
 }) {
   var user = useSelector((state) => state.data);
 
@@ -73,6 +75,7 @@ export default function InputMessage({
         setIsLoading(false);
       }
     }
+    setReplyMessageConversation(undefined);
   }
 
   var mimeTypeMapping = {
