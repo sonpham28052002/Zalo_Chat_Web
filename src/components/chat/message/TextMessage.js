@@ -10,6 +10,7 @@ export default function TextMessage({
   message,
   conversation,
   setIsOpenForwardMessage,
+  setReplyMessage,
 }) {
   function getImageUserChat(userId, conversation) {
     if (conversation.conversationType === "group") {
@@ -62,6 +63,7 @@ export default function TextMessage({
               message={message}
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
+              setReplyMessage={setReplyMessage}
               conversation={conversation}
             />
           )}
@@ -104,6 +106,7 @@ export default function TextMessage({
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
               conversation={conversation}
+              setReplyMessage={setReplyMessage}
             />
           )}
         </div>

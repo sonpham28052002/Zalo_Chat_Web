@@ -13,6 +13,7 @@ export default function Conversation({
   index,
   conversation,
   setIsOpenForwardMessage,
+  setReplyMessage,
 }) {
   switch (item.messageType) {
     case "Text":
@@ -24,6 +25,7 @@ export default function Conversation({
           message={item}
           conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
+          setReplyMessage={setReplyMessage}
         />
       );
     case "STICKER":

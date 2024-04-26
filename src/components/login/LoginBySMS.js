@@ -55,14 +55,14 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative">
+    <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative ">
       <img
         src={require("./asset/snapedit_1705786829845.png")}
         className="h-36"
         alt="/"
       ></img>
-      <h1 className="font-bold text-3xl">ĐĂNG NHẬP VỚI OPT</h1>
-      <h4 className="text-gray-400 text-base font-medium">
+      <h1 className="font-bold  text-3xl h-14 text-center w-full	whitespace-nowrap overflow-hidden text-ellipsis">ĐĂNG NHẬP VỚI OPT</h1>
+      <h4 className="text-gray-400 text-base text-center font-medium whitespace-nowrap overflow-hidden text-ellipsis w-full h-10">
         Chào mừng bạn đến với chúng tôi.
       </h4>
       <form className="h-full w-full flex flex-col justify-start mt-5">
@@ -170,7 +170,7 @@ export default function ForgotPassword() {
             <div>{isload ? <Loader /> : contentButton}</div>
           )}
         </button>
-        <p className="mb-5 text-center text-sm font-medium text-slate-500 mr-1">
+        <p className="mb-5 text-center text-sm font-medium text-slate-500 mr-1 whitespace-nowrap overflow-hidden text-ellipsis w-full">
           Chưa có tài khoản nào trước đây.
           <Link to="/signup" className="hover:text-blue-700">
             Đăng ký ngay!
@@ -182,7 +182,7 @@ export default function ForgotPassword() {
             history("/");
           }}
           type="button"
-          className=" min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold"
+          className=" min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis "
         >
           Đăng nhập bằng mật khẩu
         </button>
@@ -191,7 +191,7 @@ export default function ForgotPassword() {
             history("/qr");
           }}
           type="button"
-          className="min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold"
+          className="min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis "
         >
           Đăng nhập bằng mã QR
         </button>

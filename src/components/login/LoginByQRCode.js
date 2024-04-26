@@ -67,11 +67,11 @@ export default function LoginByQRCode() {
         Sử ứng dụng để quét mã QR bên dưới.
       </h4>
       {isScaned ? (
-        <div className="mt-10 h-fit ">
+        <div className="mt-1 h-1/2  flex flex-col items-center w-3/4 ">
           <img
             alt="#"
             src={userReceive?.content.avt}
-            className="shadow-2xl h-52 rounded-full border-2 border-white -mt-7"
+            className="shadow-2xl h-1/2 w-1/2  min-h-10 min-w-10 rounded-full border-2 border-white mt-7"
           />
           <h1 className="mt-2 text-xl font-bold text-center w-full">
             {userReceive?.content.name}
@@ -105,7 +105,7 @@ export default function LoginByQRCode() {
                   </div>
                 </>
               )}
-              <div className="border-2  border-white shadow-md p-3 rounded-md">
+              <div className="border-2 border-white shadow-md p-3 rounded-md">
                 <QRCode className="h-full " value={valueQR} />
               </div>
               <h4 className="text-base text-center font-medium mt-2 text-blue-300">

@@ -28,6 +28,10 @@ export default function NavChat({ indexSelect, setIndex, showSearch }) {
   useSubscription("/user/" + data.id + "/addMemberIntoGroup", (messages) => {
     dispatch(getAPI(data.id));
   });
+  useSubscription("/user/" + data.id + "/deleteMessage", (messages) => {
+    
+    dispatch(getAPI(data.id));
+  });
 
   useSubscription("/user/" + data.id + "/removeMemberInGroup", (messages) => {
     dispatch(getAPI(data.id));

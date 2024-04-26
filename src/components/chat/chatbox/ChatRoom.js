@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { BsCameraVideo } from "react-icons/bs";
-import { IoIosSearch } from "react-icons/io";
+import { IoIosSearch, IoMdCloseCircleOutline } from "react-icons/io";
 import { PiTagSimpleFill, PiWarningCircleLight } from "react-icons/pi";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import "../../../style/scrollBar.css";
@@ -30,6 +30,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var [isLoading, setIsLoading] = useState(false);
   var [showGrantMember, setShowGrantMember] = useState(false);
   var [showAddMember, setShowAddMember] = useState(false);
+  var [replyMessage, setReplyMessage] = useState(undefined);
 
   var [listMember, setListMember] = useState([]);
   var [isExtent, setIsExtend] = useState(false);
@@ -52,8 +53,12 @@ export default function ChatRoom({ idConversation, setIndex }) {
   useSubscription("/user/" + owner.id + "/singleChat", (message) => {
     let mess = JSON.parse(message.body);
     if (conversation.conversationType === "single") {
-      if (mess.receiver.id === idConversation) {
+      if (
+        mess.sender.id === idConversation ||
+        mess.receiver.id === idConversation
+      ) {
         getMessageByIdSenderAndIsReceiver(owner.id, idConversation, (data) => {
+          console.log(data);
           setMessages(data.slice().reverse());
         });
       }
@@ -89,6 +94,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
 
   useSubscription("/user/" + owner.id + "/deleteMessage", (message) => {
     let mess = JSON.parse(message.body);
+    console.log(mess);
     setMessages(messages.filter((item) => item.id !== mess.id));
   });
 
@@ -113,11 +119,13 @@ export default function ChatRoom({ idConversation, setIndex }) {
     let mess = JSON.parse(message.body);
     setConversation(mess);
     setIsExtend(false);
+    setIndex(-1);
   });
 
   useSubscription("/user/" + owner.id + "/removeMemberInGroup", (messages) => {
     let mess = JSON.parse(messages.body);
     console.log(mess);
+    // eslint-disable-next-line
     mess.members.map((item, index) => {
       listMember[index].memberType = item.memberType;
     });
@@ -128,6 +136,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
 
   useSubscription("/user/" + owner.id + "/outGroup", (messages) => {
     let mess = JSON.parse(messages.body);
+    // eslint-disable-next-line
     mess.members.map((item, index) => {
       listMember[index].memberType = item.memberType;
     });
@@ -173,6 +182,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
 
   useEffect(() => {
     // eslint-disable-next-line
+    setReplyMessage(undefined);
     setIsLoad(false);
     setIsExtend(false);
     owner.conversation.filter(async (item) => {
@@ -302,6 +312,14 @@ export default function ChatRoom({ idConversation, setIndex }) {
       setIsOpenForwardMessage(!isOpenForwardMessage);
     },
     [isOpenForwardMessage]
+  );
+
+  var setReplyMessageConversation = useCallback(
+    (message) => {
+      setReplyMessage(message);
+    },
+    // eslint-disable-next-line
+    [replyMessage]
   );
 
   function checkInputConversation() {
@@ -439,7 +457,9 @@ export default function ChatRoom({ idConversation, setIndex }) {
                 <div className="absolute bottom-0 max-h-[764px] w-full flex flex-col overflow-scroll justify-items-end overflow-y-auto overflow-x-hidden  py-2 my-2">
                   <Virtuoso
                     ref={scrollContainerRef}
-                    className="w-full min-h-[740px] scrollbar-container rotate-180"
+                    className={`w-full ${
+                      replyMessage ? "min-h-[700px]" : "min-h-[740px]"
+                    }  scrollbar-container rotate-180`}
                     totalCount={messages.length}
                     initialTopMostItemIndex={0}
                     itemContent={(index) => {
@@ -452,13 +472,32 @@ export default function ChatRoom({ idConversation, setIndex }) {
                           item={messages[index]}
                           index={index}
                           setIsOpenForwardMessage={setIsOpenForwardMessageView}
+                          setReplyMessage={setReplyMessageConversation}
                         />
                       );
                     }}
                   />
+                  {replyMessage && (
+                    <div className="w-full h-52 px-2 -mb-2 relative">
+                      <div
+                        className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
+                        onClick={() => {
+                          setReplyMessage(undefined);
+                        }}
+                      >
+                        <IoMdCloseCircleOutline />
+                      </div>
+                      <div className="w-full bg-gray-400 h-full py-1 flex flex-row justify-start">
+                        <div className="h-full w-[2px] bg-blue-500 ml-3 py-1"></div>
+                        <div className="mx-2 flex flex-col justify-between">
+                          <p className="font-medium">{replyMessage?.content}</p>
+                          <p className="text-xs">{replyMessage?.id}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </>
-
               {isLoading && (
                 <div className="absolute bottom-0 w-full flex flex-row justify-center items-center pb-2 ">
                   <Loader />
@@ -473,6 +512,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
                 setMessages={setMessages}
                 messages={messages}
                 setIsLoading={setIsLoading}
+                replyMessage={replyMessage}
               />
             ) : (
               <div className="flex flex-row justify-center items-center h-20 text-xl font-normal text-red-500">

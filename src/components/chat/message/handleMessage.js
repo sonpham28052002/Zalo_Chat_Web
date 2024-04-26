@@ -5,12 +5,14 @@ import { SlReload } from "react-icons/sl";
 import { useSelector } from "react-redux";
 import { stompClient } from "../../../socket/socket";
 import { useSubscription } from "react-stomp-hooks";
+import { MdQuickreply } from "react-icons/md";
 
 export default function HandleMessage({
   message,
   setIsRetrieve,
   setIsOpenForwardMessage,
   conversation,
+  setReplyMessage,
 }) {
   var owner = useSelector((state) => state.data);
 
@@ -64,23 +66,41 @@ export default function HandleMessage({
   function handleShareMessage() {
     setIsOpenForwardMessage(message);
   }
+
   return (
     <div className="flex flex-row mx-5 text-gray-400">
       {message.messageType !== "RETRIEVE" && (
-        <div
-          className="relative flex flex-col items-center group hover:text-white mx-[2px] hover:bg-slate-400 rounded-sm p-[2px]"
-          onClick={() => {
-            handleShareMessage();
-          }}
-        >
-          <IoIosShareAlt />
-          <div className="absolute bottom-0 w-60 flex-col items-center hidden mb-6 group-hover:flex">
-            <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-600 shadow-lg rounded-md">
-              chuyển tiếp
-            </span>
-            <div className="w-3 h-3 -mt-2 rotate-45 bg-gray-600"></div>
+        <>
+          <div
+            className="relative flex flex-col items-center group hover:text-white mx-[2px] hover:bg-slate-400 rounded-sm p-[2px]"
+            onClick={() => {
+              console.log(message);
+              setReplyMessage(message);
+            }}
+          >
+            <MdQuickreply />
+            <div className="absolute bottom-0 w-60 flex-col items-center hidden mb-6 group-hover:flex">
+              <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-600 shadow-lg rounded-md">
+                trả lời
+              </span>
+              <div className="w-3 h-3 -mt-2 rotate-45 bg-gray-600"></div>
+            </div>
           </div>
-        </div>
+          <div
+            className="relative flex flex-col items-center group hover:text-white mx-[2px] hover:bg-slate-400 rounded-sm p-[2px]"
+            onClick={() => {
+              handleShareMessage();
+            }}
+          >
+            <IoIosShareAlt />
+            <div className="absolute bottom-0 w-60 flex-col items-center hidden mb-6 group-hover:flex">
+              <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-600 shadow-lg rounded-md">
+                chuyển tiếp
+              </span>
+              <div className="w-3 h-3 -mt-2 rotate-45 bg-gray-600"></div>
+            </div>
+          </div>
+        </>
       )}
       {owner.id === message.sender.id && message.messageType !== "RETRIEVE" && (
         <div
