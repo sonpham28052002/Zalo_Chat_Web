@@ -416,6 +416,16 @@ export default function ChatRoom({ idConversation, setIndex }) {
               </div>
             </div>
           </div>
+          {showSearchMessage === true && <div className="w-full flex flex-row p-2 justify-center items-center">
+          <input
+            type="text" placeholder="Tìm tin nhắn" spellCheck="false"
+            className="w-3/4 bg-slate-100 h-8 border p-1 text-xs rounded pl-7 focus:outline-none"
+            onChange={(e) => {
+              handleSearchText(e.target.value);
+            }}
+          ></input>
+          <button className="w-[100px]" onClick={() => setShowSearchMessage(false)}>Đóng</button>
+        </div>}
           <div className="flex flex-row justify-center items-center">
             <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
               onClick={() => {
@@ -443,7 +453,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
             </div>
           </div>
         </div>
-        {showSearchMessage === true && <div className="w-full bg-slate-50 flex flex-row p-2 justify-center items-center">
+        {/* {showSearchMessage === true && <div className="w-full bg-slate-50 flex flex-row p-2 justify-center items-center">
           <input
             type="text" placeholder="Tìm tin nhắn" spellCheck="false"
             className="w-3/4 bg-slate-100 h-8 border p-1 text-xs rounded pl-7 focus:outline-none"
@@ -452,7 +462,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
             }}
           ></input>
           <button className="w-[100px]" onClick={() => setShowSearchMessage(false)}>Đóng</button>
-        </div>}
+        </div>} */}
         {isLoad ? (
           <div className="h-[877px]">
             <div
