@@ -28,6 +28,10 @@ export default function NavChat({ indexSelect, setIndex, showSearch }) {
   useSubscription("/user/" + data.id + "/addMemberIntoGroup", (messages) => {
     dispatch(getAPI(data.id));
   });
+  useSubscription("/user/" + data.id + "/deleteMessage", (messages) => {
+    
+    dispatch(getAPI(data.id));
+  });
 
   useSubscription("/user/" + data.id + "/removeMemberInGroup", (messages) => {
     dispatch(getAPI(data.id));
@@ -35,6 +39,7 @@ export default function NavChat({ indexSelect, setIndex, showSearch }) {
 
   useSubscription("/user/" + data.id + "/disbandConversation", (message) => {
     dispatch(getAPI(data.id));
+    setIndex(-1);
   });
 
   useSubscription("/user/" + data.id + "/outGroup", (message) => {

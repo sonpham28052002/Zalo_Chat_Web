@@ -13,6 +13,8 @@ export default function Conversation({
   index,
   conversation,
   setIsOpenForwardMessage,
+  setReplyMessage,
+  forcusMessage,
 }) {
   switch (item.messageType) {
     case "Text":
@@ -24,6 +26,8 @@ export default function Conversation({
           message={item}
           conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
+          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     case "STICKER":
@@ -34,6 +38,8 @@ export default function Conversation({
           sticker={item}
           conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
+          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     case "PNG":
@@ -47,6 +53,8 @@ export default function Conversation({
           image={item}
           conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
+          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     case "RETRIEVE":
@@ -56,6 +64,8 @@ export default function Conversation({
           key={item.id}
           message={item}
           conversation={conversation}
+          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     case "VIDEO":
@@ -66,6 +76,8 @@ export default function Conversation({
           video={item}
           conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
+          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     case "AUDIO":
@@ -76,6 +88,8 @@ export default function Conversation({
           vioce={item}
           conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
+          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     case "DOCX":
@@ -98,6 +112,8 @@ export default function Conversation({
           file={item}
           conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
+          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     default:
@@ -108,6 +124,8 @@ export default function Conversation({
           file={item}
           conversation={conversation}
           setIsOpenForwardMessage={setIsOpenForwardMessage}
+          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
   }

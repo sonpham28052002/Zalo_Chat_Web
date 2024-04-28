@@ -37,7 +37,7 @@ export default function LoginByNumberPhone() {
   };
 
   return (
-    <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative">
+    <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative whitespace-nowrap overflow-hidden text-ellipsis ">
       <img
         src={require("./asset/snapedit_1705786829845.png")}
         className="h-36"
