@@ -20,6 +20,7 @@ import ForwardMessage from "./ForwardMessage";
 import OptionChat from "./OptionChat";
 import GrantMember from "./GrantMember";
 import AddMemberModal from "./AddMemberModal";
+import EmotionModal from "./EmotionModal";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
@@ -32,6 +33,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var [showAddMember, setShowAddMember] = useState(false);
   var [showSearchMessage, setShowSearchMessage] = useState(false);
   var [searchText, setSearchText] = useState("");
+  var [isOpenEmotionModal, setOpenEmotionModal] = useState(true);
 
   var [listMember, setListMember] = useState([]);
   var [isExtent, setIsExtend] = useState(false);
@@ -417,15 +419,15 @@ export default function ChatRoom({ idConversation, setIndex }) {
             </div>
           </div>
           {showSearchMessage === true && <div className="w-full flex flex-row p-2 justify-center items-center">
-          <input
-            type="text" placeholder="Tìm tin nhắn" spellCheck="false"
-            className="w-3/4 bg-slate-100 h-8 border p-1 text-xs rounded pl-7 focus:outline-none"
-            onChange={(e) => {
-              handleSearchText(e.target.value);
-            }}
-          ></input>
-          <button className="w-[100px]" onClick={() => setShowSearchMessage(false)}>Đóng</button>
-        </div>}
+            <input
+              type="text" placeholder="Tìm tin nhắn" spellCheck="false"
+              className="w-3/4 bg-slate-100 h-8 border p-1 text-xs rounded pl-7 focus:outline-none"
+              onChange={(e) => {
+                handleSearchText(e.target.value);
+              }}
+            ></input>
+            <button className="w-[100px]" onClick={() => setShowSearchMessage(false)}>Đóng</button>
+          </div>}
           <div className="flex flex-row justify-center items-center">
             <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
               onClick={() => {
@@ -559,6 +561,10 @@ export default function ChatRoom({ idConversation, setIndex }) {
           setIsOpen={setShowAddMember}
         />
       )}
+      <EmotionModal
+        isOpen={isOpenEmotionModal}
+        setIsOpen={setOpenEmotionModal}
+      />
     </div>
   );
 }

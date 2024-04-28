@@ -3,15 +3,12 @@ import "./style.css";
 import { IoSearch } from "react-icons/io5";
 import { TbArrowsSort } from "react-icons/tb";
 import { FaChevronDown } from "react-icons/fa6";
-import { LuFilter } from "react-icons/lu";
 import React, { useState } from "react";
 import { Menu } from "@headlessui/react";
 import { PiUserListLight } from "react-icons/pi";
 import { removeAccents, filterList } from "./Function";
 import UserInfoModal from "./../infoUser/UserInfoModal";
-import { MdLabel } from "react-icons/md";
 import { useSelector } from "react-redux";
-import { getInfoUserById } from "../../../services/User_service";
 import { stompClient } from "../../../socket/socket";
 import { useSubscription } from "react-stomp-hooks";
 
@@ -25,19 +22,9 @@ function ViewListFriend() {
   );
 
   const [sortNameOption, setSortNameOption] = useState("ins");
-  const [selectedOptionLabel, setSelectedOptionLabel] = useState(0);
   const [textFilter, setTextFilter] = useState("");
   const [isOpenUserInfoModal, setIsOpenUserInfoModal] = useState(false);
   const [idInfoFriend, setIdInfoFriend] = useState(undefined);
-  const labels = [
-    { id: 0, label: "Tất cả", value: "all", color: "gray" },
-    { id: 1, label: "Khách hàng", value: "customer", color: "red" },
-    { id: 2, label: "Gia đình", value: "family", color: "blue" },
-    { id: 3, label: "Công việc", value: "work", color: "green" },
-    { id: 4, label: "Bạn bè", value: "friends", color: "yellow" },
-    { id: 5, label: "Trả lời sau", value: "reply-later", color: "purple" },
-    { id: 6, label: "Đồng nghiệp", value: "colleagues", color: "orange" },
-  ];
 
   function CharacterText({ text }) {
     return <div className="text-base font-semibold pl-5 pt-8">{text}</div>;
@@ -284,7 +271,7 @@ function ViewListFriend() {
               </div>
             </div>
             <ListContact list={contacts}></ListContact>
-            {idInfoFriend !== undefined &&
+            {isOpenUserInfoModal &&
               <UserInfoModal
                 isOpen={isOpenUserInfoModal}
                 setIsOpen={setIsOpenUserInfoModal}
