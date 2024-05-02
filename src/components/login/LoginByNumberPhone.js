@@ -101,8 +101,8 @@ export default function LoginByNumberPhone() {
         </div>
         <button
           onClick={() => {
-            NotificationCustom();
-            // handleLoginWithPhoneAnhPassword(phone, password);
+            // NotificationCustom();
+            handleLoginWithPhoneAnhPassword(phone, password);
           }}
           type="button"
           className="min-h-10 w-full rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
