@@ -41,14 +41,10 @@ export default function Sticker({ setIndex, receiver, sender, sendMessage }) {
                   sender: sender,
                   receiver: {
                     id: receiver.id,
-                    userName: receiver.userName,
-                    avt: receiver.avt,
                   },
                   seen: [
                     {
                       id: user.id,
-                      userName: user.userName,
-                      avt: user.avt,
                     },
                   ],
                   size: null,

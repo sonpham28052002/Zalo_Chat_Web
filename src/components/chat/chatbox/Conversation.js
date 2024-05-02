@@ -64,8 +64,6 @@ export default function Conversation({
           key={item.id}
           message={item}
           conversation={conversation}
-          setReplyMessage={setReplyMessage}
-          forcusMessage={forcusMessage}
         />
       );
     case "VIDEO":

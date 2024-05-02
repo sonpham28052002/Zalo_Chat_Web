@@ -27,7 +27,7 @@ export default function InputMessage({
   setIsLoading,
   replyMessage,
   setReplyMessageConversation,
-  forcusMessage
+  forcusMessage,
 }) {
   var user = useSelector((state) => state.data);
 
@@ -43,9 +43,14 @@ export default function InputMessage({
         ...message,
         idGroup: conversation.idGroup,
         receiver: { id: `group_${conversation.idGroup}` },
-        replyMessage: { ...replyMessage },
-        reply: { ...replyMessage },
       };
+      if (replyMessage) {
+        mess = {
+          ...mess,
+          replyMessage: { ...replyMessage },
+          reply: { ...replyMessage },
+        };
+      }
       console.log(mess);
       if (stompClient && stompClient.connected) {
         stompClient.send(
@@ -63,9 +68,14 @@ export default function InputMessage({
         let mess = {
           ...message,
           idGroup: "",
-          replyMessage: { ...replyMessage },
-          reply: { ...replyMessage },
         };
+        if (replyMessage) {
+          mess = {
+            ...mess,
+            replyMessage: { ...replyMessage },
+            reply: { ...replyMessage },
+          };
+        }
         stompClient.send(
           "/app/private-single-message",
           {},

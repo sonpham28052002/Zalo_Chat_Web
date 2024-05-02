@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { BsCameraVideo } from "react-icons/bs";
-import { IoIosSearch, IoMdCloseCircleOutline } from "react-icons/io";
+import { IoIosSearch } from "react-icons/io";
 import { PiTagSimpleFill, PiWarningCircleLight } from "react-icons/pi";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import "../../../style/scrollBar.css";
@@ -325,11 +325,13 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var forcusMessage = useCallback(
     (message) => {
       const index = messages.findIndex((item) => item.id === message.id);
-      scrollContainerRef.current?.scrollToIndex({
-        index: index, // Sử dụng index cuối cùng của mảng tin nhắn
-        align: "start",
-        behavior: "auto",
-      });
+      if (index !== -1) {
+        scrollContainerRef.current?.scrollToIndex({
+          index: index,
+          align: "start",
+          behavior: "auto",
+        });
+      }
     },
     // eslint-disable-next-line
     [replyMessage]

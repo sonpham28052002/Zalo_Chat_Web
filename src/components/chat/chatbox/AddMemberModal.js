@@ -43,6 +43,7 @@ export default function AddMemberModal({ conversation, isOpen, setIsOpen }) {
   }
 
   var handleAddMember = async () => {
+    setIsLoad(true);
     let arr = [];
     // eslint-disable-next-line
     listSelect.slice().map((item) => {
@@ -57,16 +58,19 @@ export default function AddMemberModal({ conversation, isOpen, setIsOpen }) {
       members: arr,
     };
     stompClient.send("/app/addMemberIntoGroup", {}, JSON.stringify(con));
+    setIsLoad(false);
   };
 
   useEffect(() => {
     var arr = [];
+    // eslint-disable-next-line 
     owner.friendList.map((item) => {
       if (checAddMemberNotExist(item)) {
         arr.push(item);
       }
     });
     setListFriend([...arr]);
+    // eslint-disable-next-line 
   }, [owner.friendLis]);
 
   function addToUniqueArray(newItem, actionType) {
