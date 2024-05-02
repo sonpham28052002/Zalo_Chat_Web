@@ -3,6 +3,7 @@ import NavIconInteract from "../chatbox/NavIconInteract";
 import { useSelector } from "react-redux";
 import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
+import ReplyViewMessage from "../replyMessage/ReplyViewMessage";
 
 export default function VioceMessage({
   avt,
@@ -10,6 +11,8 @@ export default function VioceMessage({
   ownerID,
   setIsOpenForwardMessage,
   conversation,
+  setReplyMessage,
+  forcusMessage,
 }) {
   let [messageLocal, setMessageLocal] = useState(vioce);
   var owner = useSelector((state) => state.data);
@@ -65,9 +68,19 @@ export default function VioceMessage({
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
               conversation={conversation}
+              setReplyMessage={setReplyMessage}
             />
           )}
           <div className="relative h-full max-w-[40%] w-fit bg-transparent border-0  shadow-lg rounded-md ">
+            {vioce.replyMessage && (
+              <div>
+                <ReplyViewMessage
+                  replyMessage={vioce.replyMessage}
+                  forcusMessage={forcusMessage}
+                  conversation={conversation}
+                />
+              </div>
+            )}
             <div className="  h-fit flex flex-col items-start justify-around rounded-md ">
               <audio controls>
                 <source src={vioce.url} type="audio/mpeg" />
@@ -93,6 +106,7 @@ export default function VioceMessage({
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
               conversation={conversation}
+              setReplyMessage={setReplyMessage}
             />
           )}
         </div>

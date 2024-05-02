@@ -1,12 +1,27 @@
 import React from "react";
-import { IoMdCloseCircleOutline } from "react-icons/io";
 import { AiFillFilePpt, AiFillFileZip } from "react-icons/ai";
 import { FaFileCode, FaFileCsv, FaFileExcel, FaFileWord } from "react-icons/fa";
 import { BiSolidFilePdf, BiSolidFileTxt } from "react-icons/bi";
 import { IoLogoHtml5 } from "react-icons/io";
 import { LuFileJson } from "react-icons/lu";
+import { useSelector } from "react-redux";
 
-export default function ReplyMessage({ replyMessage, setReplyMessage }) {
+export default function ReplyViewMessage({
+  replyMessage,
+  forcusMessage,
+  conversation,
+}) {
+  var owner = useSelector((state) => state.data);
+  var findName = () => {
+    if (conversation?.conversationType === "single") {
+      if (replyMessage?.sender.id === owner.id) {
+        return owner.userName;
+      } else {
+        return conversation.user.userName;
+      }
+    }
+  };
+
   function renderIconFile(type) {
     if (type === "PDF") {
       return <BiSolidFilePdf className="text-5xl  text-[#ff6350] " />;
@@ -31,44 +46,55 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
     }
   }
 
-  function TextMessage({ replyMessage, setReplyMessage }) {
+  function TextMessage({ replyMessage, forcusMessage }) {
     return (
-      <div className="w-full h-52 px-2 -mb-2 relative">
-        <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
-          onClick={() => {
-            setReplyMessage(undefined);
-          }}
-        >
-          <IoMdCloseCircleOutline />
-        </div>
-        <div className="w-full bg-gray-400 h-full py-1 flex flex-row justify-start">
-          <div className="h-full w-[2px] bg-blue-500 ml-3 py-1"></div>
-          <div className="mx-2 flex flex-col justify-between">
-            <p className="font-medium">{replyMessage?.content}</p>
-            <p className="text-xs">{replyMessage?.id}</p>
+      <div
+        className="   h-fit min-w-full max-w-full flex flex-col items-start justify-around text-wrap bg-[#c7e0ff] p-2  border-l-2 border-blue-500"
+        onClick={() => {
+          forcusMessage(replyMessage);
+        }}
+      >
+        <p className="font-medium text-sm">{findName()}</p>
+
+        {/^(ftp|http|https):\/\/[^ "]+$/.test(replyMessage.content) ? (
+          <div className="w-96">
+            {/* <Embed url={messageLocal.content} /> */}
+            <a
+              target="_blank"
+              rel="noreferrer"
+              className="whitespace-wrap break-words max-w-96 text-xs"
+              href={replyMessage?.content}
+            >
+              {replyMessage?.content}
+            </a>
           </div>
-        </div>
+        ) : (
+          <p className="whitespace-wrap break-words max-w-96 text-xs">
+            {replyMessage?.content}
+          </p>
+        )}
       </div>
     );
   }
 
-  function StickerMessage({ replyMessage, setReplyMessage }) {
+  function StickerMessage({ replyMessage, forcusMessage }) {
     return (
-      <div className="w-full h-52 px-2 -mb-2 relative">
-        <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
-          onClick={() => {
-            setReplyMessage(undefined);
-          }}
-        >
-          <IoMdCloseCircleOutline />
-        </div>
-        <div className="w-full bg-gray-400 h-full py-1 flex flex-row justify-start">
+      <div
+        className="w-full min-w-44 h-16  relative"
+        onClick={() => {
+          forcusMessage(replyMessage);
+        }}
+      >
+        <div className="w-full bg-[#c7e0ff] h-full py-1 flex flex-row justify-start px-2">
           <div className="h-full w-[2px] bg-blue-500 ml-3 py-1"></div>
           <img alt="." src={replyMessage.url} className="h-12 w-12" />
           <div className="flex flex-col justify-between ml-2 text-sm">
-            <p className="">Trả lời tin nhắn</p>
+            <p className="">
+              Trả lời <span className="font-medium">{findName()}</span>
+            </p>{" "}
+            <p className="">
+              Trả lời <span className="font-medium">{findName()}</span>
+            </p>
             <p className="font-medium">[Sticker]</p>
           </div>
         </div>
@@ -76,23 +102,22 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
     );
   }
 
-  function FileMessage({ replyMessage, setReplyMessage }) {
+  function FileMessage({ replyMessage, forcusMessage }) {
     return (
-      <div className="w-full h-52 px-2 -mb-2 relative">
-        <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
-          onClick={() => {
-            setReplyMessage(undefined);
-          }}
-        >
-          <IoMdCloseCircleOutline />
-        </div>
-        <div className="w-full bg-gray-400 h-full py-1 flex flex-row justify-start">
+      <div
+        className="w-full h-16 relative"
+        onClick={() => {
+          forcusMessage(replyMessage);
+        }}
+      >
+        <div className="w-full bg-[#c7e0ff] h-full py-1 flex flex-row justify-start">
           <div className="h-full w-[2px] bg-blue-500 ml-3 py-1"></div>
           <div className="mx-2 flex flex-row ">
             {renderIconFile(replyMessage.messageType)}
             <div className="flex flex-col justify-between ml-2 text-sm">
-              <p className="">Trả lời tin nhắn</p>
+              <p className="">
+                Trả lời <span className="font-medium">{findName()}</span>
+              </p>
               <p className="font-medium">[file {replyMessage.titleFile}]</p>
             </div>
           </div>
@@ -100,23 +125,22 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
       </div>
     );
   }
-  function ImageMessage({ replyMessage, setReplyMessage }) {
+  function ImageMessage({ replyMessage, forcusMessage }) {
     return (
-      <div className="w-full h-52 px-2 -mb-2 relative">
-        <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
-          onClick={() => {
-            setReplyMessage(undefined);
-          }}
-        >
-          <IoMdCloseCircleOutline />
-        </div>
-        <div className="w-full bg-gray-400 h-full py-1 flex flex-row justify-start">
+      <div
+        className="w-full h-16  rounded-md relative"
+        onClick={() => {
+          forcusMessage(replyMessage);
+        }}
+      >
+        <div className="w-full bg-[#c7e0ff] h-full py-1 flex flex-row justify-start">
           <div className="h-full w-[2px] bg-blue-500 ml-3 py-1"></div>
           <div className="mx-2 flex flex-row ">
             <img alt="." src={replyMessage.url} className="h-12 w-12" />
-            <div className="flex flex-col justify-between ml-2 text-sm">
-              <p className="">Trả lời tin nhắn</p>
+            <div className="h-12 flex flex-col justify-between ml-2 text-sm">
+              <p className="">
+                Trả lời <span className="font-medium">{findName()}</span>
+              </p>
               <p className="font-medium">[Hình ảnh ]</p>
             </div>
           </div>
@@ -124,25 +148,24 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
       </div>
     );
   }
-  function VideoMessage({ replyMessage, setReplyMessage }) {
+  function VideoMessage({ replyMessage, forcusMessage }) {
     return (
-      <div className="w-full h-52 px-2 -mb-2 relative">
-        <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
-          onClick={() => {
-            setReplyMessage(undefined);
-          }}
-        >
-          <IoMdCloseCircleOutline />
-        </div>
-        <div className="w-full bg-gray-400 h-full py-1 flex flex-row justify-start">
+      <div
+        className="w-full h-16  relative"
+        onClick={() => {
+          forcusMessage(replyMessage);
+        }}
+      >
+        <div className="w-full bg-[#c7e0ff] h-full py-1 flex flex-row justify-start">
           <div className="h-full w-[2px] bg-blue-500 ml-3 py-1"></div>
           <div className="mx-2 flex flex-row justify-between">
             <video className="overflow-hidden rounded-md w-12 h-12 ">
               <source src={replyMessage.url} type="video/mp4" />
             </video>
-            <div className="flex flex-col justify-between ml-2 text-sm">
-              <p className="">Trả lời tin nhắn</p>
+            <div className="h-12 flex flex-col justify-between ml-2 text-sm">
+              <p className="">
+                Trả lời <span className="font-medium">{findName()}</span>
+              </p>
               <p className="font-medium">[Video]</p>
             </div>
           </div>
@@ -150,26 +173,25 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
       </div>
     );
   }
-  function VioceMessage({ replyMessage, setReplyMessage }) {
+  function VioceMessage({ replyMessage, forcusMessage }) {
     return (
-      <div className="w-full h-52 px-2 -mb-2 relative">
-        <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
-          onClick={() => {
-            setReplyMessage(undefined);
-          }}
-        >
-          <IoMdCloseCircleOutline />
-        </div>
-        <div className="w-full bg-gray-400 h-full py-1 flex flex-row justify-start">
+      <div
+        className="w-full h-16 relative"
+        onClick={() => {
+          forcusMessage(replyMessage);
+        }}
+      >
+        <div className="w-full bg-[#c7e0ff] h-full py-1 flex flex-row justify-start">
           <div className="h-full w-[2px] bg-blue-500 ml-3 py-1"></div>
-          <div className="mx-2 flex flex-row justify-between items-center">
+          <div className="mx-2 flex flex-row items-center justify-between">
             <audio controls className="h-10 w-36">
               <source src={replyMessage.url} type="audio/mpeg" />
               <source src={replyMessage.url} type="audio/3gp" />
             </audio>
             <div className="flex flex-col justify-between ml-2 text-sm">
-              <p className="">Trả lời tin nhắn</p>
+              <p className="">
+                Trả lời <span className="font-medium">{findName()}</span>
+              </p>
               <p className="font-medium">[Vioce]</p>
             </div>
           </div>
@@ -182,14 +204,14 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
       return (
         <TextMessage
           replyMessage={replyMessage}
-          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     case "STICKER":
       return (
         <StickerMessage
           replyMessage={replyMessage}
-          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     case "PNG":
@@ -199,21 +221,21 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
       return (
         <ImageMessage
           replyMessage={replyMessage}
-          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     case "VIDEO":
       return (
         <VideoMessage
           replyMessage={replyMessage}
-          setReplyMessage={setReplyMessage}
-        />
+          forcusMessage={forcusMessage}
+        />  
       );
     case "AUDIO":
       return (
         <VioceMessage
           replyMessage={replyMessage}
-          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     case "DOCX":
@@ -232,14 +254,14 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
       return (
         <FileMessage
           replyMessage={replyMessage}
-          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
     default:
       return (
         <FileMessage
           replyMessage={replyMessage}
-          setReplyMessage={setReplyMessage}
+          forcusMessage={forcusMessage}
         />
       );
   }

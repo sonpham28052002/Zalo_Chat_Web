@@ -8,6 +8,8 @@ export default function StickerMessage({
   sticker,
   setIsOpenForwardMessage,
   conversation,
+  setReplyMessage,
+  forcusMessage,
 }) {
   var owner = useSelector((state) => state.data);
   var refMessage = useRef(null);
@@ -62,6 +64,7 @@ export default function StickerMessage({
                 setIsRetrieve={setIsRetrieve}
                 setIsOpenForwardMessage={setIsOpenForwardMessage}
                 conversation={conversation}
+                setReplyMessage={setReplyMessage}
               />
             )}
           </div>
@@ -80,6 +83,7 @@ export default function StickerMessage({
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
               conversation={conversation}
+              setReplyMessage={setReplyMessage}
             />
           )}
         </div>

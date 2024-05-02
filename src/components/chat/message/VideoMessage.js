@@ -10,6 +10,8 @@ export default function VideoMessage({
   ownerID,
   setIsOpenForwardMessage,
   conversation,
+  setReplyMessage,
+  forcusMessage,
 }) {
   let [messageLocal, setMessageLocal] = useState(video);
   var owner = useSelector((state) => state.data);
@@ -65,12 +67,13 @@ export default function VideoMessage({
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
               conversation={conversation}
+              setReplyMessage={setReplyMessage}
             />
           )}
-          <div className="relative h-full max-w-[40%] w-fit border shadow-lg rounded-md ">
+          <div className="relative h-full max-w-[40%] w-fit shadow-lg rounded-md ">
             <div className="  h-fit flex flex-col items-start justify-around rounded-md ">
               <video
-                className="overflow-hidden rounded-md min-w-60 h-52 w-auto "
+                className="overflow-hidden rounded-md min-w-60 max-h-96 w-auto "
                 controls
               >
                 <source src={video.url} type="video/mp4" />
@@ -104,6 +107,7 @@ export default function VideoMessage({
               setIsRetrieve={setIsRetrieve}
               setIsOpenForwardMessage={setIsOpenForwardMessage}
               conversation={conversation}
+              setReplyMessage={setReplyMessage}
             />
           )}
         </div>
