@@ -199,29 +199,36 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
           </motion.div>
         </motion.div>
       )}
-      <UpdateInfoModal
-        key={"UpdateInfoModal"}
-        isOpen={isOpenUpdateInfoModal}
-        setIsOpen={setIsOpenUpdateInfoModal}
-      ></UpdateInfoModal>
-      <ChangePasswordModal
-        key={"ChangePasswordModal"}
-        isOpen={isOpenChangePasswordModal}
-        setIsOpen={setIsOpenChangePasswordModal}
-      ></ChangePasswordModal>
-      <AvtModal
-        key={"ImageModal"}
-        isOpen={isOpenImageModal}
-        setIsOpen={setIsOpenImageModal}
-        url={img}
-      />
-
-      <BgModal
-        key={"BgModal"}
-        isOpen={isOpenBgModal}
-        setIsOpen={setIsOpenBgModal}
-        url={img}
-      />
+      {isOpenUpdateInfoModal &&
+        <UpdateInfoModal
+          key={"UpdateInfoModal"}
+          isOpen={isOpenUpdateInfoModal}
+          setIsOpen={setIsOpenUpdateInfoModal}
+        ></UpdateInfoModal>
+      }
+      {isOpenChangePasswordModal &&
+        <ChangePasswordModal
+          key={"ChangePasswordModal"}
+          isOpen={isOpenChangePasswordModal}
+          setIsOpen={setIsOpenChangePasswordModal}
+        ></ChangePasswordModal>
+      }
+      {isOpenImageModal &&
+        <AvtModal
+          key={"ImageModal"}
+          isOpen={isOpenImageModal}
+          setIsOpen={setIsOpenImageModal}
+          url={img}
+        />
+      }
+      {isOpenBgModal &&
+        <BgModal
+          key={"BgModal"}
+          isOpen={isOpenBgModal}
+          setIsOpen={setIsOpenBgModal}
+          url={img}
+        />
+      }
     </AnimatePresence>
   );
 };

@@ -20,6 +20,7 @@ import ForwardMessage from "./ForwardMessage";
 import OptionChat from "./OptionChat";
 import GrantMember from "./GrantMember";
 import AddMemberModal from "./AddMemberModal";
+import EmotionModal from "./EmotionModal";
 import ReplyMessage from "../replyMessage/replyMessage";
 
 export default function ChatRoom({ idConversation, setIndex }) {
@@ -31,6 +32,9 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var [isLoading, setIsLoading] = useState(false);
   var [showGrantMember, setShowGrantMember] = useState(false);
   var [showAddMember, setShowAddMember] = useState(false);
+  var [showSearchMessage, setShowSearchMessage] = useState(false);
+  var [searchText, setSearchText] = useState("");
+  var [isOpenEmotionModal, setOpenEmotionModal] = useState(true);
   var [replyMessage, setReplyMessage] = useState(undefined);
 
   var [listMember, setListMember] = useState([]);
@@ -179,6 +183,18 @@ export default function ChatRoom({ idConversation, setIndex }) {
       }
     })[0]
   );
+
+  const handleSearchText = (text) => {
+    setSearchText(text);
+    var indexes = [];
+    messages.forEach(function (obj, index) {
+      if (obj.messageType === "Text" && obj.content.toLowerCase().includes(text.toLowerCase())) {
+        indexes.push(index);
+      }
+    });
+    console.log(indexes);
+  };
+
 
   useEffect(() => {
     // eslint-disable-next-line
@@ -434,8 +450,21 @@ export default function ChatRoom({ idConversation, setIndex }) {
               </div>
             </div>
           </div>
+          {showSearchMessage === true && <div className="w-full flex flex-row p-2 justify-center items-center">
+            <input
+              type="text" placeholder="Tìm tin nhắn" spellCheck="false"
+              className="w-3/4 bg-slate-100 h-8 border p-1 text-xs rounded pl-7 focus:outline-none"
+              onChange={(e) => {
+                handleSearchText(e.target.value);
+              }}
+            ></input>
+            <button className="w-[100px]" onClick={() => setShowSearchMessage(false)}>Đóng</button>
+          </div>}
           <div className="flex flex-row justify-center items-center">
-            <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
+            <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
+              onClick={() => {
+                setShowSearchMessage(true);
+              }}>
               <IoIosSearch className="text-2xl " />
             </div>
             <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
@@ -458,6 +487,16 @@ export default function ChatRoom({ idConversation, setIndex }) {
             </div>
           </div>
         </div>
+        {/* {showSearchMessage === true && <div className="w-full bg-slate-50 flex flex-row p-2 justify-center items-center">
+          <input
+            type="text" placeholder="Tìm tin nhắn" spellCheck="false"
+            className="w-3/4 bg-slate-100 h-8 border p-1 text-xs rounded pl-7 focus:outline-none"
+            onChange={(e) => {
+              handleSearchText(e.target.value);
+            }}
+          ></input>
+          <button className="w-[100px]" onClick={() => setShowSearchMessage(false)}>Đóng</button>
+        </div>} */}
         {isLoad ? (
           <div className="h-[877px]">
             <div
@@ -565,6 +604,10 @@ export default function ChatRoom({ idConversation, setIndex }) {
           setIsOpen={setShowAddMember}
         />
       )}
+      <EmotionModal
+        isOpen={isOpenEmotionModal}
+        setIsOpen={setOpenEmotionModal}
+      />
     </div>
   );
 }

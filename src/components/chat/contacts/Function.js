@@ -3,15 +3,17 @@ function removeAccents(str) {
     return tmp;
 }
 
-function filterList(list, filter) {
+function filterList(list, filter, sort) {
     let tmp = [];
     filter = filter.toLowerCase();
     list.forEach(item => {
-        if (removeAccents(item.name).toLowerCase().includes(removeAccents(filter))) {
+        if (removeAccents(item.user.userName).toLowerCase().includes(removeAccents(filter))) {
             tmp.push(item);
         }
     });
-    return tmp;
+    if (sort === "ins")
+        return tmp.sort((a, b) => a.user.userName.localeCompare(b.user.userName))
+    return tmp.sort((b, a) => a.user.userName.localeCompare(b.user.userName))
 }
 
-export { removeAccents,filterList };
+export { removeAccents, filterList };
