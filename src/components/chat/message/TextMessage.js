@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 
 import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
+import ReplyViewMessage from "../replyMessage/ReplyViewMessage";
+import TotalReact from "../chatbox/TotalReact";
 
 export default function TextMessage({
   avt,
@@ -12,6 +14,7 @@ export default function TextMessage({
   setIsOpenForwardMessage,
   setReplyMessage,
   forcusMessage,
+  isOpenEmotion,
 }) {
   function getImageUserChat(userId, conversation) {
     if (conversation.conversationType === "group") {
@@ -68,41 +71,15 @@ export default function TextMessage({
               conversation={conversation}
             />
           )}
-          <div className=" relative h-fit max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-col justify-start items-center border  shadow-lg p-2">
+          <div className=" relative h-fit max-w-[50%] min-w-20 w-fit bg-[#e5efff] rounded-md flex flex-col justify-start items-start border shadow-lg p-2 ">
             {messageLocal.replyMessage && (
-              <div
-                className="   h-fit min-w-full max-w-full flex flex-col items-start justify-around text-wrap bg-[#c7e0ff] p-2  border-l-2 border-blue-500"
-                onClick={() => {
-                  forcusMessage(messageLocal.replyMessage);
-                }}
-              >
-                {messageLocal.replyMessage?.sender.id === owner.id ? (
-                  <p className="font-medium text-sm">{owner.userName}</p>
-                ) : (
-                  <p className="font-medium text-sm">
-                    {conversation.user.userName}
-                  </p>
-                )}
-                {/^(ftp|http|https):\/\/[^ "]+$/.test(messageLocal.content) ? (
-                  <div className="w-96">
-                    {/* <Embed url={messageLocal.content} /> */}
-                    <a
-                      target="_blank"
-                      rel="noreferrer"
-                      className="whitespace-wrap break-words max-w-96 text-xs"
-                      href={messageLocal.replyMessage?.content}
-                    >
-                      {messageLocal.replyMessage?.content}
-                    </a>
-                  </div>
-                ) : (
-                  <p className="whitespace-wrap break-words max-w-96 text-xs">
-                    {messageLocal.replyMessage?.content}
-                  </p>
-                )}
-              </div>
+              <ReplyViewMessage
+                replyMessage={messageLocal.replyMessage}
+                forcusMessage={forcusMessage}
+                conversation={conversation}
+              />
             )}
-            <div className=" h-fit min-w-20 max-w-full flex flex-col items-start justify-around text-wrap  ">
+            <div className=" h-fit min-w-20 max-w-full flex flex-col items-start justify-around text-wrap ">
               {/^(ftp|http|https):\/\/[^ "]+$/.test(messageLocal.content) ? (
                 <div className="w-96">
                   {/* <Embed url={messageLocal.content} /> */}
@@ -120,18 +97,25 @@ export default function TextMessage({
                   {messageLocal.content}
                 </p>
               )}
-            </div>
-            <div className="absolute -bottom-6  flex flex-row justify-between items-center  w-full pt-1 ">
               <span className="text-[12px] text-gray-400">
                 {addHoursAndFormatToHHMM(new Date(message.senderDate), 7)}
               </span>
+            </div>
+            <div className="absolute -bottom-5  flex flex-row items-center justify-end  w-full">
+              {messageLocal.react.length !== 0 && (
+                <TotalReact
+                  isOpenEmotion={isOpenEmotion}
+                  messageSelect={messageLocal}
+                />
+              )}
               <NavIconInteract
                 check={owner.id === message.sender.id}
-                icon={message.interact}
+                icon={message.react[message.react.length - 1]}
                 setMessage={setMessageLocal}
                 message={messageLocal}
               />
             </div>
+            <div></div>
           </div>
           {owner.id !== message.sender.id && (
             <HandleMessage
