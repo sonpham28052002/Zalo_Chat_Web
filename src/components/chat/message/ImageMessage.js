@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
 import ReplyViewMessage from "../replyMessage/ReplyViewMessage";
+import TotalReact from "../chatbox/TotalReact";
+import { useSubscription } from "react-stomp-hooks";
 
 export default function ImageMessage({
   avt,
@@ -13,6 +15,8 @@ export default function ImageMessage({
   conversation,
   setReplyMessage,
   forcusMessage,
+  isOpenEmotion,
+  updateMessage,
 }) {
   let [messageLocal, setMessageLocal] = useState(image);
   var owner = useSelector((state) => state.data);
@@ -40,7 +44,10 @@ export default function ImageMessage({
       return avt;
     }
   }
-
+  useSubscription("/user/" + messageLocal.id + "/react-message", (messages) => {
+    let mess = JSON.parse(messages.body);
+    updateMessage(mess);
+  });
   return (
     <div className="h-fit">
       {!isRetrieve ? (
@@ -86,19 +93,29 @@ export default function ImageMessage({
               <img
                 src={image.url}
                 alt="#"
-                className={`overflow-hidden rounded-md min-w-60 max-h-80 w-auto ${image.replyMessage && "mt-1"} `}
+                className={`overflow-hidden rounded-md min-w-60 max-h-80 w-auto ${
+                  image.replyMessage && "mt-1"
+                } `}
               />
             </div>
             <div className="flex flex-row justify-between items-center absolute w-full pt-1 ">
               <span className=" text-[12px] px-4 text-gray-400 ">
                 {addHoursAndFormatToHHMM(new Date(image.senderDate), 7)}
               </span>
-              <NavIconInteract
-                check={ownerID !== image.sender.id}
-                icon={image.interact}
-                setMessage={setMessageLocal}
-                message={messageLocal}
-              />
+              <div className="flex flex-row marker:">
+                {messageLocal.react.length !== 0 && (
+                  <TotalReact
+                    isOpenEmotion={isOpenEmotion}
+                    messageSelect={messageLocal}
+                  />
+                )}
+                <NavIconInteract
+                  check={ownerID !== image.sender.id}
+                  icon={image.interact}
+                  setMessage={setMessageLocal}
+                  message={messageLocal}
+                />
+              </div>
             </div>
           </div>
           {owner.id !== image.sender.id && (

@@ -16,6 +16,7 @@ export default function Conversation({
   setReplyMessage,
   forcusMessage,
   isOpenEmotion,
+  updateMessage,
 }) {
   switch (item.messageType) {
     case "Text":
@@ -30,6 +31,7 @@ export default function Conversation({
           setReplyMessage={setReplyMessage}
           forcusMessage={forcusMessage}
           isOpenEmotion={isOpenEmotion}
+          updateMessage={updateMessage}
         />
       );
     case "STICKER":
@@ -42,6 +44,8 @@ export default function Conversation({
           setIsOpenForwardMessage={setIsOpenForwardMessage}
           setReplyMessage={setReplyMessage}
           forcusMessage={forcusMessage}
+          isOpenEmotion={isOpenEmotion}
+          updateMessage={updateMessage}
         />
       );
     case "PNG":
@@ -57,6 +61,8 @@ export default function Conversation({
           setIsOpenForwardMessage={setIsOpenForwardMessage}
           setReplyMessage={setReplyMessage}
           forcusMessage={forcusMessage}
+          isOpenEmotion={isOpenEmotion}
+          updateMessage={updateMessage}
         />
       );
     case "RETRIEVE":
@@ -78,6 +84,8 @@ export default function Conversation({
           setIsOpenForwardMessage={setIsOpenForwardMessage}
           setReplyMessage={setReplyMessage}
           forcusMessage={forcusMessage}
+          isOpenEmotion={isOpenEmotion}
+          updateMessage={updateMessage}
         />
       );
     case "AUDIO":
@@ -90,6 +98,8 @@ export default function Conversation({
           setIsOpenForwardMessage={setIsOpenForwardMessage}
           setReplyMessage={setReplyMessage}
           forcusMessage={forcusMessage}
+          isOpenEmotion={isOpenEmotion}
+          updateMessage={updateMessage}
         />
       );
     case "DOCX":
@@ -114,6 +124,8 @@ export default function Conversation({
           setIsOpenForwardMessage={setIsOpenForwardMessage}
           setReplyMessage={setReplyMessage}
           forcusMessage={forcusMessage}
+          isOpenEmotion={isOpenEmotion}
+          updateMessage={updateMessage}
         />
       );
     default:
@@ -126,6 +138,8 @@ export default function Conversation({
           setIsOpenForwardMessage={setIsOpenForwardMessage}
           setReplyMessage={setReplyMessage}
           forcusMessage={forcusMessage}
+          isOpenEmotion={isOpenEmotion}
+          updateMessage={updateMessage}
         />
       );
   }

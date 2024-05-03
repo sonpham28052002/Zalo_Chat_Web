@@ -22,6 +22,14 @@ export default function Home() {
     dispatch(getAPI(data.id));
   });
 
+  useSubscription("/user/" + data.id + "/updateAvt", (user) => {
+    dispatch(getAPI(data.id));
+  });
+  
+  useSubscription("/user/" + data.id + "/coverImage", (user) => {
+    dispatch(getAPI(data.id));
+  });
+
   return (
     <div className="min-w-screen-md  min-h-dvh flex flex-row">
       <div className=" bg-[#0091ff]  w-16 h-svh flex flex-col items-center justify-between">
