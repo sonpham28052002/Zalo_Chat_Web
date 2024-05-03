@@ -15,6 +15,7 @@ export default function Conversation({
   setIsOpenForwardMessage,
   setReplyMessage,
   forcusMessage,
+  isOpenEmotion,
 }) {
   switch (item.messageType) {
     case "Text":
@@ -28,6 +29,7 @@ export default function Conversation({
           setIsOpenForwardMessage={setIsOpenForwardMessage}
           setReplyMessage={setReplyMessage}
           forcusMessage={forcusMessage}
+          isOpenEmotion={isOpenEmotion}
         />
       );
     case "STICKER":
@@ -64,8 +66,6 @@ export default function Conversation({
           key={item.id}
           message={item}
           conversation={conversation}
-          setReplyMessage={setReplyMessage}
-          forcusMessage={forcusMessage}
         />
       );
     case "VIDEO":

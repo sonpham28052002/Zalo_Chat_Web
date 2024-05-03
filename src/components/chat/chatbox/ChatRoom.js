@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { BsCameraVideo } from "react-icons/bs";
-import { IoIosSearch, IoMdCloseCircleOutline } from "react-icons/io";
+import { IoIosSearch } from "react-icons/io";
 import { PiTagSimpleFill, PiWarningCircleLight } from "react-icons/pi";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import "../../../style/scrollBar.css";
@@ -20,6 +20,7 @@ import ForwardMessage from "./ForwardMessage";
 import OptionChat from "./OptionChat";
 import GrantMember from "./GrantMember";
 import AddMemberModal from "./AddMemberModal";
+import EmotionModal from "./EmotionModal";
 import ReplyMessage from "../replyMessage/replyMessage";
 
 export default function ChatRoom({ idConversation, setIndex }) {
@@ -31,6 +32,9 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var [isLoading, setIsLoading] = useState(false);
   var [showGrantMember, setShowGrantMember] = useState(false);
   var [showAddMember, setShowAddMember] = useState(false);
+  var [showSearchMessage, setShowSearchMessage] = useState(false);
+  var [searchText, setSearchText] = useState("");
+  var [isOpenEmotionModal, setOpenEmotionModal] = useState(true);
   var [replyMessage, setReplyMessage] = useState(undefined);
 
   var [listMember, setListMember] = useState([]);
@@ -40,6 +44,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var [chats, setChats] = useState([]);
   var [friend, setFriend] = useState([]);
   var [allUser, setAllUser] = useState([]);
+  var [messageSelect, setMessageSelect] = useState(undefined);
   const scrollContainerRef = useRef(null);
 
   useSubscription("/user/" + owner.id + "/retrieveMessage", (message) => {
@@ -116,6 +121,14 @@ export default function ChatRoom({ idConversation, setIndex }) {
     [showGrantMember]
   );
 
+  var isOpenEmotion = useCallback(
+    (value, messageSelect) => {
+      setMessageSelect(messageSelect);
+      setOpenEmotionModal(value);
+    },
+    // eslint-disable-next-line
+    [isOpenEmotionModal]
+  );
   useSubscription("/user/" + owner.id + "/disbandConversation", (message) => {
     let mess = JSON.parse(message.body);
     setConversation(mess);
@@ -180,11 +193,26 @@ export default function ChatRoom({ idConversation, setIndex }) {
     })[0]
   );
 
+  const handleSearchText = (text) => {
+    setSearchText(text);
+    var indexes = [];
+    messages.forEach(function (obj, index) {
+      if (
+        obj.messageType === "Text" &&
+        obj.content.toLowerCase().includes(text.toLowerCase())
+      ) {
+        indexes.push(index);
+      }
+    });
+    console.log(indexes);
+  };
+
   useEffect(() => {
     // eslint-disable-next-line
     setReplyMessage(undefined);
     setIsLoad(false);
     setIsExtend(false);
+    setOpenEmotionModal(false);
     owner.conversation.filter(async (item) => {
       if (
         item.conversationType === "group" &&
@@ -325,11 +353,13 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var forcusMessage = useCallback(
     (message) => {
       const index = messages.findIndex((item) => item.id === message.id);
-      scrollContainerRef.current?.scrollToIndex({
-        index: index, // Sử dụng index cuối cùng của mảng tin nhắn
-        align: "start",
-        behavior: "auto",
-      });
+      if (index !== -1) {
+        scrollContainerRef.current?.scrollToIndex({
+          index: index,
+          align: "start",
+          behavior: "auto",
+        });
+      }
     },
     // eslint-disable-next-line
     [replyMessage]
@@ -432,8 +462,32 @@ export default function ChatRoom({ idConversation, setIndex }) {
               </div>
             </div>
           </div>
+          {showSearchMessage === true && (
+            <div className="w-full flex flex-row p-2 justify-center items-center">
+              <input
+                type="text"
+                placeholder="Tìm tin nhắn"
+                spellCheck="false"
+                className="w-3/4 bg-slate-100 h-8 border p-1 text-xs rounded pl-7 focus:outline-none"
+                onChange={(e) => {
+                  handleSearchText(e.target.value);
+                }}
+              ></input>
+              <button
+                className="w-[100px]"
+                onClick={() => setShowSearchMessage(false)}
+              >
+                Đóng
+              </button>
+            </div>
+          )}
           <div className="flex flex-row justify-center items-center">
-            <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
+            <div
+              className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
+              onClick={() => {
+                setShowSearchMessage(true);
+              }}
+            >
               <IoIosSearch className="text-2xl " />
             </div>
             <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
@@ -456,6 +510,16 @@ export default function ChatRoom({ idConversation, setIndex }) {
             </div>
           </div>
         </div>
+        {/* {showSearchMessage === true && <div className="w-full bg-slate-50 flex flex-row p-2 justify-center items-center">
+          <input
+            type="text" placeholder="Tìm tin nhắn" spellCheck="false"
+            className="w-3/4 bg-slate-100 h-8 border p-1 text-xs rounded pl-7 focus:outline-none"
+            onChange={(e) => {
+              handleSearchText(e.target.value);
+            }}
+          ></input>
+          <button className="w-[100px]" onClick={() => setShowSearchMessage(false)}>Đóng</button>
+        </div>} */}
         {isLoad ? (
           <div className="h-[877px]">
             <div
@@ -486,6 +550,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
                           setIsOpenForwardMessage={setIsOpenForwardMessageView}
                           setReplyMessage={setReplyMessageConversation}
                           forcusMessage={forcusMessage}
+                          isOpenEmotion={isOpenEmotion}
                         />
                       );
                     }}
@@ -561,6 +626,14 @@ export default function ChatRoom({ idConversation, setIndex }) {
           messages={messages}
           isOpen={showAddMember}
           setIsOpen={setShowAddMember}
+        />
+      )}
+      {isOpenEmotionModal && messageSelect && (
+        <EmotionModal
+          isOpen={isOpenEmotionModal}
+          setIsOpen={setOpenEmotionModal}
+          conversation={conversation}
+          messageSelect={messageSelect}
         />
       )}
     </div>

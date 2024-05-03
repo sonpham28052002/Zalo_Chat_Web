@@ -71,12 +71,14 @@ export default function InfoUser() {
           </Menu.Items>
         </Transition>
       </Menu>
-      <UserInfoModal
-        isOpen={isOpenInforUser}
-        setIsOpen={setIsOpenInforUser}
-        userId={user.id}
-      />
-      <ModalSetting setIsOpen={setIsOpenSetting} isOpen={isOpenSetting} />
+      {isOpenInforUser &&
+        <UserInfoModal
+          isOpen={isOpenInforUser}
+          setIsOpen={setIsOpenInforUser}
+          userId={user.id}
+        />}
+      {isOpenSetting && <ModalSetting setIsOpen={setIsOpenSetting} isOpen={isOpenSetting} />}
+
     </>
   );
 }
