@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
 import ReplyViewMessage from "../replyMessage/ReplyViewMessage";
+import TotalReact from "../chatbox/TotalReact";
 
 export default function TextMessage({
   avt,
@@ -13,6 +14,7 @@ export default function TextMessage({
   setIsOpenForwardMessage,
   setReplyMessage,
   forcusMessage,
+  isOpenEmotion,
 }) {
   function getImageUserChat(userId, conversation) {
     if (conversation.conversationType === "group") {
@@ -95,18 +97,25 @@ export default function TextMessage({
                   {messageLocal.content}
                 </p>
               )}
-            </div>
-            <div className="absolute -bottom-6  flex flex-row justify-between items-center  w-full pt-1 ">
               <span className="text-[12px] text-gray-400">
                 {addHoursAndFormatToHHMM(new Date(message.senderDate), 7)}
               </span>
+            </div>
+            <div className="absolute -bottom-5  flex flex-row items-center justify-end  w-full">
+              {messageLocal.react.length !== 0 && (
+                <TotalReact
+                  isOpenEmotion={isOpenEmotion}
+                  messageSelect={messageLocal}
+                />
+              )}
               <NavIconInteract
                 check={owner.id === message.sender.id}
-                icon={message.interact}
+                icon={message.react[message.react.length - 1]}
                 setMessage={setMessageLocal}
                 message={messageLocal}
               />
             </div>
+            <div></div>
           </div>
           {owner.id !== message.sender.id && (
             <HandleMessage

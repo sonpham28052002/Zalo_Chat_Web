@@ -10,6 +10,7 @@ export default function ReplyViewMessage({
   replyMessage,
   forcusMessage,
   conversation,
+  message,
 }) {
   var owner = useSelector((state) => state.data);
   var findName = () => {
@@ -19,6 +20,10 @@ export default function ReplyViewMessage({
       } else {
         return conversation.user.userName;
       }
+    } else {
+      return conversation.members.filter(
+        (item) => item.member.id === replyMessage.sender.id
+      )[0].member.userName;
     }
   };
 
@@ -48,31 +53,35 @@ export default function ReplyViewMessage({
 
   function TextMessage({ replyMessage, forcusMessage }) {
     return (
-      <div
-        className="   h-fit min-w-full max-w-full flex flex-col items-start justify-around text-wrap bg-[#c7e0ff] p-2  border-l-2 border-blue-500"
-        onClick={() => {
-          forcusMessage(replyMessage);
-        }}
-      >
-        <p className="font-medium text-sm">{findName()}</p>
-
-        {/^(ftp|http|https):\/\/[^ "]+$/.test(replyMessage.content) ? (
-          <div className="w-96">
-            {/* <Embed url={messageLocal.content} /> */}
-            <a
-              target="_blank"
-              rel="noreferrer"
-              className="whitespace-wrap break-words max-w-96 text-xs"
-              href={replyMessage?.content}
-            >
-              {replyMessage?.content}
-            </a>
-          </div>
-        ) : (
-          <p className="whitespace-wrap break-words max-w-96 text-xs">
-            {replyMessage?.content}
+      <div className="h-fit w-full">
+        <div
+          className={`h-fit w-full flex flex-col items-start justify-around text-wrap bg-[#c7e0ff] p-2  border-l-2 border-blue-500 `}
+          onClick={() => {
+            forcusMessage(replyMessage);
+          }}
+        >
+          <p className="text-xs">
+            Trả lời <span className=" text-base font-medium">{findName()}</span>
           </p>
-        )}
+
+          {/^(ftp|http|https):\/\/[^ "]+$/.test(replyMessage.content) ? (
+            <div className="w-full">
+              {/* <Embed url={messageLocal.content} /> */}
+              <a
+                target="_blank"
+                rel="noreferrer"
+                className="whitespace-wrap break-words max-w-96 text-xs"
+                href={replyMessage?.content}
+              >
+                {replyMessage?.content}
+              </a>
+            </div>
+          ) : (
+            <p className="whitespace-wrap break-words max-w-96 text-xs">
+              {replyMessage?.content}
+            </p>
+          )}
+        </div>
       </div>
     );
   }
@@ -89,9 +98,6 @@ export default function ReplyViewMessage({
           <div className="h-full w-[2px] bg-blue-500 ml-3 py-1"></div>
           <img alt="." src={replyMessage.url} className="h-12 w-12" />
           <div className="flex flex-col justify-between ml-2 text-sm">
-            <p className="">
-              Trả lời <span className="font-medium">{findName()}</span>
-            </p>{" "}
             <p className="">
               Trả lời <span className="font-medium">{findName()}</span>
             </p>
@@ -229,7 +235,7 @@ export default function ReplyViewMessage({
         <VideoMessage
           replyMessage={replyMessage}
           forcusMessage={forcusMessage}
-        />  
+        />
       );
     case "AUDIO":
       return (

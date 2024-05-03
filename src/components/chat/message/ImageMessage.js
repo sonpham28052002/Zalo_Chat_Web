@@ -3,6 +3,7 @@ import NavIconInteract from "../chatbox/NavIconInteract";
 import { useSelector } from "react-redux";
 import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
+import ReplyViewMessage from "../replyMessage/ReplyViewMessage";
 
 export default function ImageMessage({
   avt,
@@ -70,11 +71,22 @@ export default function ImageMessage({
             />
           )}
           <div className="relative h-full max-w-[40%] w-fit shadow-lg rounded-md ">
-            <div className="  h-fit flex flex-col items-start justify-around rounded-md ">
+            <div
+              className={`h-fit flex flex-col items-start justify-around rounded-md  ${
+                image.replyMessage && "p-2 bg-[#aabddb] "
+              }`}
+            >
+              {image.replyMessage && (
+                <ReplyViewMessage
+                  replyMessage={image.replyMessage}
+                  forcusMessage={forcusMessage}
+                  conversation={conversation}
+                />
+              )}
               <img
                 src={image.url}
                 alt="#"
-                className="overflow-hidden rounded-md min-w-60 max-h-80 w-auto "
+                className={`overflow-hidden rounded-md min-w-60 max-h-80 w-auto ${image.replyMessage && "mt-1"} `}
               />
             </div>
             <div className="flex flex-row justify-between items-center absolute w-full pt-1 ">

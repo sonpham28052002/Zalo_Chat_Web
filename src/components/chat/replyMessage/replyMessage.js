@@ -35,7 +35,7 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
     return (
       <div className="w-full h-52 px-2 -mb-2 relative">
         <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
+          className="absolute h-5 w-5 flex flex-row justify-center items-center right-3 top-1 hover:text-red-600"
           onClick={() => {
             setReplyMessage(undefined);
           }}
@@ -45,8 +45,8 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
         <div className="w-full bg-gray-400 h-full py-1 flex flex-row justify-start">
           <div className="h-full w-[2px] bg-blue-500 ml-3 py-1"></div>
           <div className="mx-2 flex flex-col justify-between">
+            <p className="">Trả lời tin nhắn</p>
             <p className="font-medium">{replyMessage?.content}</p>
-            <p className="text-xs">{replyMessage?.id}</p>
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
     return (
       <div className="w-full h-52 px-2 -mb-2 relative">
         <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
+          className="absolute h-5 w-5 flex flex-row justify-center items-center right-3 top-1 hover:text-red-600"
           onClick={() => {
             setReplyMessage(undefined);
           }}
@@ -80,7 +80,7 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
     return (
       <div className="w-full h-52 px-2 -mb-2 relative">
         <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
+          className="absolute h-5 w-5 flex flex-row justify-center items-center right-3 top-1 hover:text-red-600"
           onClick={() => {
             setReplyMessage(undefined);
           }}
@@ -104,7 +104,7 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
     return (
       <div className="w-full h-52 px-2 -mb-2 relative">
         <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
+          className="absolute h-5 w-5 flex flex-row justify-center items-center right-3 top-1 hover:text-red-600"
           onClick={() => {
             setReplyMessage(undefined);
           }}
@@ -128,7 +128,7 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
     return (
       <div className="w-full h-52 px-2 -mb-2 relative">
         <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
+          className="absolute h-5 w-5 flex flex-row justify-center items-center right-3 top-1 hover:text-red-600"
           onClick={() => {
             setReplyMessage(undefined);
           }}
@@ -154,7 +154,7 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
     return (
       <div className="w-full h-52 px-2 -mb-2 relative">
         <div
-          className="absolute h-5 w-5 flex flex-row justify-center items-center right-5 top-1 hover:text-red-600"
+          className="absolute h-5 w-5 flex flex-row justify-center items-center right-3 top-1 hover:text-red-600"
           onClick={() => {
             setReplyMessage(undefined);
           }}

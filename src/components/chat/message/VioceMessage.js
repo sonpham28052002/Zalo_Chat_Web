@@ -43,11 +43,11 @@ export default function VioceMessage({
   }
 
   return (
-    <div className="h-fit">
+    <div className="h-fit ">
       {!isRetrieve ? (
         <div
           ref={refMessage}
-          className={` relative h-fit w-full  flex flex-row items-end my-3 bg-transparent py-5 rotate-180  ${
+          className={` relative h-fit w-full  flex flex-row items-end my-3 bg-transparent py-5 rotate-180   ${
             owner.id === vioce.sender.id
               ? "justify-end pr-5"
               : "justify-start pl-5"
@@ -71,18 +71,19 @@ export default function VioceMessage({
               setReplyMessage={setReplyMessage}
             />
           )}
-          <div className="relative h-full max-w-[40%] w-fit bg-transparent border-0  shadow-lg rounded-md ">
+          <div className={`relative h-full  max-w-[40%] w-fit bg-transparent border-0  shadow-lg rounded-md ${vioce.replyMessage && "p-2 bg-[#aabddb] " }`}>
             {vioce.replyMessage && (
               <div>
                 <ReplyViewMessage
                   replyMessage={vioce.replyMessage}
                   forcusMessage={forcusMessage}
                   conversation={conversation}
+                  message={vioce}
                 />
               </div>
             )}
-            <div className="  h-fit flex flex-col items-start justify-around rounded-md ">
-              <audio controls>
+            <div className={` h-fit flex flex-col items-center justify-around ${vioce.replyMessage && "mt-1" } `}>
+              <audio controls className="shadow-xl">
                 <source src={vioce.url} type="audio/mpeg" />
                 <source src={vioce.url} type="audio/3gp" />
               </audio>

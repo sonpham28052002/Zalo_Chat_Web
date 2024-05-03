@@ -43,6 +43,7 @@ export default function InputMessage({
         ...message,
         idGroup: conversation.idGroup,
         receiver: { id: `group_${conversation.idGroup}` },
+        react: [],
       };
       if (replyMessage) {
         mess = {
@@ -68,6 +69,7 @@ export default function InputMessage({
         let mess = {
           ...message,
           idGroup: "",
+          react: [],
         };
         if (replyMessage) {
           mess = {
