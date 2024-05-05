@@ -11,8 +11,8 @@ import BgModal from "./BgModal";
 import ChangePasswordModal from "./ChangePasswordModal";
 
 const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
-  var [user, setUser] = useState(undefined);
   var owner = useSelector((state) => state.data);
+  var [user, setUser] = useState(undefined);
   const [isOpenUpdateInfoModal, setIsOpenUpdateInfoModal] = useState(false);
   const [isOpenImageModal, setIsOpenImageModal] = useState(false);
   const [isOpenBgModal, setIsOpenBgModal] = useState(false);
@@ -21,10 +21,12 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
   let [img, setImg] = useState("");
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && owner.id !== userId) {
       getInfoUserById(userId, setUser);
+    } else if (isOpen && owner.id === userId) {
+      setUser(owner);
     }
-  }, [isOpen, userId]);
+  }, [isOpen, userId, owner]);
   return (
     <AnimatePresence>
       {isOpen && user && (
@@ -63,14 +65,16 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                       className="opacity-0 absolute inset-0 z-50 "
                       title="Thay đổi ảnh bìa"
                       onChange={async (e) => {
+                        console.log(e.target.files[0]);
                         if (e.target.files[0]) {
                           if (e.target.files[0].size > 10 * 1024 * 1024) {
                             alert("File quá lớn, vui lòng chọn file <10MB");
                             return;
                           }
                           const url = await uploadFile(e.target.files[0]);
+                          console.log(url);
                           setImg(url);
-                          setIsOpen(!isOpen);
+                          setIsOpen(true);
                           setIsOpenBgModal(true);
                         }
                       }}
@@ -94,15 +98,18 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                         type="file"
                         className="opacity-0 absolute inset-0 z-50 "
                         title="Thay đổi ảnh đại diện"
+                        accept="image/"
                         onChange={async (e) => {
+                          console.log(e.target.files[0]);
                           if (e.target.files[0]) {
                             if (e.target.files[0].size > 10 * 1024 * 1024) {
                               alert("File quá lớn, vui lòng chọn file <10MB");
                               return;
                             }
                             const url = await uploadFile(e.target.files[0]);
+                            console.log(url);
                             setImg(url);
-                            setIsOpen(!isOpen);
+                            setIsOpen(true);
                             setIsOpenImageModal(true);
                           }
                         }}
@@ -129,7 +136,9 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
                       Bio
                     </p>
-                    <p className="w-28 font-sans">{user.bio}</p>
+                    <p className="w-56 font-sans whitespace-nowrap overflow-hidden text-ellipsis">
+                      {user.bio}
+                    </p>
                   </div>
                   <div className="h-8 px-1  flex flex-row items-center">
                     <p className="w-28 text-sm font-sans  font-medium text-gray-400">
@@ -153,28 +162,10 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                 <div className="w-full bg-white py-2 px-4">
                   {owner.id === user.id ? (
                     <div className="flex flex-row w-full">
-                      {/* <button
-                        className="w-full h-8 rounded-md hover:bg-slate-200 flex flex-row items-center justify-center font-medium border-b border-gray-300"
-                        onClick={() => {
-                          setIsOpen(!isOpen);
-                          setIsOpenUpdateInfoModal(true);
-                        }}
-                      >
-                        <CiEdit className="text-xl mr-1" /> Cập nhật thông tin
-                      </button>
-                      <button
-                        className="w-full h-8 rounded-md hover:bg-slate-200 flex flex-row items-center justify-center font-medium"
-                        onClick={() => {
-                          setIsOpen(!isOpen);
-                          setIsOpenChangePasswordModal(true);
-                        }}
-                      >
-                        Thay đổi mật khẩu
-                      </button> */}
                       <button
                         className="h-10 w-1/2 bg-blue-600 text-white rounded-md  hover:bg-blue-700 self-center m-5"
                         onClick={() => {
-                          setIsOpen(!isOpen);
+                          setIsOpen(true);
                           setIsOpenUpdateInfoModal(true);
                         }}
                       >
@@ -183,7 +174,7 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
                       <button
                         className="h-10 w-1/2 bg-blue-600 text-white rounded-md hover:bg-blue-700 self-center"
                         onClick={() => {
-                          setIsOpen(!isOpen);
+                          setIsOpen(true);
                           setIsOpenChangePasswordModal(true);
                         }}
                       >
@@ -199,36 +190,36 @@ const UserInfoModal = ({ isOpen, setIsOpen, userId }) => {
           </motion.div>
         </motion.div>
       )}
-      {isOpenUpdateInfoModal &&
+      {isOpenUpdateInfoModal && (
         <UpdateInfoModal
           key={"UpdateInfoModal"}
           isOpen={isOpenUpdateInfoModal}
           setIsOpen={setIsOpenUpdateInfoModal}
         ></UpdateInfoModal>
-      }
-      {isOpenChangePasswordModal &&
+      )}
+      {isOpenChangePasswordModal && (
         <ChangePasswordModal
           key={"ChangePasswordModal"}
           isOpen={isOpenChangePasswordModal}
           setIsOpen={setIsOpenChangePasswordModal}
         ></ChangePasswordModal>
-      }
-      {isOpenImageModal &&
+      )}
+      {isOpenImageModal && (
         <AvtModal
           key={"ImageModal"}
           isOpen={isOpenImageModal}
           setIsOpen={setIsOpenImageModal}
           url={img}
         />
-      }
-      {isOpenBgModal &&
+      )}
+      {isOpenBgModal && (
         <BgModal
           key={"BgModal"}
           isOpen={isOpenBgModal}
           setIsOpen={setIsOpenBgModal}
           url={img}
         />
-      }
+      )}
     </AnimatePresence>
   );
 };

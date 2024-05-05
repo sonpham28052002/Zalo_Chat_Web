@@ -17,7 +17,7 @@ export default function ChatRom({ setIdConversation, idConversation }) {
   useEffect(() => {
     setIdConversation(saveIndex);
     // eslint-disable-next-line
-  }, [saveIndex]);
+  }, [saveIndex, data]);
 
   useSubscription("/user/" + data.id + "/addMemberIntoGroup", (messages) => {
     dispatch(getAPI(data.id));
@@ -34,6 +34,7 @@ export default function ChatRom({ setIdConversation, idConversation }) {
     // eslint-disable-next-line
     [isSearch]
   );
+  
   return (
     <div className="w-full h-full flex flex-row">
       {isSearch ? (
@@ -45,7 +46,7 @@ export default function ChatRom({ setIdConversation, idConversation }) {
       ) : (
         <NavChat
           indexSelect={saveIndex}
-          setIndex={setSaveIndex}
+          setIndex={changeIndex}
           showSearch={select}
         />
       )}

@@ -54,10 +54,7 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
         <span className="text-slate-400">{viewLastMessage}</span>
       </div>
       <div className="flex flex-row justify-center items-center w-1/6">
-        <NavChatOption
-          conversation={conversation}
-          ownerId={owner.id}
-        />
+        <NavChatOption conversation={conversation} ownerId={owner.id} />
       </div>
     </div>
   );

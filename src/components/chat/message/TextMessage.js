@@ -6,6 +6,7 @@ import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
 import ReplyViewMessage from "../replyMessage/ReplyViewMessage";
 import TotalReact from "../chatbox/TotalReact";
+import { useSubscription } from "react-stomp-hooks";
 
 export default function TextMessage({
   avt,
@@ -15,6 +16,7 @@ export default function TextMessage({
   setReplyMessage,
   forcusMessage,
   isOpenEmotion,
+  updateMessage,
 }) {
   function getImageUserChat(userId, conversation) {
     if (conversation.conversationType === "group") {
@@ -41,6 +43,11 @@ export default function TextMessage({
       return "đang gửi...";
     }
   }
+
+  useSubscription("/user/" + messageLocal.id + "/react-message", (messages) => {
+    let mess = JSON.parse(messages.body);
+    updateMessage(mess);
+  });
 
   return (
     <div className="min-h-5 py-1">

@@ -3,6 +3,9 @@ import NavIconInteract from "../chatbox/NavIconInteract";
 import { useSelector } from "react-redux";
 import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
+import ReplyViewMessage from "../replyMessage/ReplyViewMessage";
+import TotalReact from "../chatbox/TotalReact";
+import { useSubscription } from "react-stomp-hooks";
 
 export default function VideoMessage({
   avt,
@@ -12,6 +15,8 @@ export default function VideoMessage({
   conversation,
   setReplyMessage,
   forcusMessage,
+  isOpenEmotion,
+  updateMessage,
 }) {
   let [messageLocal, setMessageLocal] = useState(video);
   var owner = useSelector((state) => state.data);
@@ -40,7 +45,10 @@ export default function VideoMessage({
       return avt;
     }
   }
-
+  useSubscription("/user/" + messageLocal.id + "/react-message", (messages) => {
+    let mess = JSON.parse(messages.body);
+    updateMessage(mess);
+  });
   return (
     <div className="h-fit">
       {!isRetrieve ? (
@@ -71,9 +79,22 @@ export default function VideoMessage({
             />
           )}
           <div className="relative h-full max-w-[40%] w-fit shadow-lg rounded-md ">
-            <div className="  h-fit flex flex-col items-start justify-around rounded-md ">
+            <div
+              className={`h-fit flex flex-col items-start justify-around rounded-md ${
+                video.replyMessage && "p-2 bg-[#aabddb] "
+              }`}
+            >
+              {video.replyMessage && (
+                <ReplyViewMessage
+                  replyMessage={video.replyMessage}
+                  forcusMessage={forcusMessage}
+                  conversation={conversation}
+                />
+              )}
               <video
-                className="overflow-hidden rounded-md min-w-60 max-h-96 w-auto "
+                className={`overflow-hidden rounded-md min-w-60 max-h-96 w-auto ${
+                  video.replyMessage && "mt-1"
+                }`}
                 controls
               >
                 <source src={video.url} type="video/mp4" />
@@ -84,6 +105,7 @@ export default function VideoMessage({
                 rel="noopener noreferrer"
                 href={video.url}
                 download
+                className=" hover:underline"
               >
                 Tải xuống video
               </a>
@@ -92,12 +114,20 @@ export default function VideoMessage({
               <span className=" text-[12px] px-4 text-gray-400 ">
                 {addHoursAndFormatToHHMM(new Date(video.senderDate), 7)}
               </span>
-              <NavIconInteract
-                check={ownerID !== video.sender.id}
-                icon={video.ract}
-                setMessage={setMessageLocal}
-                message={messageLocal}
-              />
+              <div className="flex flex-row">
+                {messageLocal.react.length !== 0 && (
+                  <TotalReact
+                    isOpenEmotion={isOpenEmotion}
+                    messageSelect={messageLocal}
+                  />
+                )}
+                <NavIconInteract
+                  check={ownerID !== video.sender.id}
+                  icon={video.ract}
+                  setMessage={setMessageLocal}
+                  message={messageLocal}
+                />
+              </div>
             </div>
           </div>
           {owner.id !== video.sender.id && (
