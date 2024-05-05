@@ -2,18 +2,24 @@ import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
+import ReplyViewMessage from "../replyMessage/ReplyViewMessage";
+import TotalReact from "../chatbox/TotalReact";
+import NavIconInteract from "../chatbox/NavIconInteract";
 
 export default function StickerMessage({
   avt,
   sticker,
+  ownerID,
   setIsOpenForwardMessage,
   conversation,
   setReplyMessage,
   forcusMessage,
+  isOpenEmotion,
 }) {
   var owner = useSelector((state) => state.data);
   var refMessage = useRef(null);
   var [isRetrieve, setIsRetrieve] = useState(false);
+  let [messageLocal, setMessageLocal] = useState(sticker);
 
   function addHoursAndFormatToHHMM(date, hoursToAdd) {
     const newDate = new Date(date);
@@ -68,12 +74,41 @@ export default function StickerMessage({
               />
             )}
           </div>
-          <div className="h-full w-fit max-w-[50%] p-2">
-            <div className=" h-fit w-fit flex flex-col items-start justify-around">
-              <img src={sticker.url} alt="#" className="h-28 w-28" />
-              <span className="text-[12px] px-4 text-gray-400">
+          <div className=" relative h-full w-fit max-w-[450%] p-2">
+            <div
+              className={` h-fit w-fit flex flex-col items-start justify-around rounded-md ${
+                sticker.replyMessage && "p-2 bg-[#aabddb] "
+              }`}
+            >
+              {sticker.replyMessage && (
+                <ReplyViewMessage
+                  replyMessage={sticker.replyMessage}
+                  forcusMessage={forcusMessage}
+                  conversation={conversation}
+                />
+              )}
+              <div className="w-full flex flex-row justify-center ">
+                <img src={sticker.url} alt="#" className="h-40  w-40" />
+              </div>
+            </div>
+            <div className="flex w-full flex-row justify-between  items-center absolute pt-1">
+              <span className=" text-[12px] px-4 text-gray-400 ">
                 {addHoursAndFormatToHHMM(new Date(sticker.senderDate), 7)}
               </span>
+              <div className="flex flex-row mt-3">
+                {messageLocal.react.length !== 0 && (
+                  <TotalReact
+                    isOpenEmotion={isOpenEmotion}
+                    messageSelect={messageLocal}
+                  />
+                )}
+                <NavIconInteract
+                  check={ownerID !== sticker.sender.id}
+                  icon={sticker.ract}
+                  setMessage={setMessageLocal}
+                  message={messageLocal}
+                />
+              </div>
             </div>
           </div>
           {owner.id !== sticker.sender.id && (

@@ -1,7 +1,6 @@
 import React from "react";
 
 export default function TotalReact({ isOpenEmotion, messageSelect }) {
- 
   function getReactUnipue(listEmotion) {
     let mapEmotion = new Map([
       ["LIKE", "👍"],
@@ -40,10 +39,10 @@ export default function TotalReact({ isOpenEmotion, messageSelect }) {
           </p>
         ))}
       <p
-        className="w-4 text-center  border-white border-r"
+        className="w-4 text-center mx-[2px] border-white border-r"
         key={messageSelect.react.length}
       >
-        {messageSelect.react.length}
+        {messageSelect.react.length >= 100 ? "99+" : messageSelect.react.length}
       </p>
     </div>
   );

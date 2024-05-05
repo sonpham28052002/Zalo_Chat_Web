@@ -97,33 +97,7 @@ export default function SearchFriend({ setIndex, showSearch }) {
               className="h-fit p-2 hover:bg-slate-200 m-1 flex flex-row justify-start items-center shadow-sm"
               onClick={() => {
                 console.log(item.id);
-                let person = prompt("Please enter your name", "Harry Potter");
-                if (person != null) {
-                  let content = {
-                    id: v4(),
-                    messageType: "Text",
-                    sender: {
-                      id: owner.id,
-                    },
-                    receiver: {
-                      id: item.id,
-                    },
-                    seen: [
-                      {
-                        id: owner.id,
-                      },
-                    ],
-                    content: person,
-                    idGroup: "",
-                  };
-                  stompClient.send(
-                    "/app/private-single-message",
-                    {},
-                    JSON.stringify(content)
-                  );
-                  setIndex(-1);
-                }
-                // setIndex(item.id);
+                setIndex(item.id);
               }}
             >
               <img
