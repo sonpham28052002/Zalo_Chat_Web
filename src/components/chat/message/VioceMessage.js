@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import HandleMessage from "./handleMessage";
 import RetrieveMessages from "./RetrieveMessages";
 import ReplyViewMessage from "../replyMessage/ReplyViewMessage";
+import TotalReact from "../chatbox/TotalReact";
+import { useSubscription } from "react-stomp-hooks";
 
 export default function VioceMessage({
   avt,
@@ -13,6 +15,8 @@ export default function VioceMessage({
   conversation,
   setReplyMessage,
   forcusMessage,
+  isOpenEmotion,
+  updateMessage,
 }) {
   let [messageLocal, setMessageLocal] = useState(vioce);
   var owner = useSelector((state) => state.data);
@@ -41,7 +45,10 @@ export default function VioceMessage({
       return avt;
     }
   }
-
+  useSubscription("/user/" + messageLocal.id + "/react-message", (messages) => {
+    let mess = JSON.parse(messages.body);
+    updateMessage(mess);
+  });
   return (
     <div className="h-fit ">
       {!isRetrieve ? (
@@ -71,33 +78,52 @@ export default function VioceMessage({
               setReplyMessage={setReplyMessage}
             />
           )}
-          <div className={`relative h-full  max-w-[40%] w-fit bg-transparent border-0  shadow-lg rounded-md ${vioce.replyMessage && "p-2 bg-[#aabddb] " }`}>
+          <div
+            className={`relative h-full  max-w-[40%] w-fit  border-0  shadow-lg rounded-md ${
+              vioce.replyMessage && "p-2 bg-[#aabddb] "
+            }`}
+          >
             {vioce.replyMessage && (
-              <div>
-                <ReplyViewMessage
-                  replyMessage={vioce.replyMessage}
-                  forcusMessage={forcusMessage}
-                  conversation={conversation}
-                  message={vioce}
-                />
-              </div>
+              <ReplyViewMessage
+                replyMessage={vioce.replyMessage}
+                forcusMessage={forcusMessage}
+                conversation={conversation}
+                message={vioce}
+              />
             )}
-            <div className={` h-fit flex flex-col items-center justify-around ${vioce.replyMessage && "mt-1" } `}>
-              <audio controls className="shadow-xl">
+
+            <div
+              className={` h-fit flex flex-col items-center justify-around  ${
+                vioce.replyMessage && "mt-1"
+              } `}
+            >
+              <audio controls className="l">
                 <source src={vioce.url} type="audio/mpeg" />
                 <source src={vioce.url} type="audio/3gp" />
               </audio>
             </div>
             <div className="flex flex-row justify-between  items-center absolute w-full pt-1 ">
-              <span className=" text-[12px] px-4 text-gray-400 ">
+              <span className=" text-[12px] px-4  text-gray-400 ">
                 {addHoursAndFormatToHHMM(new Date(vioce.senderDate), 7)}
               </span>
-              <NavIconInteract
-                check={ownerID !== vioce.sender.id}
-                icon={vioce.ract}
-                setMessage={setMessageLocal}
-                message={messageLocal}
-              />
+              <div
+                className={`w-fit flex flex-row justify-center ${
+                  vioce.replyMessage && "mt-5"
+                }`}
+              >
+                {messageLocal.react.length !== 0 && (
+                  <TotalReact
+                    isOpenEmotion={isOpenEmotion}
+                    messageSelect={messageLocal}
+                  />
+                )}
+                <NavIconInteract
+                  check={ownerID !== vioce.sender.id}
+                  icon={vioce.ract}
+                  setMessage={setMessageLocal}
+                  message={messageLocal}
+                />
+              </div>
             </div>
           </div>
           {owner.id !== vioce.sender.id && (

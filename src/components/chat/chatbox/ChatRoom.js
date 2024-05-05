@@ -22,9 +22,13 @@ import GrantMember from "./GrantMember";
 import AddMemberModal from "./AddMemberModal";
 import EmotionModal from "./EmotionModal";
 import ReplyMessage from "../replyMessage/replyMessage";
+import { IoCallOutline } from "react-icons/io5";
+import { stompClient } from "../../../socket/socket";
+import { v4 } from "uuid";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
+  var [idConversationVirtuoso, setIdConversationVirtuoso] = useState(v4());
   var [avtMember, setAvtMember] = useState("");
   var [nameConversation, setNameConversation] = useState("");
   var [isOpenInforUser, setIsOpenInforUser] = useState(false);
@@ -35,12 +39,13 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var [showSearchMessage, setShowSearchMessage] = useState(false);
   var [searchText, setSearchText] = useState("");
   var [isOpenEmotionModal, setOpenEmotionModal] = useState(true);
-  var [replyMessage, setReplyMessage] = useState(undefined);
+  var [replyMessage, setReplyMessage] = useState([]);
 
   var [listMember, setListMember] = useState([]);
   var [isExtent, setIsExtend] = useState(false);
   var [receiver, setReceiver] = useState(undefined);
   var [messages, setMessages] = useState([]);
+
   var [chats, setChats] = useState([]);
   var [friend, setFriend] = useState([]);
   var [allUser, setAllUser] = useState([]);
@@ -129,6 +134,17 @@ export default function ChatRoom({ idConversation, setIndex }) {
     // eslint-disable-next-line
     [isOpenEmotionModal]
   );
+
+  var updateMessage = useCallback(
+    (message) => {
+      const index = [...messages].findIndex((item) => item.id === message.id);
+      messages[index].react = [...message.react];
+      setMessages([...messages]);
+    },
+    // eslint-disable-next-line
+    [messages]
+  );
+
   useSubscription("/user/" + owner.id + "/disbandConversation", (message) => {
     let mess = JSON.parse(message.body);
     setConversation(mess);
@@ -207,6 +223,19 @@ export default function ChatRoom({ idConversation, setIndex }) {
     console.log(indexes);
   };
 
+  var checkUserConversation = (id) => {
+    for (let index = 0; index < owner.conversation.length; index++) {
+      if (
+        owner.conversation[index].conversationType === "single" &&
+        owner.conversation[index].id === id
+      ) {
+        return null;
+      }
+    }
+    var user = owner.friendList.filter((item) => item.user.id === id)[0];
+    return user;
+  };
+
   useEffect(() => {
     // eslint-disable-next-line
     setReplyMessage(undefined);
@@ -228,7 +257,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
               owner.id,
               item.idGroup
             );
-            setMessages(mess.slice().reverse());
+            setMessages([...mess.slice().reverse()]);
             setListMember(members);
             setConversation({ ...item, members: members });
             setIsLoad(true);
@@ -248,11 +277,30 @@ export default function ChatRoom({ idConversation, setIndex }) {
             setIsLoad(true);
             scrollToButtom();
             setConversation({ ...item });
+            check = true;
           }
         );
         return item;
       }
     });
+    var check = checkUserConversation(idConversation);
+    if (check) {
+      const conver = {
+        conversationType: "single",
+        lastMessage: undefined,
+        user: {
+          id: check.user.id,
+          avt: check.user.avt,
+          userName: check.user.userName,
+        },
+      };
+      setConversation({ ...conver });
+      setMessages([]);
+      setAvtMember(check.user.avt);
+      setNameConversation(check.user.userName);
+      setReceiver({ id: check.user.id });
+      setIsLoad(true);
+    }
 
     // eslint-disable-next-line
   }, [idConversation]);
@@ -350,19 +398,24 @@ export default function ChatRoom({ idConversation, setIndex }) {
     [replyMessage]
   );
 
-  var forcusMessage = useCallback(
-    (message) => {
-      const index = messages.findIndex((item) => item.id === message.id);
-      if (index !== -1) {
+  var forcusIndexMessage = (message) => {
+    var mess = [...messages];
+    for (let index = 0; index < mess.length; index++) {
+      if (mess[index].id === message.id) {
         scrollContainerRef.current?.scrollToIndex({
           index: index,
           align: "start",
           behavior: "auto",
         });
+        break;
       }
-    },
+    }
+  };
+
+  var forcusMessage = useCallback(
+    forcusIndexMessage,
     // eslint-disable-next-line
-    [replyMessage]
+    [messages]
   );
   function checkInputConversation() {
     if (conversation.conversationType === "single") {
@@ -420,6 +473,24 @@ export default function ChatRoom({ idConversation, setIndex }) {
     ) {
       return "Chỉ có trường nhóm và phó nhóm mới có thể gửi tin nhắn.";
     }
+  }
+
+  useSubscription(
+    "/user/" + idConversationVirtuoso + "/checkUserResult",
+    (data) => {
+      const result = JSON.parse(data.body);
+      console.log(result);
+    }
+  );
+  function handleSendCall() {
+    stompClient.send(
+      "/app/checkUser",
+      {},
+      JSON.stringify({
+        userId: owner.id,
+        addressReceiver: idConversationVirtuoso,
+      })
+    );
   }
 
   return (
@@ -490,6 +561,14 @@ export default function ChatRoom({ idConversation, setIndex }) {
             >
               <IoIosSearch className="text-2xl " />
             </div>
+            <div
+              className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
+              onClick={() => {
+                handleSendCall();
+              }}
+            >
+              <IoCallOutline className="text-xl " />
+            </div>
             <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
               <BsCameraVideo className="text-xl " />
             </div>
@@ -551,6 +630,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
                           setReplyMessage={setReplyMessageConversation}
                           forcusMessage={forcusMessage}
                           isOpenEmotion={isOpenEmotion}
+                          updateMessage={updateMessage}
                         />
                       );
                     }}

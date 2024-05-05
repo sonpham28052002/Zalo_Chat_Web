@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { IoMdClose } from "react-icons/io";
+// import { IoMdClose } from "react-icons/io";
 import { AiOutlineLike } from "react-icons/ai";
 import { useSelector } from "react-redux";
-
+import { stompClient } from "../../../socket/socket";
 export default function NavIconInteract({ icon, setMessage, message, check }) {
   var [iconText, setIconText] = useState(icon);
   var owner = useSelector((state) => state.data);
@@ -14,9 +14,7 @@ export default function NavIconInteract({ icon, setMessage, message, check }) {
       react: react,
     };
     text.react = [...text.react, textReact];
-
-    setMessage(text);
-    console.log(text);
+    stompClient.send("/app/react-message", {}, JSON.stringify(text));
     setIconText(react);
   }
 
@@ -48,14 +46,14 @@ export default function NavIconInteract({ icon, setMessage, message, check }) {
               check ? "flex-row-reverse" : ""
             }`}
           >
-            <IoMdClose
+            {/* <IoMdClose
               className="p-1 rounded-md hover:bg-red-200 hover:text-white  text-3xl "
               role="img"
               aria-label="Biểu cảm"
               onClick={(e) => {
                 sendREACT("");
               }}
-            />
+            /> */}
             <span
               className="p-1 rounded-md hover:bg-slate-100 hover:text-xl hover:p-0"
               role="img"
