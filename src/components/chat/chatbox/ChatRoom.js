@@ -22,9 +22,13 @@ import GrantMember from "./GrantMember";
 import AddMemberModal from "./AddMemberModal";
 import EmotionModal from "./EmotionModal";
 import ReplyMessage from "../replyMessage/replyMessage";
+import { IoCallOutline } from "react-icons/io5";
+import { stompClient } from "../../../socket/socket";
+import { v4 } from "uuid";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
+  var [idConversationVirtuoso, setIdConversationVirtuoso] = useState(v4());
   var [avtMember, setAvtMember] = useState("");
   var [nameConversation, setNameConversation] = useState("");
   var [isOpenInforUser, setIsOpenInforUser] = useState(false);
@@ -471,6 +475,24 @@ export default function ChatRoom({ idConversation, setIndex }) {
     }
   }
 
+  useSubscription(
+    "/user/" + idConversationVirtuoso + "/checkUserResult",
+    (data) => {
+      const result = JSON.parse(data.body);
+      console.log(result);
+    }
+  );
+  function handleSendCall() {
+    stompClient.send(
+      "/app/checkUser",
+      {},
+      JSON.stringify({
+        userId: owner.id,
+        addressReceiver: idConversationVirtuoso,
+      })
+    );
+  }
+
   return (
     <div className="h-full w-10/12 flex flex-row relative">
       {isOpenForwardMessage && (
@@ -538,6 +560,14 @@ export default function ChatRoom({ idConversation, setIndex }) {
               }}
             >
               <IoIosSearch className="text-2xl " />
+            </div>
+            <div
+              className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
+              onClick={() => {
+                handleSendCall();
+              }}
+            >
+              <IoCallOutline className="text-xl " />
             </div>
             <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
               <BsCameraVideo className="text-xl " />
