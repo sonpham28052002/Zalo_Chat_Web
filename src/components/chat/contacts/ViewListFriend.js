@@ -3,7 +3,7 @@ import "./style.css";
 import { IoSearch } from "react-icons/io5";
 import { TbArrowsSort } from "react-icons/tb";
 import { FaChevronDown } from "react-icons/fa6";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu } from "@headlessui/react";
 import { PiUserListLight } from "react-icons/pi";
 import { removeAccents, filterList } from "./Function";
@@ -35,8 +35,16 @@ function ViewListFriend() {
     stompClient.send("/app/unfriend", {}, JSON.stringify(mess));
   }
 
+  useEffect(() => {
+    setContacts(
+      user.friendList
+        .slice()
+        .sort((a, b) => a.user.userName.localeCompare(b.user.userName))
+    );
+  }, [user.friendList]);
   useSubscription("/user/" + user.id + "/unfriend", (messages) => {
     let mess = JSON.parse(messages.body);
+    console.log(mess);
     setContacts(contacts.filter((item) => item.user.id !== mess.user.id));
   });
   function ListContact({ list }) {
@@ -45,9 +53,9 @@ function ViewListFriend() {
         <div key={index} className="flex flex-col">
           {(index === 0 ||
             removeAccents(item.user.userName[0]) !==
-            removeAccents(list[index - 1].user.userName[0])) && (
-              <CharacterText text={removeAccents(item.user.userName[0])} />
-            )}
+              removeAccents(list[index - 1].user.userName[0])) && (
+            <CharacterText text={removeAccents(item.user.userName[0])} />
+          )}
           <div className="flex flex-col">
             <div
               className="flex flex-row w-full items-center blur-item-light cursor-pointer pl-5"
@@ -85,16 +93,16 @@ function ViewListFriend() {
                           <Menu.Item>
                             {({ active }) => (
                               <button
-                                className={`${active
+                                className={`${
+                                  active
                                     ? "bg-gray-100 text-gray-900"
                                     : "text-gray-700"
-                                  } group flex rounded-md items-center w-full px-2 py-2 text-sm`}                                
+                                } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                                 onClick={() => {
                                   setIdInfoFriend(item.user.id);
                                   console.log(idInfoFriend);
                                   setIsOpenUserInfoModal(true);
-                                }
-                                }
+                                }}
                               >
                                 Xem thông tin
                               </button>
@@ -104,11 +112,12 @@ function ViewListFriend() {
                           <Menu.Item>
                             {({ active }) => (
                               <button
-                                className={`${active
+                                className={`${
+                                  active
                                     ? "bg-gray-100 text-gray-900"
                                     : "text-gray-700"
-                                  } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                                onClick={() => { }}
+                                } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                onClick={() => {}}
                               >
                                 Phân loại
                               </button>
@@ -117,11 +126,12 @@ function ViewListFriend() {
                           <Menu.Item>
                             {({ active }) => (
                               <button
-                                className={`${active
+                                className={`${
+                                  active
                                     ? "bg-gray-100 text-gray-900"
                                     : "text-gray-700"
-                                  } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                                onClick={() => { }}
+                                } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                onClick={() => {}}
                               >
                                 Đặt tên gợi nhớ
                               </button>
@@ -131,11 +141,12 @@ function ViewListFriend() {
                           <Menu.Item>
                             {({ active }) => (
                               <button
-                                className={`${active
+                                className={`${
+                                  active
                                     ? "bg-gray-100 text-gray-900"
                                     : "text-gray-700"
-                                  } group flex rounded-md items-center w-full px-2 py-2 text-sm text-red-600`}
-                                onClick={() => { }}
+                                } group flex rounded-md items-center w-full px-2 py-2 text-sm text-red-600`}
+                                onClick={() => {}}
                               >
                                 Chặn người này
                               </button>
@@ -145,10 +156,11 @@ function ViewListFriend() {
                           <Menu.Item>
                             {({ active }) => (
                               <button
-                                className={`${active
+                                className={`${
+                                  active
                                     ? "bg-gray-100 text-gray-900"
                                     : "text-gray-700"
-                                  } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                                 onClick={() => {
                                   unFriend(item);
                                 }}
@@ -200,7 +212,11 @@ function ViewListFriend() {
                     setTextFilter(event.target.value);
                     document.getElementById("search-input").focus();
                     var newlist = user.friendList.slice();
-                    let tmp = filterList(newlist, event.target.value, sortNameOption);
+                    let tmp = filterList(
+                      newlist,
+                      event.target.value,
+                      sortNameOption
+                    );
                     setContacts(tmp);
                   }}
                 />
@@ -230,14 +246,16 @@ function ViewListFriend() {
                       <Menu.Item>
                         {({ active }) => (
                           <button
-                            className={`${active
+                            className={`${
+                              active
                                 ? "bg-gray-100 text-gray-900"
                                 : "text-gray-700"
-                              } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                            } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                             onClick={() => {
                               setSortNameOption("ins");
                               const sortedContacts = [...contacts].sort(
-                                (a, b) => a.user.userName.localeCompare(b.user.userName)
+                                (a, b) =>
+                                  a.user.userName.localeCompare(b.user.userName)
                               );
                               setContacts(sortedContacts);
                             }}
@@ -249,14 +267,16 @@ function ViewListFriend() {
                       <Menu.Item>
                         {({ active }) => (
                           <button
-                            className={`${active
+                            className={`${
+                              active
                                 ? "bg-gray-100 text-gray-900"
                                 : "text-gray-700"
-                              } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                            } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                             onClick={() => {
                               setSortNameOption("des");
                               const sortedContacts = [...contacts].sort(
-                                (b, a) => a.user.userName.localeCompare(b.user.userName)
+                                (b, a) =>
+                                  a.user.userName.localeCompare(b.user.userName)
                               );
                               setContacts(sortedContacts);
                             }}
@@ -271,13 +291,13 @@ function ViewListFriend() {
               </div>
             </div>
             <ListContact list={contacts}></ListContact>
-            {isOpenUserInfoModal &&
+            {isOpenUserInfoModal && (
               <UserInfoModal
                 isOpen={isOpenUserInfoModal}
                 setIsOpen={setIsOpenUserInfoModal}
                 userId={idInfoFriend}
               />
-            }
+            )}
           </div>
         </div>
       </div>

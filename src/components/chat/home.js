@@ -16,7 +16,7 @@ import { initZegoCloudCall } from "../../ZegoCloudCall/ZegoCloudCall";
 export default function Home() {
   var [indexSelect, setIndexSelect] = useState(0);
   var data = useSelector((state) => state.data);
-  
+
   var dispatch = useDispatch();
 
   useSubscription("/user/" + data.id + "/unfriend", (messages) => {
@@ -28,6 +28,9 @@ export default function Home() {
   });
 
   useSubscription("/user/" + data.id + "/coverImage", (user) => {
+    dispatch(getAPI(data.id));
+  });
+  useSubscription("/user/" + data.id + "/acceptAddFriend", (message) => {
     dispatch(getAPI(data.id));
   });
 
