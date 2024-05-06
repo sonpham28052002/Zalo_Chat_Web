@@ -213,7 +213,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
 
   const handleSearchText = (text) => {
     setSearchText(text);
-    if (text === ""){
+    if (text === "") {
       setListSearchMessage([]);
       setListIndexMessage([]);
       return;
@@ -490,7 +490,17 @@ export default function ChatRoom({ idConversation, setIndex }) {
   }
 
   function SearchMessageView({ list }) {
-    console.log(list);
+    if (conversation.conversationType !== "single") {
+      console.log(conversation);
+    }
+    function getUserNameById(id) {
+      return conversation.members.filter((item) => item.member.id === id)[0]
+        .member?.userName;
+    }
+    function getAVTById(id) {
+      return conversation.members.filter((item) => item.member.id === id)[0]
+        .member?.avt;
+    }
     return (
       <div className="h-full">
         <div className="h-16 w-full flex flex-row items-center px-4 border-b">
@@ -502,14 +512,19 @@ export default function ChatRoom({ idConversation, setIndex }) {
             className="flex flex-row bg-white h-[70px] items-center cursor-pointer blur-item-light"
             onClick={
               () =>
-              console.log(listIndexMessage[index]) 
+                scrollContainerRef.current?.scrollToIndex({
+                  index: listIndexMessage[index],
+                  align: "start",
+                  behavior: "auto",
+                })
             }
           >
-            <img className="w-10 h-10 m-2 rounded-full" src={item.sender.id === owner.id ? owner.avt : avtMember} alt="." />
+            <img className="w-10 h-10 m-2 rounded-full" src={item.sender.id === owner.id ? owner.avt : conversation.conversationType === "single" ? avtMember : getAVTById(item.sender.id)} alt="." />
             <div className="flex flex-col">
               <div className="flex flex-row">
                 <p className="w-[170px] text-base font-semibold overflow-hidden overflow-ellipsis whitespace-nowrap ">
-                  {item.sender.id === owner.id ? owner.userName : nameConversation}
+                  {/* {item.sender.id === owner.id ? owner.userName : nameConversation} */}
+                  {item.sender.id === owner.id ? owner.userName : conversation.conversationType === "single" ? nameConversation : getUserNameById(item.sender.id)}
                 </p>
                 <p className="text-sm text-gray-500">
                   {new Date(item.senderDate).getDate() + "/" + (new Date(item.senderDate).getMonth() + 1) + "/" + new Date(item.senderDate).getFullYear()}
