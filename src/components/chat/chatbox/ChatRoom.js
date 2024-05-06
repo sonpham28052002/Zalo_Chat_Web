@@ -46,7 +46,9 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var [showSearchMessage, setShowSearchMessage] = useState(false);
   var [searchText, setSearchText] = useState("");
   var [isOpenEmotionModal, setOpenEmotionModal] = useState(true);
-  var [replyMessage, setReplyMessage] = useState([]);
+  var [replyMessage, setReplyMessage] = useState(undefined);
+  var [listSearchMessage, setListSearchMessage] = useState([]);
+  var [listIndexMessage, setListIndexMessage] = useState([]);
 
   var [listMember, setListMember] = useState([]);
   var [isExtent, setIsExtend] = useState(false);
@@ -218,16 +220,24 @@ export default function ChatRoom({ idConversation, setIndex }) {
 
   const handleSearchText = (text) => {
     setSearchText(text);
-    var indexes = [];
+    if (text === "") {
+      setListSearchMessage([]);
+      setListIndexMessage([]);
+      return;
+    }
+    var listSearchMessage = [];
+    var listIndex = [];
     messages.forEach(function (obj, index) {
       if (
         obj.messageType === "Text" &&
         obj.content.toLowerCase().includes(text.toLowerCase())
       ) {
-        indexes.push(index);
+        listSearchMessage.push(obj);
+        listIndex.push(index);
       }
-    });
-    console.log(indexes);
+    })
+    setListSearchMessage(listSearchMessage);
+    setListIndexMessage(listIndex);
   };
 
   var checkUserConversation = (id) => {
@@ -249,6 +259,10 @@ export default function ChatRoom({ idConversation, setIndex }) {
     setIsLoad(false);
     setIsExtend(false);
     setOpenEmotionModal(false);
+    setSearchText("");
+    setShowSearchMessage(false)
+    setListSearchMessage([]);
+    setListIndexMessage([]);
     owner.conversation.filter(async (item) => {
       if (
         item.conversationType === "group" &&
@@ -482,6 +496,60 @@ export default function ChatRoom({ idConversation, setIndex }) {
     }
   }
 
+  function SearchMessageView({ list }) {
+    if (conversation.conversationType !== "single") {
+      console.log(conversation);
+    }
+    function getUserNameById(id) {
+      return conversation.members.filter((item) => item.member.id === id)[0]
+        .member?.userName;
+    }
+    function getAVTById(id) {
+      return conversation.members.filter((item) => item.member.id === id)[0]
+        .member?.avt;
+    }
+    return (
+      <div className="h-full">
+        <div className="h-16 w-full flex flex-row items-center px-4 border-b">
+          <p className="text-lg font-medium">Tìm kiếm tin nhắn</p>
+        </div>
+        {list.map((item, index) => (
+          <div
+            key={index}
+            className="flex flex-row bg-white h-[70px] items-center cursor-pointer blur-item-light"
+            onClick={
+              () =>
+                scrollContainerRef.current?.scrollToIndex({
+                  index: listIndexMessage[index],
+                  align: "start",
+                  behavior: "auto",
+                })
+            }
+          >
+            <img className="w-10 h-10 m-2 rounded-full" src={item.sender.id === owner.id ? owner.avt : conversation.conversationType === "single" ? avtMember : getAVTById(item.sender.id)} alt="." />
+            <div className="flex flex-col">
+              <div className="flex flex-row">
+                <p className="w-[170px] text-base font-semibold overflow-hidden overflow-ellipsis whitespace-nowrap ">
+                  {/* {item.sender.id === owner.id ? owner.userName : nameConversation} */}
+                  {item.sender.id === owner.id ? owner.userName : conversation.conversationType === "single" ? nameConversation : getUserNameById(item.sender.id)}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {new Date(item.senderDate).getDate() + "/" + (new Date(item.senderDate).getMonth() + 1) + "/" + new Date(item.senderDate).getFullYear()}
+                </p>
+              </div>
+
+              <p className="w-[200px] text-base overflow-hidden overflow-ellipsis whitespace-nowrap ">
+                {item.content}
+              </p>
+            </div>
+
+
+          </div>
+        ))}
+
+      </div>
+    )
+  }
   useSubscription(
     "/user/" + idConversationVirtuoso + "/checkUserResult",
     (data) => {
@@ -589,6 +657,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
               className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
               onClick={() => {
                 setShowSearchMessage(true);
+                setIsExtend(false);
               }}
             >
               <IoIosSearch className="text-2xl " />
@@ -638,16 +707,6 @@ export default function ChatRoom({ idConversation, setIndex }) {
             </div>
           </div>
         </div>
-        {/* {showSearchMessage === true && <div className="w-full bg-slate-50 flex flex-row p-2 justify-center items-center">
-          <input
-            type="text" placeholder="Tìm tin nhắn" spellCheck="false"
-            className="w-3/4 bg-slate-100 h-8 border p-1 text-xs rounded pl-7 focus:outline-none"
-            onChange={(e) => {
-              handleSearchText(e.target.value);
-            }}
-          ></input>
-          <button className="w-[100px]" onClick={() => setShowSearchMessage(false)}>Đóng</button>
-        </div>} */}
         {isLoad ? (
           <div className="h-[877px]">
             <div
@@ -661,9 +720,8 @@ export default function ChatRoom({ idConversation, setIndex }) {
                 <div className="absolute bottom-0 max-h-[764px] w-full flex flex-col overflow-scroll justify-items-end overflow-y-auto overflow-x-hidden  py-2 my-2">
                   <Virtuoso
                     ref={scrollContainerRef}
-                    className={`w-full ${
-                      replyMessage ? "min-h-[700px]" : "min-h-[740px]"
-                    }  scrollbar-container rotate-180`}
+                    className={`w-full ${replyMessage ? "min-h-[700px]" : "min-h-[740px]"
+                      }  scrollbar-container rotate-180`}
                     totalCount={messages.length}
                     initialTopMostItemIndex={0}
                     itemContent={(index) => {
@@ -727,6 +785,11 @@ export default function ChatRoom({ idConversation, setIndex }) {
           />
         )}
       </div>
+      {showSearchMessage && (
+        <div className="h-full w-[380px] border-l border-gray-200 select-none">
+          <SearchMessageView list={listSearchMessage}></SearchMessageView>
+        </div>
+      )}
       {isExtent && (
         <OptionChat
           conversation={conversation}
@@ -768,3 +831,4 @@ export default function ChatRoom({ idConversation, setIndex }) {
     </div>
   );
 }
+

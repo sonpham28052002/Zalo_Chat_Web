@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
 import { useSelector } from "react-redux";
+import { useState } from "react";
+import { LuFilter } from 'react-icons/lu';
 
 export default function EmotionModal({
   isOpen,
@@ -10,7 +12,7 @@ export default function EmotionModal({
   conversation,
 }) {
   var owner = useSelector((state) => state.data);
-  console.log(conversation);
+  var [listReact, setListReact] = useState(messageSelect.react);
   useEffect(() => {}, []);
   const leftValue = `calc((100vw - 450px) / 2)`;
   let mapEmotion = new Map([
@@ -28,7 +30,8 @@ export default function EmotionModal({
       } else {
         return conversation.user.userName;
       }
-    } else if (conversation.conversationType === "group") {
+    } 
+    if (conversation.conversationType === "group") {
       console.log(
         conversation.members.filter((item) => item.member.id === id)[0]
       );
@@ -44,13 +47,19 @@ export default function EmotionModal({
       } else {
         return conversation.user.avt;
       }
-    } else if (conversation.conversationType === "group") {
+    }
+    if (conversation.conversationType === "group") {
       console.log(
         conversation.members.filter((item) => item.member.id === id)[0]
       );
       return conversation.members.filter((item) => item.member.id === id)[0]
         .member?.avt;
     }
+  }
+
+  function handleSelectEmotion(emotion) {
+    var filterReact = messageSelect.react.filter((item) => item.react === emotion);
+    setListReact(filterReact);
   }
 
   function EmotionViewCol1() {
@@ -62,13 +71,17 @@ export default function EmotionModal({
       emotionCounts.set(react, count + 1);
     });
     return (
-      <div className="flex flex-col w-full bg-slate-100 p-3 h-full">
-        Tất cả ({messageSelect?.react.length})
+      <div className="flex flex-col w-full bg-[#eaedf0] p-3 h-full">
+        <div className="w-full h-8 cursor-pointer btn-blur-gray"
+          onClick={() => {setListReact(messageSelect?.react)}}        
+        >Tất cả ({messageSelect?.react.length})</div>        
         {Array.from(emotionCounts).map(([emotion, count]) => {
           return (
             <div
-              className="flex flex-row justify-between w-full "
+              className="flex flex-row justify-between w-full cursor-pointer btn-blur-gray"
               key={emotion}
+              onClick={() => {handleSelectEmotion(emotion)}}
+
             >
               <div className="w-8 h-8">
                 {mapEmotion.get(emotion.toUpperCase())}
@@ -88,19 +101,17 @@ export default function EmotionModal({
         let userId = item.user.id;
         let react = item.react;
         if (!userEmotionMap.has(userId)) {
-          userEmotionMap.set(userId, { user: { id: userId }, reacts: [] });
-        }
+          userEmotionMap.set(userId, { user: { id: userId }, reacts: [] });        }
 
         if (!userEmotionMap.get(userId).reacts.includes(react)) {
           userEmotionMap.get(userId).reacts.push(react);
         }
       });
-
       return Array.from(userEmotionMap.values());
     }
     return (
       <div className="flex flex-col w-full p-3 h-ful">
-        {Array.from(getUserEmotions(messageSelect.react)).map((item) => {
+        {Array.from(getUserEmotions(listReact)).map((item) => {
           return (
             <div
               className="flex flex-row justify-between w-full items-center"
