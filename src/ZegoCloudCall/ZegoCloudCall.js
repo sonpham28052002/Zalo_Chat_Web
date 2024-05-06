@@ -34,7 +34,6 @@ async function initZegoCloudCall(owner) {
       outgoingCallUrl: require("../assets/happy-pop-1-185286.mp3"),
     },
     onIncomingCallReceived: (callID, caller, callType, callees) => {
-      console.log(1);
     },
     onSetRoomConfigBeforeJoining: (callType) => {
       if (callType === 0) {
@@ -57,6 +56,7 @@ async function initZegoCloudCall(owner) {
         };
       }
     },
+    onCallInvitationEnded: () => {},
   });
   updateZegoCloud(ZegoCloudCall);
 }
@@ -246,7 +246,6 @@ function handleSendGroupCall(callType, ArrUserReceiver, idGroup, owner) {
       console.log(callee);
       arrUser.push(callee);
     },
-
     onCallInvitationEnded: (reason, data) => {
       //   console.log(reason);
       //   var dateEnd = new Date();
