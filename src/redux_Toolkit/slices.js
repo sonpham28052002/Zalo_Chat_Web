@@ -45,19 +45,11 @@ var reducer = createSlice({
   name: "user",
   initialState: {
     data: undefined,
+    zegoCloudCall: undefined,
   },
   reducers: {
-    addMessage: (state, actions) => {
-      const { mess, id, type } = actions.payload;
-      for (let index = 0; index < state.data.conversation.length; index++) {
-        if (
-          state.data.conversation[index].conversationType === type &&
-          state.data.conversation[index].user.id === id
-        ) {
-          state.data.conversation[index].messages = mess;
-          break;
-        }
-      }
+    updateZegoCloud: (state, actions) => {
+      state.zegoCloudCall = actions.payload;
     },
   },
   extraReducers: (builder) => {
@@ -72,5 +64,5 @@ var reducer = createSlice({
 });
 
 export default reducer;
-export const { addMessage } = reducer.actions;
+export const { updateZegoCloud } = reducer.actions;
 export { getAPI, putAPI };

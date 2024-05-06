@@ -12,6 +12,7 @@ import InfoUser from "./infoUser/infoUser";
 import { useSubscription } from "react-stomp-hooks";
 import { getAPI } from "../../redux_Toolkit/slices";
 import { useDispatch, useSelector } from "react-redux";
+import { initZegoCloudCall } from "../../ZegoCloudCall/ZegoCloudCall";
 export default function Home() {
   var [indexSelect, setIndexSelect] = useState(0);
   var data = useSelector((state) => state.data);
@@ -29,7 +30,11 @@ export default function Home() {
   useSubscription("/user/" + data.id + "/coverImage", (user) => {
     dispatch(getAPI(data.id));
   });
- 
+
+  React.useEffect(() => {
+    initZegoCloudCall(data);
+  }, [data]);
+
   return (
     <div className="min-w-screen-md  min-h-dvh flex flex-row">
       <div className=" bg-[#0091ff]  w-16 h-svh flex flex-col items-center justify-between">

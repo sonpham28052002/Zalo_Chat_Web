@@ -116,6 +116,7 @@ export default function FileMessage({
             <div className="  h-full flex flex-row items-start justify-around rounded-md p-2">
               {renderIconFile(file.messageType)}
               <div className="flex flex-col justify-around  h-24 w-72">
+              
                 <p className="font-medium text-base">
                   {file.titleFile &&
                   file.titleFile +

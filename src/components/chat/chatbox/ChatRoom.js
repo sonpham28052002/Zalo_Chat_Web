@@ -25,9 +25,18 @@ import ReplyMessage from "../replyMessage/replyMessage";
 import { IoCallOutline } from "react-icons/io5";
 import { stompClient } from "../../../socket/socket";
 import { v4 } from "uuid";
+import {
+  ZegoCloudCall,
+  handleSendSingleCall,
+} from "../../../ZegoCloudCall/ZegoCloudCall";
+import {
+  ZegoInvitationType,
+  ZegoUIKitPrebuilt,
+} from "@zegocloud/zego-uikit-prebuilt";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
+
   var [idConversationVirtuoso, setIdConversationVirtuoso] = useState(v4());
   var [avtMember, setAvtMember] = useState("");
   var [nameConversation, setNameConversation] = useState("");
@@ -482,15 +491,17 @@ export default function ChatRoom({ idConversation, setIndex }) {
       console.log(result);
     }
   );
-  function handleSendCall() {
-    stompClient.send(
-      "/app/checkUser",
-      {},
-      JSON.stringify({
-        userId: owner.id,
-        addressReceiver: idConversationVirtuoso,
-      })
-    );
+  function handleSendCall(callType) {
+    console.log(ZegoCloudCall);
+    // stompClient.send(
+    //   "/app/checkUser",
+    //   {},
+    //   JSON.stringify({
+    //     userId: owner.id,
+    //     addressReceiver: idConversationVirtuoso,
+    //   })
+    // );
+    handleSendSingleCall(callType, conversation.user, owner);
   }
 
   return (
@@ -564,12 +575,23 @@ export default function ChatRoom({ idConversation, setIndex }) {
             <div
               className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
               onClick={() => {
-                handleSendCall();
+                if (conversation.conversationType === "single") {
+                  handleSendCall(ZegoUIKitPrebuilt.InvitationTypeVoiceCall);
+                } else {
+                }
               }}
             >
               <IoCallOutline className="text-xl " />
             </div>
-            <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
+            <div
+              className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
+              onClick={() => {
+                if (conversation.conversationType === "single") {
+                  handleSendCall(ZegoUIKitPrebuilt.InvitationTypeVideoCall);
+                } else {
+                }
+              }}
+            >
               <BsCameraVideo className="text-xl " />
             </div>
             <div

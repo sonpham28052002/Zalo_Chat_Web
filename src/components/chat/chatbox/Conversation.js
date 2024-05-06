@@ -7,6 +7,7 @@ import RetrieveMessages from "../message/RetrieveMessages";
 import VideoMessage from "../message/VideoMessage";
 import FileMessage from "../message/FileMesage";
 import VioceMessage from "../message/VioceMessage";
+import CallSingle from "../message/CallSingle";
 export default function Conversation({
   avt,
   item,
@@ -128,6 +129,16 @@ export default function Conversation({
           updateMessage={updateMessage}
         />
       );
+    case "CALLSINGLE":
+      return (
+        <CallSingle
+          avt={avt}
+          key={item.id}
+          file={item}
+          conversation={conversation}
+        />
+      );
+
     default:
       return (
         <FileMessage
