@@ -85,7 +85,7 @@ export default function CallSingle({ avt, file, conversation }) {
                   : file.titleFile}
                 {file.sender.id !== owner.id
                   ? conversation.user.userName + " "
-                  : owner.userName}
+                  : " bạn"}
               </p>
             </div>
           </div>
