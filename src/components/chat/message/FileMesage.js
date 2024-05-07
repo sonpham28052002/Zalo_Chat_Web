@@ -117,7 +117,7 @@ export default function FileMessage({
               {renderIconFile(file.messageType)}
               <div className="flex flex-col justify-around  h-24 w-72">
               
-                <p className="font-medium text-base">
+                <p className="font-medium text-base whitespace-nowrap overflow-hidden text-ellipsis">
                   {file.titleFile &&
                   file.titleFile +
                     "".substring(0, file.titleFile.lastIndexOf(".")).length >
