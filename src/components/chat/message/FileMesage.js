@@ -17,6 +17,7 @@ export default function FileMessage({
   conversation,
   setReplyMessage,
   forcusMessage,
+  seen,
 }) {
   let [messageLocal, setMessageLocal] = useState(file);
   var owner = useSelector((state) => state.data);
@@ -82,9 +83,23 @@ export default function FileMessage({
     }
     return "đang gửi...";
   }
-
+  
+  function renderSeen(message) {
+    const arrSeen = seen.filter((item) => item.indexMessage === message.id);
+    return arrSeen.map((item, index) => (
+      <img
+        key={index}
+        src={item.user.avt}
+        alt=""
+        className="h-4 w-4 rounded-full shadow-lg border-white border mx-[1px]"
+      />
+    ));
+  }
   return (
     <div className="h-40 ">
+      <div className=" rotate-180 flex flex-row justify-end px-2">
+        {renderSeen(file)}
+      </div>
       {!isRetrieve ? (
         <div
           ref={refMessage}
@@ -116,7 +131,6 @@ export default function FileMessage({
             <div className="  h-full flex flex-row items-start justify-around rounded-md p-2">
               {renderIconFile(file.messageType)}
               <div className="flex flex-col justify-around  h-24 w-72">
-              
                 <p className="font-medium text-base whitespace-nowrap overflow-hidden text-ellipsis">
                   {file.titleFile &&
                   file.titleFile +
