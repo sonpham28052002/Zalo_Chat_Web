@@ -33,6 +33,7 @@ import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
+  var listUserOnline = useSelector((state) => state.listUserOnline);
 
   // eslint-disable-next-line
   var [idConversationVirtuoso, setIdConversationVirtuoso] = useState(v4());
@@ -717,26 +718,51 @@ export default function ChatRoom({ idConversation, setIndex }) {
       <div className={` h-full ${isExtent ? "w-9/12" : "w-full"} `}>
         <div className="border-b flex flex-row items-center justify-between px-4">
           <div className="flex flex-row w-2/5  py-2 ">
-            <img
-              className="rounded-full h-12 w-12 mr-1 border border-white "
-              alt="#"
-              src={avtMember}
-              onClick={() => {
-                if (conversation.conversationType === "single") {
-                  setIsOpenInforUser(true);
-                }
-              }}
-            ></img>
-            <div>
+            <div className="relative">
+              <img
+                className="rounded-full h-12 w-12 mr-1 border shadow-2xl border-white "
+                alt="#"
+                src={avtMember}
+                onClick={() => {
+                  if (conversation.conversationType === "single") {
+                    setIsOpenInforUser(true);
+                  }
+                }}
+              ></img>
+              {avtMember &&
+                conversation.conversationType === "single" &&
+                listUserOnline.includes(conversation.user.id) && (
+                  <div className="bg-green-500 rounded-full h-2 w-2 absolute right-2 bottom-[2px]"></div>
+                )}
+            </div>
+            <div className="flex flex-col justify-center">
               <h1 className="font-medium text-lg">{nameConversation}</h1>
               <div className="flex flex-row items-center">
-                <p className="text-xs border-r pr-2 mr-2 font-medium text-gray-400">
-                  Đang hoạt động
-                </p>
-                <div className="flex flex-row items-center">
-                  <PiTagSimpleFill className={`mr-1`} />
-                  <p className="text-sm">Bạn bè</p>
-                </div>
+                {conversation.conversationType === "single" && (
+                  <p className="text-xs border-r pr-2 mr-2 font-medium text-gray-400">
+                    {listUserOnline.includes(conversation?.user?.id)
+                      ? "Đang hoạt động"
+                      : "Không hoạt động"}
+                  </p>
+                )}
+                {conversation.conversationType === "single" && (
+                  <div className="flex flex-row items-center">
+                    <PiTagSimpleFill className={`mr-1`} />
+
+                    <p className="text-sm">
+                      {owner.friendList.filter(
+                        (item) => item.user.id === conversation.user.id
+                      )[0]
+                        ? "Bạn bè"
+                        : "Người lạ"}
+                    </p>
+                  </div>
+                )}
+                {conversation.conversationType === "group" && (
+                  <p className="text-sm">
+                    {conversation.members.length} thành viên
+                  </p>
+                )}
               </div>
             </div>
           </div>

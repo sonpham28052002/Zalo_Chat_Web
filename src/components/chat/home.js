@@ -9,10 +9,17 @@ import { HomeRouter } from "../../router/router";
 
 import NavMenuSetting from "./setting/NavMenuSetting";
 import InfoUser from "./infoUser/infoUser";
-import { useSubscription } from "react-stomp-hooks";
-import { getAPI } from "../../redux_Toolkit/slices";
+import { StompSessionProvider, useSubscription } from "react-stomp-hooks";
+import {
+  addUserIntoList,
+  getAPI,
+  removeUserIntoList,
+  updateListUserOnline,
+} from "../../redux_Toolkit/slices";
 import { useDispatch, useSelector } from "react-redux";
 import { initZegoCloudCall } from "../../ZegoCloudCall/ZegoCloudCall";
+const host = process.env.REACT_APP_HOST;
+
 export default function Home() {
   var [indexSelect, setIndexSelect] = useState(0);
   var data = useSelector((state) => state.data);
@@ -22,9 +29,21 @@ export default function Home() {
   useSubscription("/user/" + data.id + "/unfriend", (messages) => {
     dispatch(getAPI(data.id));
   });
+  useSubscription("/user/" + data.id + "/ListUserOnline", (messages) => {
+    var listUserOnline = JSON.parse(messages.body);
+    console.log(listUserOnline);
+    dispatch(updateListUserOnline(listUserOnline));
+  });
 
   useSubscription("/user/" + data.id + "/updateAvt", (user) => {
     dispatch(getAPI(data.id));
+  });
+
+  useSubscription("/user/" + data.id + "/userOffline", (user) => {
+    dispatch(removeUserIntoList(user.body));
+  });
+  useSubscription("/user/" + data.id + "/userOnline", (user) => {
+    dispatch(addUserIntoList(user.body));
   });
 
   useSubscription("/user/" + data.id + "/coverImage", (user) => {
@@ -39,66 +58,68 @@ export default function Home() {
   }, [data]);
 
   return (
-    <div className="min-w-screen-md  min-h-dvh flex flex-row">
-      <div className=" bg-[#0091ff]  w-16 h-svh flex flex-col items-center justify-between">
-        <div className="flex flex-col items-center h-96 w-full pt-7 ">
-          <InfoUser />
+    <StompSessionProvider connectHeaders={[data.id]} url={`${host}/ws`}>
+      <div className="min-w-screen-md  min-h-dvh flex flex-row">
+        <div className=" bg-[#0091ff]  w-16 h-svh flex flex-col items-center justify-between">
+          <div className="flex flex-col items-center h-96 w-full pt-7 ">
+            <InfoUser />
+            <div className="w-full flex flex-col items-center">
+              <Link
+                to="/home"
+                className={`${
+                  indexSelect === 0 ? "bg-[#1a8dcd]" : ""
+                } w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center my-1 `}
+                onClick={() => {
+                  setIndexSelect(0);
+                }}
+              >
+                <BsChatTextFill className=" text-white text-2xl" />
+              </Link>
+              <Link
+                to="/home/Contact"
+                className={`${
+                  indexSelect === 1 ? "bg-[#1a8dcd]" : ""
+                } w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center my-1 `}
+                onClick={() => {
+                  setIndexSelect(1);
+                }}
+              >
+                <TiContacts className="text-white text-2xl" />
+              </Link>
+              <Link
+                to="/home/Todos"
+                className={`${
+                  indexSelect === 2 ? "bg-[#1a8dcd]" : ""
+                } w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center my-1 `}
+                onClick={() => {
+                  setIndexSelect(2);
+                }}
+              >
+                <IoIosCheckboxOutline className="text-white text-2xl" />
+              </Link>
+            </div>
+          </div>
           <div className="w-full flex flex-col items-center">
             <Link
-              to="/home"
-              className={`${
-                indexSelect === 0 ? "bg-[#1a8dcd]" : ""
-              } w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center my-1 `}
-              onClick={() => {
-                setIndexSelect(0);
-              }}
+              to="/chat2"
+              className="w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center"
             >
-              <BsChatTextFill className=" text-white text-2xl" />
+              <IoCloudOutline className="text-white text-2xl" />
             </Link>
             <Link
-              to="/home/Contact"
-              className={`${
-                indexSelect === 1 ? "bg-[#1a8dcd]" : ""
-              } w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center my-1 `}
-              onClick={() => {
-                setIndexSelect(1);
-              }}
+              to="/chat2"
+              className="w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center"
             >
-              <TiContacts className="text-white text-2xl" />
+              <PiToolboxBold className="text-white text-2xl" />
             </Link>
-            <Link
-              to="/home/Todos"
-              className={`${
-                indexSelect === 2 ? "bg-[#1a8dcd]" : ""
-              } w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center my-1 `}
-              onClick={() => {
-                setIndexSelect(2);
-              }}
-            >
-              <IoIosCheckboxOutline className="text-white text-2xl" />
-            </Link>
+
+            <NavMenuSetting />
           </div>
         </div>
-        <div className="w-full flex flex-col items-center">
-          <Link
-            to="/chat2"
-            className="w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center"
-          >
-            <IoCloudOutline className="text-white text-2xl" />
-          </Link>
-          <Link
-            to="/chat2"
-            className="w-full h-16 hover:bg-[#1a8dcd] flex flex-col items-center justify-center"
-          >
-            <PiToolboxBold className="text-white text-2xl" />
-          </Link>
-
-          <NavMenuSetting />
+        <div className="h-svh w-screen">
+          <HomeRouter />
         </div>
       </div>
-      <div className="h-svh w-screen">
-        <HomeRouter />
-      </div>
-    </div>
+    </StompSessionProvider>
   );
 }

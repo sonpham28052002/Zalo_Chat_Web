@@ -45,11 +45,25 @@ var reducer = createSlice({
   name: "user",
   initialState: {
     data: undefined,
-    zegoCloudCall: undefined,
+    listUserOnline: [],
   },
   reducers: {
-    updateZegoCloud: (state, actions) => {
-      state.zegoCloudCall = actions.payload;
+    updateListUserOnline: (state, actions) => {
+      state.listUserOnline = actions.payload;
+    },
+    addUserIntoList: (state, actions) => {
+      const idUser = actions.payload;
+      const arr = [...state.listUserOnline];
+      if (!arr.includes(idUser)) {
+        state.listUserOnline = [...arr, idUser];
+      }
+    },
+    removeUserIntoList: (state, actions) => {
+      const idUser = actions.payload;
+      const arr = [...state.listUserOnline];
+      if (arr.includes(idUser)) {
+        state.listUserOnline = [...arr.filter((item) => item !== idUser)];
+      }
     },
   },
   extraReducers: (builder) => {
@@ -64,5 +78,6 @@ var reducer = createSlice({
 });
 
 export default reducer;
-export const { updateZegoCloud } = reducer.actions;
+export const { updateListUserOnline, removeUserIntoList, addUserIntoList } =
+  reducer.actions;
 export { getAPI, putAPI };

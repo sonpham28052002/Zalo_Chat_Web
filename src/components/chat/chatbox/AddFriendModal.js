@@ -15,7 +15,7 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
       id: owner.id,
       userName: owner.userName,
       avt: owner.avt,
-      receiverId: friend.id,
+      receiverId: friend?.id,
     };
     stompClient.send("/app/request-add-friend", {}, JSON.stringify(request));
     setIsOpen(false)

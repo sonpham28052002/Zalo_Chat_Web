@@ -6,6 +6,8 @@ import { animateCss } from "../../notification/notification";
 
 export default function TabChat({ conversation, indexSelect, setIndex }) {
   var owner = useSelector((state) => state.data);
+  var listUserOnline = useSelector((state) => state.listUserOnline);
+
   var nameConversation = "";
   var avtConversation = undefined;
   var idConversation = undefined;
@@ -70,11 +72,17 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
         setIndex(idConversation);
       }}
     >
-      <img
-        className="rounded-full h-12 w-12 bg-center bg-cover"
-        src={avtConversation}
-        alt="#"
-      />
+      <div className="relative h-fit w-fit ">
+        <img
+          className="rounded-full h-12 w-12 bg-center bg-cover border-white border"
+          src={avtConversation}
+          alt="#"
+        />
+        {conversation.conversationType === "single" &&
+          listUserOnline.includes(conversation.user.id) && (
+            <div className="bg-green-500 rounded-full h-2 w-2 absolute right-0 bottom-1"></div>
+          )}
+      </div>
       <div className="flex flex-col justify-center w-4/6  ml-2">
         <p className="font-medium text-nowrap max-w-44 overflow-hidden">
           {nameConversation.length < 25
