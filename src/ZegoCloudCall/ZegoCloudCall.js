@@ -12,8 +12,8 @@ function updateZegoCloud(value) {
 async function initZegoCloudCall(owner) {
   const userID = owner.id;
   const userName = owner.userName;
-  const appID = 1532398834;
-  const serverSecret = "df5e8d723e44364f8e74237831ca7159";
+  const appID = 940263346;
+  const serverSecret = "a3807f37d7f0eb2f8b31a51d199262e0";
   const TOKEN = await ZegoUIKitPrebuilt.generateKitTokenForTest(
     appID,
     serverSecret,
@@ -33,8 +33,7 @@ async function initZegoCloudCall(owner) {
       incomingCallUrl: require("../assets/ringtone-205162.mp3"),
       outgoingCallUrl: require("../assets/happy-pop-1-185286.mp3"),
     },
-    onIncomingCallReceived: (callID, caller, callType, callees) => {
-    },
+    onIncomingCallReceived: (callID, caller, callType, callees) => {},
     onSetRoomConfigBeforeJoining: (callType) => {
       if (callType === 0) {
         return {
@@ -202,114 +201,75 @@ function handleSendSingleCall(callType, userReceiver, userSender) {
     },
   });
 }
-
-function handleSendGroupCall(callType, ArrUserReceiver, idGroup, owner) {
-  var arrUser = [];
-  var dateStart = new Date();
-
+function randomID(len) {
+  let result = "";
+  if (result) return result;
+  var chars = "12345qwertyuiopasdfgh67890jklmnbvcxzMNBVCZXASDQWERTYHGFUIOLKJP",
+    maxPos = chars.length,
+    i;
+  len = len || 5;
+  for (i = 0; i < len; i++) {
+    result += chars.charAt(Math.floor(Math.random() * maxPos));
+  }
+  return result;
+}
+async function handleSendGroupCall(idGroup, owner, sendMessageCallGroup) {
+  const roomID = randomID(25);
   try {
-    ZegoCloudCall?.sendCallInvitation({
-      callees: ArrUserReceiver,
-      callType: callType,
-      timeout: 10,
-      onSetRoomConfigBeforeJoining: (callType) => {
-        if (callType === 0) {
-          return {
-            showScreenSharingButton: false,
-            showAudioVideoSettingsButton: false,
-            showMyCameraToggleButton: false,
-            turnOnCameraWhenJoining: false,
-            showTextChat: false,
-            showUserList: false,
-          };
-        } else {
-          return {
-            showScreenSharingButton: false,
-            showAudioVideoSettingsButton: false,
-            showMyCameraToggleButton: true,
-            turnOnCameraWhenJoining: true,
-            showTextChat: false,
-            showUserList: false,
-          };
-        }
+    const appID = 940263346;
+    const serverSecret = "a3807f37d7f0eb2f8b31a51d199262e0";
+
+    const kitToken = await ZegoUIKitPrebuilt.generateKitTokenForTest(
+      appID,
+      serverSecret,
+      roomID,
+      owner.id,
+      owner.userName
+    );
+
+    // Create instance object from Kit Token.
+    const zp = await ZegoUIKitPrebuilt.create(kitToken);
+    let path = window.location.pathname.split("/")[1];
+    console.log(roomID);
+    // start the call
+    var url =
+      window.location.protocol +
+      "//" +
+      window.location.host +
+      "/" +
+      path +
+      "/CallGroup" +
+      "?roomID=" +
+      roomID;
+    await zp.joinRoom({
+      container: null,
+      showPreJoinView: false,
+      sharedLinks: [
+        {
+          name: "Personal link",
+          url: url,
+        },
+      ],
+      scenario: {
+        mode: ZegoUIKitPrebuilt.GroupCall, // To implement 1-on-1 calls, modify the parameter here to [ZegoUIKitPrebuilt.OneONoneCall].
       },
+      onJoinRoom: () => {
+        console.log("join room success");
+      },
+      onLeaveRoom: () => {},
     });
+    await sendMessageCallGroup(idGroup, owner, url, roomID);
   } catch (error) {
     console.log(error);
   }
-  ZegoCloudCall?.setCallInvitationConfig({
-    // xữ lý từ chối cuộc gọi
-    onOutgoingCallDeclined: () => {},
-    // xữ lý khi chấp nhận cuộc gọi
-    onOutgoingCallAccepted: (callID, callee) => {
-      console.log("in call 1");
-      console.log(callee);
-      arrUser.push(callee);
-    },
-    onCallInvitationEnded: (reason, data) => {
-      //   console.log(reason);
-      //   var dateEnd = new Date();
-      //   var difference = Math.abs(dateStart.getTime() - dateEnd.getTime()) / 1000;
-      //   console.log(difference);
-      //   if (reason === "LeaveRoom") {
-      //     let title = "";
-      //     if (callType === 0) {
-      //       title = "thoại";
-      //     } else {
-      //       title = "video";
-      //     }
-      //     const mess = {
-      //       id: v4(),
-      //       messageType: "CALLGROUP",
-      //       sender: { id: owner.id },
-      //       receiver: { id: `group_${idGroup}` },
-      //       seen: [
-      //         {
-      //           id: owner.id,
-      //         },
-      //       ],
-      //       size: difference,
-      //       titleFile: "Cuộc gọi " + title + " từ ",
-      //       url: undefined,
-      //       idGroup: "",
-      //       react: [],
-      //     };
-      //     stompClient.send(
-      //       "/app/private-single-message",
-      //       {},
-      //       JSON.stringify(mess)
-      //     );
-      //   } else if (reason === "Timeout") {
-      //     let title = "";
-      //     if (callType === 0) {
-      //       title = "thoại";
-      //     } else {
-      //       title = "video";
-      //     }
-      //     const mess = {
-      //       id: v4(),
-      //       messageType: "CALLGROUP",
-      //       sender: { id: owner.id },
-      //       receiver: { id: `group_${idGroup}` },
-      //       seen: [
-      //         {
-      //           id: owner.id,
-      //         },
-      //       ],
-      //       size: undefined,
-      //       titleFile: "bị nhở cuộc gọi " + title + " từ ",
-      //       url: undefined,
-      //       idGroup: "",
-      //       react: [],
-      //     };
-      //     stompClient.send(
-      //       "/app/private-single-message",
-      //       {},
-      //       JSON.stringify(mess)
-      //     );
-      //   }
-    },
-  });
+  await window.open(url);
+  const urlreback =
+    window.location.protocol +
+    "//" +
+    window.location.host +
+    window.location.pathname;
+  console.log(urlreback);
+  await window.location.assign(urlreback);
 }
 
 export {

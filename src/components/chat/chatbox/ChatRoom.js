@@ -30,6 +30,7 @@ import {
   handleSendSingleCall,
 } from "../../../ZegoCloudCall/ZegoCloudCall";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
+import { stompClient } from "../../../socket/socket";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
@@ -45,7 +46,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var [showGrantMember, setShowGrantMember] = useState(false);
   var [showAddMember, setShowAddMember] = useState(false);
   var [showSearchMessage, setShowSearchMessage] = useState(false);
-  var [searchText, setSearchText] = useState("");
+  // var [searchText, setSearchText] = useState("");
   var [isOpenEmotionModal, setOpenEmotionModal] = useState(true);
   var [replyMessage, setReplyMessage] = useState(undefined);
   var [listSearchMessage, setListSearchMessage] = useState([]);
@@ -101,6 +102,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
 
   useSubscription("/user/" + owner.id + "/groupChat", (message) => {
     let mess = JSON.parse(message.body);
+    console.log("mess");
     console.log(mess);
     if (conversation.conversationType === "group") {
       getMessageAndMemberByIdSenderAndIdGroup(
@@ -237,7 +239,6 @@ export default function ChatRoom({ idConversation, setIndex }) {
   );
 
   const handleSearchText = (text) => {
-    setSearchText(text);
     if (text === "") {
       setListSearchMessage([]);
       setListIndexMessage([]);
@@ -277,7 +278,6 @@ export default function ChatRoom({ idConversation, setIndex }) {
     setIsLoad(false);
     setIsExtend(false);
     setOpenEmotionModal(false);
-    setSearchText("");
     setShowSearchMessage(false);
     setListSearchMessage([]);
     setListIndexMessage([]);
@@ -498,22 +498,22 @@ export default function ChatRoom({ idConversation, setIndex }) {
     }
   }
 
-  function checkNotificationInput() {
-    const iam = conversation.members.filter(
-      (item) => item.member.id === owner.id
-    )[0];
-    if (iam.memberType === "LEFT_MEMBER") {
-      return "Bạn không còn là thành viên của nhóm này, bạn chỉ có thể đọc được tin nhắn trước đó.";
-    }
-    if (conversation?.status === "DISBANDED") {
-      return "Nhóm đã giải tán";
-    } else if (
-      conversation?.status === "READ_ONLY" &&
-      iam.memberType === "MEMBER"
-    ) {
-      return "Chỉ có trường nhóm và phó nhóm mới có thể gửi tin nhắn.";
-    }
-  }
+  // function checkNotificationInput() {
+  //   const iam = conversation.members.filter(
+  //     (item) => item.member.id === owner.id
+  //   )[0];
+  //   if (iam.memberType === "LEFT_MEMBER") {
+  //     return "Bạn không còn là thành viên của nhóm này, bạn chỉ có thể đọc được tin nhắn trước đó.";
+  //   }
+  //   if (conversation?.status === "DISBANDED") {
+  //     return "Nhóm đã giải tán";
+  //   } else if (
+  //     conversation?.status === "READ_ONLY" &&
+  //     iam.memberType === "MEMBER"
+  //   ) {
+  //     return "Chỉ có trường nhóm và phó nhóm mới có thể gửi tin nhắn.";
+  //   }
+  // }
 
   function SearchMessageView({ list }) {
     if (conversation.conversationType !== "single") {
@@ -590,6 +590,18 @@ export default function ChatRoom({ idConversation, setIndex }) {
       console.log(result);
     }
   );
+  useSubscription(
+    "/user/" + conversation?.idGroup + "/updateMessage",
+    (data) => {
+      const mess = JSON.parse(data.body);
+      var arr = messages.slice();
+      const indexMess = arr.findIndex((item) => item.id === mess.id);
+      if (indexMess !== -1) {
+        arr[indexMess] = { ...mess };
+      }
+      setMessages([...arr]);
+    }
+  );
   function handleSendCall(callType) {
     console.log(ZegoCloudCall);
     // stompClient.send(
@@ -603,29 +615,50 @@ export default function ChatRoom({ idConversation, setIndex }) {
     handleSendSingleCall(callType, conversation.user, owner);
   }
   function handleSendCallGroup(callType) {
-    console.log(ZegoCloudCall);
-    // stompClient.send(
-    //   "/app/checkUser",
-    //   {},
-    //   JSON.stringify({
-    //     userId: owner.id,
-    //     addressReceiver: idConversationVirtuoso,
-    //   })
-    // );
-    var arrUserReceiver = [];
-    for (let index = 0; index < conversation.members.length; index++) {
-      const element = conversation.members[index];
-      if (element.memberType !== "LEFT_MEMBER") {
-        arrUserReceiver.push({
-          userID: element.member.id,
-          userName: element.member.userName,
-        });
-      }
-    }
-
-    handleSendGroupCall(callType, arrUserReceiver, conversation.idGroup, owner);
+    handleSendGroupCall(
+      conversation.idGroup,
+      owner,
+      sendMessageCallGroup,
+      callType
+    );
   }
-
+  var sendMessageGroup = async (idGroup, owner, url, roomID) => {
+    let mess = {
+      id: v4(),
+      messageType: "CALLGROUP",
+      sender: { id: owner.id },
+      seen: [
+        {
+          id: owner.id,
+        },
+      ],
+      size: undefined,
+      titleFile: "Bắt đầu cuộc gọi nhóm",
+      url: url,
+      idGroup: idGroup,
+      receiver: { id: `group_${idGroup}` },
+      react: [],
+      replyMessage: undefined,
+      reply: undefined,
+    };
+    console.log(mess);
+    const createCall = { userId: owner.id, idGroup: idGroup, roomID: roomID };
+    console.log(createCall);
+    await stompClient.send("/app/createCall", {}, JSON.stringify(createCall));
+    await stompClient.send(
+      "/app/private-single-message",
+      {},
+      JSON.stringify(mess)
+    );
+  };
+  var sendMessageCallGroup = useCallback(
+    async (idGroup, owner, url, roomID) => {
+      console.log("sendMessageCallGroup");
+      await sendMessageGroup(idGroup, owner, url, roomID);
+    },
+    // eslint-disable-next-line
+    []
+  );
   var [seenIndexes, setSeenIndexes] = useState([]);
   useEffect(() => {
     if (conversation?.conversationType === "single") {
@@ -738,7 +771,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
             <div className="flex flex-col justify-center">
               <h1 className="font-medium text-lg">{nameConversation}</h1>
               <div className="flex flex-row items-center">
-                {conversation.conversationType === "single" && (
+                {conversation?.conversationType === "single" && (
                   <p className="text-xs border-r pr-2 mr-2 font-medium text-gray-400">
                     {listUserOnline.includes(conversation?.user?.id)
                       ? "Đang hoạt động"
@@ -801,9 +834,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
                 if (conversation.conversationType === "single") {
                   handleSendCall(ZegoUIKitPrebuilt.InvitationTypeVoiceCall);
                 } else {
-                  handleSendCallGroup(
-                    ZegoUIKitPrebuilt.InvitationTypeVoiceCall
-                  );
+                  handleSendCallGroup("vioce");
                 }
               }}
             >
@@ -815,9 +846,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
                 if (conversation.conversationType === "single") {
                   handleSendCall(ZegoUIKitPrebuilt.InvitationTypeVideoCall);
                 } else {
-                  handleSendCallGroup(
-                    ZegoUIKitPrebuilt.InvitationTypeVoiceCall
-                  );
+                  handleSendCallGroup("video");
                 }
               }}
             >

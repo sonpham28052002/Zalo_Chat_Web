@@ -56,6 +56,7 @@ export default function ImageMessage({
       <img
         key={index}
         src={item.user.avt}
+        alt=""
         className="h-4 w-4 rounded-full shadow-lg border-white border mx-[1px]"
       />
     ));

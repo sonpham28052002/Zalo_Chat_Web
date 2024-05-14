@@ -9,6 +9,7 @@ import FileMessage from "../message/FileMesage";
 import VioceMessage from "../message/VioceMessage";
 import CallSingle from "../message/CallSingle";
 import Notification from "../message/Notification";
+import CallGroupMessage from "../message/CallGroupMessage";
 export default function Conversation({
   avt,
   item,
@@ -141,6 +142,16 @@ export default function Conversation({
     case "CALLSINGLE":
       return (
         <CallSingle
+          avt={avt}
+          key={item.id}
+          file={item}
+          conversation={conversation}
+          seen={seen}
+        />
+      );
+    case "CALLGROUP":
+      return (
+        <CallGroupMessage
           avt={avt}
           key={item.id}
           file={item}

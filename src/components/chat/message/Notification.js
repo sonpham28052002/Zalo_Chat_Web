@@ -40,7 +40,7 @@ export default function Notification({ notification, seen, conversation }) {
           {" " + notification.content}
         </p>
       );
-    } else if (notification.notificationType === "OUT_GROUP") {
+    } else if (notification.notificationType === "OUT_CALL") {
       return (
         <p className="bg-slate-300 px-3 w-fit text-sm rounded-full">
           {

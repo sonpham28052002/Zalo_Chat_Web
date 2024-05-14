@@ -14,6 +14,7 @@ import SignUpPasswordForm from "../components/login/SignUpPasswordForm";
 import { useState } from "react";
 import FormSignUp from "../components/login/formSignUp";
 import SignUpPreviewInfoForm from "../components/login/SignUpPreviewInfoForm";
+import CallGroup from "../components/chat/CallGroup/CallGroup";
 
 export function LoginRouter() {
   return (
@@ -59,6 +60,7 @@ export function AcceptRouter() {
     <Routes>
       <Route element={<Login />} path="/*"></Route>
       <Route element={<Home />} path="/home*"></Route>
+      <Route element={<CallGroup />} path="/CallGroup"></Route>
     </Routes>
   );
 }
