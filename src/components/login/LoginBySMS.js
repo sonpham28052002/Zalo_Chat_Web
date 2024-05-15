@@ -1,58 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import OTPInput from "react-otp-input";
-import PhoneInput from "react-phone-input-2";
+import React, { useState } from "react";
 import "react-phone-input-2/lib/style.css";
 import { Link, useNavigate } from "react-router-dom";
-import { handleVertifi } from "../../firebase/firebaseService";
 import { useDispatch } from "react-redux";
 import { getAPI } from "../../redux_Toolkit/slices";
-import { handleGetValueCookie } from "../../services/Cookie_Service";
+import AuthenticationOTP from "./AuthenticationOTP";
 import Loader from "../chat/custom/loader";
-import CountDownTimeLast from "./countDownTimeLast";
-import { getAccountByPhone } from "../../services/Account_Service";
 export default function ForgotPassword() {
   const history = useNavigate();
-  var [phone, setPhone] = useState("84346676956");
-  var [contentButton, setContentButton] = useState("Gửi");
-  var [otpVertifi, setOtpVertifi] = useState();
-  var buttonRef = useRef();
-
-  var [isVertifi, setVertifi] = useState(false);
-  var [otp, setOtp] = useState("");
-  var [isload, setIsload] = useState(false);
-  var [checkTime, setCheckTime] = useState(undefined);
-  var [viewCountDown, setViewCountDown] = useState(false);
-
+  var [phone, setPhone] = useState("");
+  var [isAuthened, setIsAuthened] = useState(false);
   var dispatch = useDispatch();
 
-  useEffect(() => {
-    checkTimeRequestOtp();
-  }, []);
-
-  function checkTimeRequestOtp() {
-    handleGetValueCookie(
-      "lastRequestOtp",
-      (value) => {
-        if (value?.time) {
-          var differenceInSeconds = Math.floor(
-            (new Date() - new Date(value.time)) / 1000
-          );
-          console.log(differenceInSeconds);
-
-          if (differenceInSeconds > 180) {
-            setViewCountDown(false);
-            setCheckTime(undefined);
-          } else {
-            buttonRef.current.disabled = true;
-            setIsload(false);
-            setViewCountDown(true);
-            setCheckTime(180 - differenceInSeconds);
-          }
-        }
-      },
-      () => {}
-    );
-  }
+  var handleLogin = async (id) => {
+    setIsAuthened(true);
+    dispatch(getAPI(id));
+    setIsAuthened(false);
+    history("/home");
+  };
 
   return (
     <div className="h-full w-1/2 mr-1 flex flex-col items-center pt-5 px-14 relative ">
@@ -61,141 +25,47 @@ export default function ForgotPassword() {
         className="h-36"
         alt="/"
       ></img>
-      <h1 className="font-bold  text-3xl h-14 text-center w-full	whitespace-nowrap overflow-hidden text-ellipsis">ĐĂNG NHẬP VỚI OPT</h1>
+      <h1 className="font-bold  text-3xl h-14 text-center w-full	whitespace-nowrap overflow-hidden text-ellipsis">
+        ĐĂNG NHẬP VỚI OPT
+      </h1>
       <h4 className="text-gray-400 text-base text-center font-medium whitespace-nowrap overflow-hidden text-ellipsis w-full h-10">
         Chào mừng bạn đến với chúng tôi.
       </h4>
-      <form className="h-full w-full flex flex-col justify-start mt-5">
-        <label className="ml-2 font-medium">Số điện thoại:</label>
-        <PhoneInput
-          country={"vn"}
-          value={phone}
-          onChange={setPhone}
-          className="mb-2 focus:border-black"
-          placeholder="xxx xxx xxx"
-          inputStyle={{
-            height: 20,
-            width: "100%",
-            fontWeight: "500",
-            borderRadius: 6,
-            paddingTop: 20,
-            paddingBottom: 20,
-          }}
-          buttonStyle={{
-            borderBottomLeftRadius: 6,
-            borderTopLeftRadius: 6,
-          }}
+      {isAuthened ? (
+        <Loader />
+      ) : (
+        <AuthenticationOTP
+          phone={phone}
+          setPhone={setPhone}
+          callback={handleLogin}
+          isCheckExistUser={true}
         />
-        <div id="recaptcha"></div>
+      )}
+      <p className="h-8 mb-1 text-center text-sm font-medium text-slate-500 mr-1 whitespace-nowrap overflow-hidden text-ellipsis w-full">
+        Chưa có tài khoản nào trước đây.
+        <Link to="/signup" className="hover:text-blue-700">
+          Đăng ký ngay!
+        </Link>
+      </p>
 
-        {!isVertifi || (
-          <>
-            <label className="ml-2 font-medium  mr-5">Nhập mã OPT:</label>
-            <div className="relative w-full flex flex-row justify-center items-end mb-5 mt-1 ">
-              <OTPInput
-                numInputs={6}
-                value={otp}
-                onChange={setOtp}
-                inputStyle={{
-                  height: 35,
-                  width: 35,
-                  fontSize: 20,
-                  borderWidth: 1,
-                  borderColor: "black",
-                  textAlign: "center",
-                }}
-                renderSeparator={<span className="mx-1">-</span>}
-                renderInput={(props) => <input {...props} />}
-              />
-            </div>
-          </>
-        )}
-        <button
-          ref={buttonRef}
-          onClick={async () => {
-            setIsload(true);
-            if (contentButton === "Gửi") {
-              checkTimeRequestOtp();
-              await getAccountByPhone(phone).then(async (res) => {
-                console.log(res);
-                if (res) {
-                  await handleVertifi("+" + phone)
-                    .then((e) => {
-                      if (e) {
-                        setOtpVertifi(e);
-                        setVertifi(true);
-                        setContentButton("Xác thực SMS");
-                      }
-                      setIsload(false);
-                    })
-                    .catch((Error) => {
-                      setIsload(false);
-                      console.log(Error);
-                    });
-                } else {
-                  alert("Số điện thoại chưa được đăng kí tài khoản");
-                  setIsload(false);
-                }
-              });
-            } else if (contentButton === "Xác thực SMS") {
-              if (otp.length === 6) {
-                setIsload(true);
-                await otpVertifi
-                  .confirm(otp)
-                  .then(async (result) => {
-                    await dispatch(getAPI(result.user.uid));
-                    setIsload(false);
-                    history("/home");
-                  })
-                  .catch((e) => {
-                    console.log(e);
-                  });
-              } else {
-                console.log("a");
-              }
-            }
-          }}
-          type="button"
-          className="min-h-10 w-full rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
-        >
-          {viewCountDown ? (
-            <CountDownTimeLast
-              timeCheck={checkTime}
-              setView={() => {
-                setViewCountDown(false);
-                buttonRef.current.disabled = false;
-              }}
-            />
-          ) : (
-            <div>{isload ? <Loader /> : contentButton}</div>
-          )}
-        </button>
-        <p className="mb-5 text-center text-sm font-medium text-slate-500 mr-1 whitespace-nowrap overflow-hidden text-ellipsis w-full">
-          Chưa có tài khoản nào trước đây.
-          <Link to="/signup" className="hover:text-blue-700">
-            Đăng ký ngay!
-          </Link>
-        </p>
-
-        <button
-          onClick={() => {
-            history("/");
-          }}
-          type="button"
-          className=" min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis "
-        >
-          Đăng nhập bằng mật khẩu
-        </button>
-        <button
-          onClick={() => {
-            history("/qr");
-          }}
-          type="button"
-          className="min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis "
-        >
-          Đăng nhập bằng mã QR
-        </button>
-      </form>
+      <button
+        onClick={() => {
+          history("/");
+        }}
+        type="button"
+        className=" min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis "
+      >
+        Đăng nhập bằng mật khẩu
+      </button>
+      <button
+        onClick={() => {
+          history("/qr");
+        }}
+        type="button"
+        className="min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis "
+      >
+        Đăng nhập bằng mã QR
+      </button>
     </div>
   );
 }

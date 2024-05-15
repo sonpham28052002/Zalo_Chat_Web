@@ -28,6 +28,8 @@ var handleVertifi = async (inputPhone) => {
       alert("Quá nhiều yêu cầu. Vui lòng thử lại sau.");
     } else if (error.message.includes("auth/invalid-phone-number")) {
       alert("Số điện thoại không hợp lệ. Vui lòng kiểm tra lại.");
+    } else if (error.message.includes("No reCAPTCHA clients exist")) {
+      alert("Không tìm thấy reCAPTCHA. Vui lòng thử tải lại trang lại sau.");
     } else if (
       error.message.includes("reCAPTCHA client element has been removed")
     ) {

@@ -155,7 +155,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
       setMessages([...messages]);
     },
     // eslint-disable-next-line
-    []
+    [messages]
   );
 
   useSubscription("/user/" + owner.id + "/disbandConversation", (message) => {
@@ -462,7 +462,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var forcusMessage = useCallback(
     forcusIndexMessage,
     // eslint-disable-next-line
-    []
+    [messages]
   );
   function checkInputConversation() {
     if (conversation.conversationType === "single") {

@@ -51,6 +51,12 @@ export default function Home() {
   useSubscription("/user/" + data.id + "/acceptAddFriend", (message) => {
     dispatch(getAPI(data.id));
   });
+  useSubscription("/user/" + data.id + "/requestAddFriend", (message) => {
+    dispatch(getAPI(data.id));
+  });
+  useSubscription("/user/" + data.id + "/declineAddFriend", (message) => {
+    dispatch(getAPI(data.id));
+  });
 
   React.useEffect(() => {
     initZegoCloudCall(data);

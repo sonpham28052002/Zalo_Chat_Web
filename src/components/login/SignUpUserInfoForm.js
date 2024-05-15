@@ -77,7 +77,7 @@ export default function SignUpUserInfoForm() {
               //   return;
               // }
               setNote("");
-              setFullName(e.target.value)
+              setFullName(e.target.value);
             }}
             className="h-10 w-full rounded-md focus:outline-none border border-gray border-solid p-1"
           />
@@ -161,9 +161,9 @@ export default function SignUpUserInfoForm() {
             const date = new Date(
               yearRef.current.value,
               monthRef.current.value - 1,
-              parseInt(dayRef.current.value, 10) +1
+              parseInt(dayRef.current.value, 10) + 1
             );
-            let formattedDob = date.toISOString().split('T')[0];
+            let formattedDob = date.toISOString().split("T")[0];
             const user = {
               id: id,
               phone: phone,
@@ -189,6 +189,15 @@ export default function SignUpUserInfoForm() {
           className="min-h-10 w-full rounded-md mb-3 bg-[#1a8dcd] text-white font-bold"
         >
           ĐĂNG KÝ
+        </button>
+        <button
+          onClick={() => {
+            history("/");
+          }}
+          type="button"
+          className=" min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold"
+        >
+          Huỷ
         </button>
       </form>
     </div>

@@ -7,7 +7,6 @@ import HeaderNavChat from "../chatbox/headerNavChat";
 import { RiGroupLine } from "react-icons/ri";
 import { SlEnvolopeLetter } from "react-icons/sl";
 
-
 function Contacts() {
   const [active, setActive] = useState(1);
 
@@ -15,11 +14,10 @@ function Contacts() {
     setActive(buttonId);
   };
 
-
   return (
     <div className="flex flex-row h-full  ">
       <div className="w-2/12 border-r-2 border-gray-200">
-        <HeaderNavChat />
+        <HeaderNavChat isSelect={false} />
         <div className="flex-1  ">
           <button
             className="flex flex-row h-16 w-full items-center"
