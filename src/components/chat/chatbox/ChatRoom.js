@@ -109,7 +109,8 @@ export default function ChatRoom({ idConversation, setIndex }) {
         owner.id,
         idConversation,
         (data) => {
-          setMessages(data.slice().reverse());
+          console.log(data);
+          setMessages([...data.slice().reverse()]);
         }
       );
     }
@@ -118,7 +119,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
   useSubscription("/user/" + owner.id + "/deleteMessage", (message) => {
     let mess = JSON.parse(message.body);
     console.log(mess);
-    setMessages(messages.filter((item) => item.id !== mess.id));
+    setMessages(messages?.filter((item) => item.id !== mess.id));
   });
 
   useSubscription("/user/" + owner.id + "/retrieveMessage", (message) => {
@@ -154,7 +155,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
       setMessages([...messages]);
     },
     // eslint-disable-next-line
-    [messages]
+    []
   );
 
   useSubscription("/user/" + owner.id + "/disbandConversation", (message) => {
@@ -223,7 +224,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
 
   var [conversation, setConversation] = useState(
     // eslint-disable-next-line
-    owner.conversation.filter((item) => {
+    owner.conversation?.filter((item) => {
       if (
         item.conversationType === "group" &&
         item.idGroup === idConversation
@@ -234,6 +235,12 @@ export default function ChatRoom({ idConversation, setIndex }) {
         item.user.id === idConversation
       ) {
         return item;
+      } else {
+        return {
+          conversationType: "single",
+          lastMessage: undefined,
+          user: { id: idConversation, avt: "", userName: "" },
+        };
       }
     })[0]
   );
@@ -268,7 +275,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
         return null;
       }
     }
-    var user = owner.friendList.filter((item) => item.user.id === id)[0];
+    var user = owner.friendList?.filter((item) => item.user.id === id)[0];
     return user;
   };
 
@@ -281,7 +288,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
     setShowSearchMessage(false);
     setListSearchMessage([]);
     setListIndexMessage([]);
-    owner.conversation.filter(async (item) => {
+    owner.conversation?.filter(async (item) => {
       if (
         item.conversationType === "group" &&
         item.idGroup === idConversation
@@ -455,13 +462,13 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var forcusMessage = useCallback(
     forcusIndexMessage,
     // eslint-disable-next-line
-    [messages]
+    []
   );
   function checkInputConversation() {
     if (conversation.conversationType === "single") {
       return true;
     } else {
-      const iam = conversation.members.filter(
+      const iam = conversation.members?.filter(
         (item) => item.member.id === owner.id
       )[0];
       if (iam.memberType === "LEFT_MEMBER") {
@@ -520,11 +527,11 @@ export default function ChatRoom({ idConversation, setIndex }) {
       console.log(conversation);
     }
     function getUserNameById(id) {
-      return conversation.members.filter((item) => item.member.id === id)[0]
+      return conversation.members?.filter((item) => item.member.id === id)[0]
         .member?.userName;
     }
     function getAVTById(id) {
-      return conversation.members.filter((item) => item.member.id === id)[0]
+      return conversation.members?.filter((item) => item.member.id === id)[0]
         .member?.avt;
     }
     return (
@@ -771,19 +778,20 @@ export default function ChatRoom({ idConversation, setIndex }) {
             <div className="flex flex-col justify-center">
               <h1 className="font-medium text-lg">{nameConversation}</h1>
               <div className="flex flex-row items-center">
+                {conversation?.conversationType &&
+                  conversation?.conversationType === "single" && (
+                    <p className="text-xs border-r pr-2 mr-2 font-medium text-gray-400">
+                      {listUserOnline?.includes(conversation?.user?.id)
+                        ? "Đang hoạt động"
+                        : "Không hoạt động"}
+                    </p>
+                  )}
                 {conversation?.conversationType === "single" && (
-                  <p className="text-xs border-r pr-2 mr-2 font-medium text-gray-400">
-                    {listUserOnline.includes(conversation?.user?.id)
-                      ? "Đang hoạt động"
-                      : "Không hoạt động"}
-                  </p>
-                )}
-                {conversation.conversationType === "single" && (
                   <div className="flex flex-row items-center">
                     <PiTagSimpleFill className={`mr-1`} />
 
                     <p className="text-sm">
-                      {owner.friendList.filter(
+                      {owner.friendList?.filter(
                         (item) => item.user.id === conversation.user.id
                       )[0]
                         ? "Bạn bè"
@@ -791,7 +799,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
                     </p>
                   </div>
                 )}
-                {conversation.conversationType === "group" && (
+                {conversation?.conversationType === "group" && (
                   <p className="text-sm">
                     {conversation.members.length} thành viên
                   </p>

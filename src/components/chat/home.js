@@ -31,7 +31,6 @@ export default function Home() {
   });
   useSubscription("/user/" + data.id + "/ListUserOnline", (messages) => {
     var listUserOnline = JSON.parse(messages.body);
-    console.log(listUserOnline);
     dispatch(updateListUserOnline(listUserOnline));
   });
 

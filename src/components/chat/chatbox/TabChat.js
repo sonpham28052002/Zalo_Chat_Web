@@ -48,12 +48,10 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
   });
   useSubscription("/user/" + owner.id + "/groupChat", (message) => {
     let mess = JSON.parse(message.body);
-    console.log(conversation);
-    console.log(mess);
-
     if (
       "group_" + conversation.idGroup === mess.receiver.id &&
-      mess.sender.id !== owner.id
+      mess.sender.id !== owner.id &&
+      indexSelect !== conversation.idGroup
     ) {
       animateCss({
         type: "MESSAGE_SINGLE",

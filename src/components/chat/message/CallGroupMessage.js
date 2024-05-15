@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { LuPhoneCall } from "react-icons/lu";
 import { JoinRoom } from "../../../socket/socket";
 
-export default function CallGroupMessage({ avt, file, conversation }) {
+export default function CallGroupMessage({ avt, file, conversation, seen }) {
   var owner = useSelector((state) => state.data);
   var refMessage = useRef(null);
 
@@ -38,8 +38,24 @@ export default function CallGroupMessage({ avt, file, conversation }) {
     }
     return "";
   }
+
+  function renderSeen(message) {
+    const arrSeen = seen.filter((item) => item.indexMessage === message.id);
+    return arrSeen.map((item, index) => (
+      <img
+        key={index}
+        src={item.user.avt}
+        alt=""
+        className="h-4 w-4 rounded-full shadow-lg border-white border mx-[1px]"
+      />
+    ));
+  }
+
   return (
     <div className="h-44">
+      <div className=" rotate-180 flex flex-row justify-end px-2">
+        {renderSeen(file)}
+      </div>
       <div
         ref={refMessage}
         className={` relative h-fit w-full flex flex-row items-end my-3  py-5 rotate-180  ${
