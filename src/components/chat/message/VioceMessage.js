@@ -17,6 +17,7 @@ export default function VioceMessage({
   forcusMessage,
   isOpenEmotion,
   updateMessage,
+  seen,
 }) {
   let [messageLocal, setMessageLocal] = useState(vioce);
   var owner = useSelector((state) => state.data);
@@ -49,8 +50,24 @@ export default function VioceMessage({
     let mess = JSON.parse(messages.body);
     updateMessage(mess);
   });
+
+  function renderSeen(message) {
+    const arrSeen = seen.filter((item) => item.indexMessage === message.id);
+    return arrSeen.map((item, index) => (
+      <img
+        key={index}
+        src={item.user.avt}
+        alt=""
+        className="h-4 w-4 rounded-full shadow-lg border-white border mx-[1px]"
+      />
+    ));
+  }
+
   return (
     <div className="h-fit ">
+      <div className=" rotate-180 flex flex-row justify-end px-2">
+        {renderSeen(vioce)}
+      </div>
       {!isRetrieve ? (
         <div
           ref={refMessage}
@@ -97,10 +114,12 @@ export default function VioceMessage({
                 vioce.replyMessage && "mt-1"
               } `}
             >
-              <audio controls className="l">
-                <source src={vioce.url} type="audio/mpeg" />
-                <source src={vioce.url} type="audio/3gp" />
-              </audio>
+              {vioce.url && (
+                <video className="h-14 w-60" controls>
+                  <source src={vioce.url} type="audio/mpeg" />
+                  <source src={vioce.url} type="audio/3gp" />
+                </video>
+              )}
             </div>
             <div className="flex flex-row justify-between  items-center absolute w-full pt-1 ">
               <span className=" text-[12px] px-4  text-gray-400 ">

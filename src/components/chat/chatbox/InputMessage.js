@@ -8,15 +8,8 @@ import { BsFillSendFill } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { v4 } from "uuid";
 import { uploadFile } from "../../../services/Azure_Service";
-import SockJS from "sockjs-client";
-import { over } from "stompjs";
 import InputVioce from "../custom/inputVioce";
-const host = process.env.REACT_APP_HOST;
-const sockjs = new SockJS(`${host}/ws`);
-const stompClient = over(sockjs);
-stompClient.connect({}, () => {
-  console.log("run");
-});
+import { stompClient } from "../../../socket/socket";
 
 export default function InputMessage({
   conversation,
@@ -30,7 +23,6 @@ export default function InputMessage({
   forcusMessage,
 }) {
   var user = useSelector((state) => state.data);
-
   const sender = {
     id: user.id,
   };
@@ -53,39 +45,27 @@ export default function InputMessage({
         };
       }
       console.log(mess);
-      if (stompClient && stompClient.connected) {
-        stompClient.send(
-          "/app/private-single-message",
-          {},
-          JSON.stringify(mess)
-        );
-        setMessages([mess, ...messages]);
-        setIsLoading(false);
-      }
+      stompClient.send("/app/private-single-message", {}, JSON.stringify(mess));
+      setMessages([mess, ...messages]);
+      setIsLoading(false);
     } else {
-      if (stompClient && stompClient.connected) {
-        console.log("replyMessage");
-        console.log(replyMessage);
-        let mess = {
-          ...message,
-          idGroup: "",
-          react: [],
+      console.log("replyMessage");
+      console.log(replyMessage);
+      let mess = {
+        ...message,
+        idGroup: "",
+        react: [],
+      };
+      if (replyMessage) {
+        mess = {
+          ...mess,
+          replyMessage: { ...replyMessage },
+          reply: { ...replyMessage },
         };
-        if (replyMessage) {
-          mess = {
-            ...mess,
-            replyMessage: { ...replyMessage },
-            reply: { ...replyMessage },
-          };
-        }
-        stompClient.send(
-          "/app/private-single-message",
-          {},
-          JSON.stringify(mess)
-        );
-        setMessages([mess, ...messages]);
-        setIsLoading(false);
       }
+      stompClient.send("/app/private-single-message", {}, JSON.stringify(mess));
+      setMessages([mess, ...messages]);
+      setIsLoading(false);
     }
     setReplyMessageConversation(undefined);
   }

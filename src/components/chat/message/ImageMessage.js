@@ -17,6 +17,7 @@ export default function ImageMessage({
   forcusMessage,
   isOpenEmotion,
   updateMessage,
+  seen,
 }) {
   let [messageLocal, setMessageLocal] = useState(image);
   var owner = useSelector((state) => state.data);
@@ -48,8 +49,23 @@ export default function ImageMessage({
     let mess = JSON.parse(messages.body);
     updateMessage(mess);
   });
+
+  function renderSeen(message) {
+    const arrSeen = seen.filter((item) => item.indexMessage === message.id);
+    return arrSeen.map((item, index) => (
+      <img
+        key={index}
+        src={item.user.avt}
+        alt=""
+        className="h-4 w-4 rounded-full shadow-lg border-white border mx-[1px]"
+      />
+    ));
+  }
   return (
     <div className="h-fit">
+      <div className=" rotate-180 flex flex-row justify-end px-2">
+        {renderSeen(image)}
+      </div>
       {!isRetrieve ? (
         <div
           ref={refMessage}

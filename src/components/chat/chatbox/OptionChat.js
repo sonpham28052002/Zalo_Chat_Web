@@ -33,7 +33,6 @@ export default function OptionChat({
   showAddMember,
 }) {
   var owner = useSelector((state) => state.data);
-  console.log(messages);
   var [showImageVideo, setShowImageVideo] = useState(false);
   var [showFile, setShowFile] = useState(false);
   var [showTextLink, setTextLink] = useState(false);

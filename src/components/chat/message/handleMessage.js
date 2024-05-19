@@ -56,12 +56,12 @@ export default function HandleMessage({
       stompClient.send("/app/retrieve-message", {}, JSON.stringify(message));
     }
 
-    // if (isOver24Hours(message.senderDate)) {
-    //   alert("Tin nhắn đã quá 24h. bạn không thể xoá được.");
-    // } else {
-    //   setIsRetrieve(true);
-    //   stompClient.send("/app/retrieve-message", {}, JSON.stringify(message));
-    // }
+    if (isOver24Hours(message.senderDate)) {
+      alert("Tin nhắn đã quá 24h. bạn không thể xoá được.");
+    } else {
+      setIsRetrieve(true);
+      stompClient.send("/app/retrieve-message", {}, JSON.stringify(message));
+    }
   }
   function handleShareMessage() {
     setIsOpenForwardMessage(message);

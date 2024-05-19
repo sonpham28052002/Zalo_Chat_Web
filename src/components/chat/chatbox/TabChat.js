@@ -1,9 +1,13 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import NavChatOption from "./NavChatOption";
+import { useSubscription } from "react-stomp-hooks";
+import { animateCss } from "../../notification/notification";
 
 export default function TabChat({ conversation, indexSelect, setIndex }) {
   var owner = useSelector((state) => state.data);
+  var listUserOnline = useSelector((state) => state.listUserOnline);
+
   var nameConversation = "";
   var avtConversation = undefined;
   var idConversation = undefined;
@@ -29,6 +33,33 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
     }
   }
 
+  useSubscription("/user/" + owner.id + "/singleChat", (messages) => {
+    let mess = JSON.parse(messages.body);
+    if (
+      owner.id === mess.receiver.id &&
+      conversation.user.id === mess.sender.id
+    ) {
+      animateCss({
+        type: "MESSAGE_SINGLE",
+        image: conversation.user.avt,
+        userName: conversation.user.userName,
+      });
+    }
+  });
+  useSubscription("/user/" + owner.id + "/groupChat", (message) => {
+    let mess = JSON.parse(message.body);
+    if (
+      "group_" + conversation.idGroup === mess.receiver.id &&
+      mess.sender.id !== owner.id &&
+      indexSelect !== conversation.idGroup
+    ) {
+      animateCss({
+        type: "MESSAGE_SINGLE",
+        image: conversation.avtGroup,
+        userName: conversation.nameGroup,
+      });
+    }
+  });
   return (
     <div
       className={`w-full h-[80px] border-red-100 hover:bg-slate-100 px-3 flex flex-row justify-start items-center ${
@@ -39,11 +70,17 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
         setIndex(idConversation);
       }}
     >
-      <img
-        className="rounded-full h-12 w-12 bg-center bg-cover"
-        src={avtConversation}
-        alt="#"
-      />
+      <div className="relative h-fit w-fit ">
+        <img
+          className="rounded-full h-12 w-12 bg-center bg-cover border-white border"
+          src={avtConversation}
+          alt="#"
+        />
+        {conversation.conversationType === "single" &&
+          listUserOnline.includes(conversation.user.id) && (
+            <div className="bg-green-500 rounded-full h-2 w-2 absolute right-0 bottom-1"></div>
+          )}
+      </div>
       <div className="flex flex-col justify-center w-4/6  ml-2">
         <p className="font-medium text-nowrap max-w-44 overflow-hidden">
           {nameConversation.length < 25

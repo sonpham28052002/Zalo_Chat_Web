@@ -7,6 +7,9 @@ import RetrieveMessages from "../message/RetrieveMessages";
 import VideoMessage from "../message/VideoMessage";
 import FileMessage from "../message/FileMesage";
 import VioceMessage from "../message/VioceMessage";
+import CallSingle from "../message/CallSingle";
+import Notification from "../message/Notification";
+import CallGroupMessage from "../message/CallGroupMessage";
 export default function Conversation({
   avt,
   item,
@@ -17,6 +20,7 @@ export default function Conversation({
   forcusMessage,
   isOpenEmotion,
   updateMessage,
+  seen,
 }) {
   switch (item.messageType) {
     case "Text":
@@ -32,6 +36,7 @@ export default function Conversation({
           forcusMessage={forcusMessage}
           isOpenEmotion={isOpenEmotion}
           updateMessage={updateMessage}
+          seen={seen}
         />
       );
     case "STICKER":
@@ -46,6 +51,7 @@ export default function Conversation({
           forcusMessage={forcusMessage}
           isOpenEmotion={isOpenEmotion}
           updateMessage={updateMessage}
+          seen={seen}
         />
       );
     case "PNG":
@@ -63,6 +69,7 @@ export default function Conversation({
           forcusMessage={forcusMessage}
           isOpenEmotion={isOpenEmotion}
           updateMessage={updateMessage}
+          seen={seen}
         />
       );
     case "RETRIEVE":
@@ -72,6 +79,7 @@ export default function Conversation({
           key={item.id}
           message={item}
           conversation={conversation}
+          seen={seen}
         />
       );
     case "VIDEO":
@@ -86,6 +94,7 @@ export default function Conversation({
           forcusMessage={forcusMessage}
           isOpenEmotion={isOpenEmotion}
           updateMessage={updateMessage}
+          seen={seen}
         />
       );
     case "AUDIO":
@@ -100,6 +109,7 @@ export default function Conversation({
           forcusMessage={forcusMessage}
           isOpenEmotion={isOpenEmotion}
           updateMessage={updateMessage}
+          seen={seen}
         />
       );
     case "DOCX":
@@ -126,6 +136,36 @@ export default function Conversation({
           forcusMessage={forcusMessage}
           isOpenEmotion={isOpenEmotion}
           updateMessage={updateMessage}
+          seen={seen}
+        />
+      );
+    case "CALLSINGLE":
+      return (
+        <CallSingle
+          avt={avt}
+          key={item.id}
+          file={item}
+          conversation={conversation}
+          seen={seen}
+        />
+      );
+    case "CALLGROUP":
+      return (
+        <CallGroupMessage
+          avt={avt}
+          key={item.id}
+          file={item}
+          conversation={conversation}
+          seen={seen}
+        />
+      );
+    case "NOTIFICATION":
+      return (
+        <Notification
+          seen={seen}
+          key={item.id}
+          notification={item}
+          conversation={conversation}
         />
       );
     default:
@@ -140,6 +180,7 @@ export default function Conversation({
           forcusMessage={forcusMessage}
           isOpenEmotion={isOpenEmotion}
           updateMessage={updateMessage}
+          seen={seen}
         />
       );
   }

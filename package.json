@@ -39,7 +39,7 @@
     "swiper": "^11.0.7",
     "uuid": "^9.0.1",
     "web-vitals": "^2.1.4",
-    "zego-zim-web": "^2.5.0"
+    "zego-zim-web": "^2.15.0"
   },
   "scripts": {
     "start": "react-scripts start",

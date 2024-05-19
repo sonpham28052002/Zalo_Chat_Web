@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
 import PhoneInput from "react-phone-input-2";
@@ -15,13 +15,16 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
       id: owner.id,
       userName: owner.userName,
       avt: owner.avt,
-      receiverId: friend.id,
+      receiverId: friend?.id,
     };
     stompClient.send("/app/request-add-friend", {}, JSON.stringify(request));
-    setIsOpen(false)
+    setIsOpen(false);
     // setImg(null);
     // setSelectedFile(null);
   }
+  useEffect(() => {
+    setFriend(null);
+  }, []);
   const leftValue = `calc((100vw - 350px) / 2)`;
 
   async function getUserByPhone() {
@@ -36,11 +39,59 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
   }
 
   function checkFriend() {
-    const friendExists = owner.friendList.some(
-      (friendItem) => friendItem.user.id === friend.id
+    console.log("element");
+    console.log(owner);
+    console.log(owner.friendRequests);
+    for (let index = 0; index < owner.friendRequests.length; index++) {
+      const element = owner.friendRequests[index];
+      console.log(element.sender.id);
+      console.log(friend.id);
+      if (element.sender.id === friend.id) {
+        return (
+          <button
+            className="w-full  btn-blur-gray rounded mr-5 text-center items-center justify-between h-10"
+            onClick={() => {}}
+          >
+            <p className="font-semibold ">Chấp nhận lời mời kết bạn</p>
+          </button>
+        );
+      } else if (element.receiver.id === friend.id) {
+        return (
+          <button
+            className="w-full  btn-blur-gray rounded mr-5 text-center items-center justify-between h-10"
+            onClick={() => {}}
+          >
+            <p className="font-semibold ">Đã gửi lời mời kết bạn.</p>
+          </button>
+        );
+      }
+    }
+    for (let index = 0; index < owner.friendList.length; index++) {
+      const element = owner.friendList[index];
+      console.log(element.user.id);
+      console.log(friend.id);
+      if (element.user.id === friend.id) {
+        return (
+          <button
+            className=" w-full btn-request rounded mr-5 text-center items-center justify-between h-10 bg-green-100"
+            onClick={() => {}}
+          >
+            <p className="font-semibold text-green-500">Đã là bạn bè</p>
+          </button>
+        );
+      }
+    }
+
+    return (
+      <button
+        className=" w-full btn-request btn-blur-gray rounded mr-5 text-center items-center justify-between h-10 "
+        onClick={() => {
+          closeModal();
+        }}
+      >
+        <p className="font-semibold text-green-500">kết bạn</p>
+      </button>
     );
-    if (friendExists) return true;
-    return false;
   }
 
   function FriendView() {
@@ -86,27 +137,8 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
           </div>
         </div>
 
-        <div className="flex flex-row h-12 w-full mt-4 p-2 border-t  ">
-          {checkFriend() ? (
-            <button className="btn-request rounded mr-5 text-center items-center justify-between h-10 bg-green-100">
-              <p className="font-semibold text-green-500">Đã là bạn bè</p>
-            </button>
-          ) : (
-            <button
-              className="btn-request btn-blur-gray rounded mr-5 text-center items-center justify-between h-10"
-              onClick={() => {
-                closeModal();
-              }}
-            >
-              <p className="font-semibold ">Kết bạn</p>
-            </button>
-          )}
-          <button
-            className=" btn-request rounded btn-add-friend h-10"
-            onClick={() => checkFriend()}
-          >
-            <p className="font-semibold ">Nhắn tin</p>
-          </button>
+        <div className="flex flex-row justify-center items-center h-12 w-full mt-4 p-2 border-t  ">
+          {checkFriend()}
         </div>
       </div>
     );
@@ -121,7 +153,9 @@ export default function AddFriendModal({ isOpen, setIsOpen }) {
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
             className="fixed top-0 left-0 right-0 bottom-0 bg-black z-50"
-            onClick={() => closeModal()}
+            onClick={() => {
+              setIsOpen(false);
+            }}
           />
           <motion.div
             initial={{ opacity: 0, y: -100 }}

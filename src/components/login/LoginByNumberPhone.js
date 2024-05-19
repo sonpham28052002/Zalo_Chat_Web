@@ -8,7 +8,6 @@ import { getAccount } from "../../services/Account_Service.js";
 import { handleSetValueCookie } from "../../services/Cookie_Service.js";
 import { useDispatch, useSelector } from "react-redux";
 import { getAPI } from "../../redux_Toolkit/slices.js";
-import { animateCss } from "../notification/notification.js";
 export default function LoginByNumberPhone() {
   const history = useNavigate();
   var [phone, setPhone] = useState("84898168640");
@@ -17,15 +16,6 @@ export default function LoginByNumberPhone() {
   var isWaitting = useSelector((state) => state.isWaitting);
   var dispatch = useDispatch();
 
-  var NotificationCustom = () => {
-    animateCss({
-      type: "MESSAGE_SINGLE",
-      image:
-        "https://th.bing.com/th/id/OIP.UYagQDMo7CCbBLXOPB5etAHaHa?rs=1&pid=ImgDetMain",
-      userName: "Phạm Thanh Sơn",
-      hoverPause: true,
-    });
-  };
   var handleLoginWithPhoneAnhPassword = (phone, password) => {
     setIsLoading(true);
     getAccount(
@@ -101,7 +91,6 @@ export default function LoginByNumberPhone() {
         </div>
         <button
           onClick={() => {
-            // NotificationCustom();
             handleLoginWithPhoneAnhPassword(phone, password);
           }}
           type="button"

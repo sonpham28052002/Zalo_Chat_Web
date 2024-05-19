@@ -45,18 +45,24 @@ var reducer = createSlice({
   name: "user",
   initialState: {
     data: undefined,
+    listUserOnline: [],
   },
   reducers: {
-    addMessage: (state, actions) => {
-      const { mess, id, type } = actions.payload;
-      for (let index = 0; index < state.data.conversation.length; index++) {
-        if (
-          state.data.conversation[index].conversationType === type &&
-          state.data.conversation[index].user.id === id
-        ) {
-          state.data.conversation[index].messages = mess;
-          break;
-        }
+    updateListUserOnline: (state, actions) => {
+      state.listUserOnline = actions.payload;
+    },
+    addUserIntoList: (state, actions) => {
+      const idUser = actions.payload;
+      const arr = [...state.listUserOnline];
+      if (!arr.includes(idUser)) {
+        state.listUserOnline = [...arr, idUser];
+      }
+    },
+    removeUserIntoList: (state, actions) => {
+      const idUser = actions.payload;
+      const arr = [...state.listUserOnline];
+      if (arr.includes(idUser)) {
+        state.listUserOnline = [...arr.filter((item) => item !== idUser)];
       }
     },
   },
@@ -72,5 +78,6 @@ var reducer = createSlice({
 });
 
 export default reducer;
-export const { addMessage } = reducer.actions;
+export const { updateListUserOnline, removeUserIntoList, addUserIntoList } =
+  reducer.actions;
 export { getAPI, putAPI };
