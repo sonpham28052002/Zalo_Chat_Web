@@ -26,8 +26,8 @@ export default function Home() {
 
   var dispatch = useDispatch();
 
-  useSubscription("/user/" + data.id + "/unfriend", (messages) => {
-    dispatch(getAPI(data.id));
+  useSubscription("/user/" + data?.id + "/unfriend", (messages) => {
+    dispatch(getAPI(data?.id));
   });
   useSubscription("/user/" + data.id + "/ListUserOnline", (messages) => {
     var listUserOnline = JSON.parse(messages.body);

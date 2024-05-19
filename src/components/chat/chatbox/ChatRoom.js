@@ -121,7 +121,13 @@ export default function ChatRoom({ idConversation, setIndex }) {
     console.log(mess);
     setMessages(messages?.filter((item) => item.id !== mess.id));
   });
-
+  useSubscription(
+    "/user/" + owner.id + "/ChangeRoleNotification",
+    (message) => {
+      let mess = JSON.parse(message.body);
+      setMessages([...mess,...messages, ]);
+    }
+  );
   useSubscription("/user/" + owner.id + "/retrieveMessage", (message) => {
     let mess = JSON.parse(message.body);
     if (mess.messageType === "RETRIEVE") {
@@ -734,7 +740,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
   }, [messages, listMember]);
 
   function checkSeen(message, idUser) {
-    for (let index = 0; index < message.seen.length; index++) {
+    for (let index = 0; index < message?.seen?.length; index++) {
       if (message.seen[index].id === idUser) {
         return true;
       }

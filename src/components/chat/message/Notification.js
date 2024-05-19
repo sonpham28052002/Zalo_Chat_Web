@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Notification({ notification, seen, conversation }) {
   function getName(id) {
-    return conversation.members.filter((item) => item.member.id === id)[0]
+    return conversation?.members?.filter((item) => item.member.id === id)[0]
       .member.userName;
   }
 
@@ -32,12 +32,9 @@ export default function Notification({ notification, seen, conversation }) {
     } else if (notification.notificationType === "ADD_MEMBER") {
       return (
         <p className="bg-slate-300 px-3 w-fit text-sm rounded-full">
-          {
-            <span className="font-medium">
-              {getName(notification.sender.id)}
-            </span>
-          }
-          {" " + notification.content}
+          {<span className="font-medium">{getName(notification.user.id)}</span>}
+          {" " + notification.content + " "}
+          <span className="font-medium">{getName(notification.sender.id)}</span>
         </p>
       );
     } else if (notification.notificationType === "OUT_CALL") {
@@ -54,12 +51,32 @@ export default function Notification({ notification, seen, conversation }) {
     } else if (notification.notificationType === "GET_OUT_GROUP") {
       return (
         <p className="bg-slate-300 px-3 w-fit text-sm rounded-full">
+          {<span className="font-medium">{getName(notification.user.id)}</span>}
+          {" " + notification.content + " "}
+          <span className="font-medium">{getName(notification.sender.id)}</span>
+        </p>
+      );
+    } else if (notification.notificationType === "OUT_GROUP") {
+      return (
+        <p className="bg-slate-300 px-3 w-fit text-sm rounded-full">
           {
             <span className="font-medium">
               {getName(notification.sender.id)}
             </span>
           }
           {" " + notification.content}
+        </p>
+      );
+    } else if (notification.notificationType === "CHANGE_ROLE") {
+      return (
+        <p className="bg-slate-300 px-3 w-fit text-sm rounded-full">
+          {
+            <span className="font-medium">
+              {getName(notification.sender.id)}
+            </span>
+          }
+          {" " + notification.content + " "}
+          <span className="font-medium">{getName(notification.user.id)}</span>
         </p>
       );
     }
