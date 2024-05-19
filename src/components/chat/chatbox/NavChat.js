@@ -68,7 +68,7 @@ export default function NavChat({ indexSelect, setIndex, showSearch }) {
 
   return (
     <div className="h-full  w-2/12  border-r">
-      <HeaderNavChat showSearch={showSearch} />
+      <HeaderNavChat showSearch={showSearch} isSelect={true} />
       <div className=" h-[860px] w-full py-1 select-none">
         <Virtuoso
           className="scrollbar-container-v2 h-full"

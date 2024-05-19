@@ -6,7 +6,7 @@ import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { useState } from "react";
 import AddFriendModal from "./AddFriendModal";
 
-export default function HeaderNavChat({ showSearch }) {
+export default function HeaderNavChat({ showSearch, isSelect }) {
   const [isOpenCreateGroupModal, setIsOpenCreateGroupModal] = useState(false);
   const [isOpenAddFriendModal, setIsOpenAddFriendModal] = useState(false);
   return (
@@ -20,7 +20,9 @@ export default function HeaderNavChat({ showSearch }) {
             readOnly
             className=" w-full  h-8 border p-1 text-xs rounded pl-7 bg-[#eaedf0] focus:outline-none"
             onClick={() => {
-              showSearch();
+              if (isSelect) {
+                showSearch();
+              }
             }}
           />
           <IoIosSearch className="absolute top-1.5 left-1 text-xl text-slate-400" />

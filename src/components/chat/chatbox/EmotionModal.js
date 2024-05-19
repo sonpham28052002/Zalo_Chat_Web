@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { useState } from "react";
-import { LuFilter } from 'react-icons/lu';
 
 export default function EmotionModal({
   isOpen,

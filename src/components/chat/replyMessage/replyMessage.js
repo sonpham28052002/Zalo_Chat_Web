@@ -164,10 +164,10 @@ export default function ReplyMessage({ replyMessage, setReplyMessage }) {
         <div className="w-full bg-gray-400 h-full py-1 flex flex-row justify-start">
           <div className="h-full w-[2px] bg-blue-500 ml-3 py-1"></div>
           <div className="mx-2 flex flex-row justify-between items-center">
-            <audio controls className="h-10 w-36">
+            <video controls className="h-10 w-36">
               <source src={replyMessage.url} type="audio/mpeg" />
               <source src={replyMessage.url} type="audio/3gp" />
-            </audio>
+            </video>
             <div className="flex flex-col justify-between ml-2 text-sm">
               <p className="">Trả lời tin nhắn</p>
               <p className="font-medium">[Vioce]</p>

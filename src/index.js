@@ -19,10 +19,10 @@ const bounce = cssTransition({
   exit: "animate__animated animate__bounceOut",
 });
 root.render(
-  <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
-      <StompSessionProvider url={`${host}/ws`}>
-        <BrowserRouter basename="/Zalo_Chat_Web">
+  <BrowserRouter basename="/Zalo_Chat_Web">
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <StompSessionProvider url={`${host}/ws`}>
           <App />
           <ToastContainer
             position="top-right"
@@ -37,10 +37,10 @@ root.render(
             transition={bounce}
             stacked
           />
-        </BrowserRouter>
-      </StompSessionProvider>
-    </PersistGate>
-  </Provider>
+        </StompSessionProvider>
+      </PersistGate>
+    </Provider>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function

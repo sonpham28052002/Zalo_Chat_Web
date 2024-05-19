@@ -23,11 +23,20 @@ import AddMemberModal from "./AddMemberModal";
 import EmotionModal from "./EmotionModal";
 import ReplyMessage from "../replyMessage/replyMessage";
 import { IoCallOutline } from "react-icons/io5";
-import { stompClient } from "../../../socket/socket";
 import { v4 } from "uuid";
+import {
+  ZegoCloudCall,
+  handleSendGroupCall,
+  handleSendSingleCall,
+} from "../../../ZegoCloudCall/ZegoCloudCall";
+import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
+import { stompClient } from "../../../socket/socket";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
+  var listUserOnline = useSelector((state) => state.listUserOnline);
+
+  // eslint-disable-next-line
   var [idConversationVirtuoso, setIdConversationVirtuoso] = useState(v4());
   var [avtMember, setAvtMember] = useState("");
   var [nameConversation, setNameConversation] = useState("");
@@ -37,7 +46,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
   var [showGrantMember, setShowGrantMember] = useState(false);
   var [showAddMember, setShowAddMember] = useState(false);
   var [showSearchMessage, setShowSearchMessage] = useState(false);
-  var [searchText, setSearchText] = useState("");
+  // var [searchText, setSearchText] = useState("");
   var [isOpenEmotionModal, setOpenEmotionModal] = useState(true);
   var [replyMessage, setReplyMessage] = useState(undefined);
   var [listSearchMessage, setListSearchMessage] = useState([]);
@@ -93,13 +102,15 @@ export default function ChatRoom({ idConversation, setIndex }) {
 
   useSubscription("/user/" + owner.id + "/groupChat", (message) => {
     let mess = JSON.parse(message.body);
+    console.log("mess");
     console.log(mess);
     if (conversation.conversationType === "group") {
       getMessageAndMemberByIdSenderAndIdGroup(
         owner.id,
         idConversation,
         (data) => {
-          setMessages(data.slice().reverse());
+          console.log(data);
+          setMessages([...data.slice().reverse()]);
         }
       );
     }
@@ -108,9 +119,15 @@ export default function ChatRoom({ idConversation, setIndex }) {
   useSubscription("/user/" + owner.id + "/deleteMessage", (message) => {
     let mess = JSON.parse(message.body);
     console.log(mess);
-    setMessages(messages.filter((item) => item.id !== mess.id));
+    setMessages(messages?.filter((item) => item.id !== mess.id));
   });
-
+  useSubscription(
+    "/user/" + owner.id + "/ChangeRoleNotification",
+    (message) => {
+      let mess = JSON.parse(message.body);
+      setMessages([...mess,...messages, ]);
+    }
+  );
   useSubscription("/user/" + owner.id + "/retrieveMessage", (message) => {
     let mess = JSON.parse(message.body);
     if (mess.messageType === "RETRIEVE") {
@@ -194,9 +211,26 @@ export default function ChatRoom({ idConversation, setIndex }) {
       setConversation({ ...mess, members: members });
     }
   );
+
+  useSubscription(
+    "/user/" + owner.id + "/SeenMessageSingle",
+    async (messages) => {
+      const mess = JSON.parse(messages.body);
+      setMessages([...mess.reverse()]);
+    }
+  );
+
+  useSubscription(
+    "/user/" + owner.id + "/SeenMessageGroup",
+    async (messages) => {
+      const mess = JSON.parse(messages.body);
+      setMessages([...mess.reverse()]);
+    }
+  );
+
   var [conversation, setConversation] = useState(
     // eslint-disable-next-line
-    owner.conversation.filter((item) => {
+    owner.conversation?.filter((item) => {
       if (
         item.conversationType === "group" &&
         item.idGroup === idConversation
@@ -207,12 +241,17 @@ export default function ChatRoom({ idConversation, setIndex }) {
         item.user.id === idConversation
       ) {
         return item;
+      } else {
+        return {
+          conversationType: "single",
+          lastMessage: undefined,
+          user: { id: idConversation, avt: "", userName: "" },
+        };
       }
     })[0]
   );
 
   const handleSearchText = (text) => {
-    setSearchText(text);
     if (text === "") {
       setListSearchMessage([]);
       setListIndexMessage([]);
@@ -228,7 +267,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
         listSearchMessage.push(obj);
         listIndex.push(index);
       }
-    })
+    });
     setListSearchMessage(listSearchMessage);
     setListIndexMessage(listIndex);
   };
@@ -242,7 +281,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
         return null;
       }
     }
-    var user = owner.friendList.filter((item) => item.user.id === id)[0];
+    var user = owner.friendList?.filter((item) => item.user.id === id)[0];
     return user;
   };
 
@@ -252,11 +291,10 @@ export default function ChatRoom({ idConversation, setIndex }) {
     setIsLoad(false);
     setIsExtend(false);
     setOpenEmotionModal(false);
-    setSearchText("");
-    setShowSearchMessage(false)
+    setShowSearchMessage(false);
     setListSearchMessage([]);
     setListIndexMessage([]);
-    owner.conversation.filter(async (item) => {
+    owner.conversation?.filter(async (item) => {
       if (
         item.conversationType === "group" &&
         item.idGroup === idConversation
@@ -308,6 +346,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
           userName: check.user.userName,
         },
       };
+      console.log(conver);
       setConversation({ ...conver });
       setMessages([]);
       setAvtMember(check.user.avt);
@@ -435,7 +474,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
     if (conversation.conversationType === "single") {
       return true;
     } else {
-      const iam = conversation.members.filter(
+      const iam = conversation.members?.filter(
         (item) => item.member.id === owner.id
       )[0];
       if (iam.memberType === "LEFT_MEMBER") {
@@ -472,33 +511,33 @@ export default function ChatRoom({ idConversation, setIndex }) {
     }
   }
 
-  function checkNotificationInput() {
-    const iam = conversation.members.filter(
-      (item) => item.member.id === owner.id
-    )[0];
-    if (iam.memberType === "LEFT_MEMBER") {
-      return "Bạn không còn là thành viên của nhóm này, bạn chỉ có thể đọc được tin nhắn trước đó.";
-    }
-    if (conversation?.status === "DISBANDED") {
-      return "Nhóm đã giải tán";
-    } else if (
-      conversation?.status === "READ_ONLY" &&
-      iam.memberType === "MEMBER"
-    ) {
-      return "Chỉ có trường nhóm và phó nhóm mới có thể gửi tin nhắn.";
-    }
-  }
+  // function checkNotificationInput() {
+  //   const iam = conversation.members.filter(
+  //     (item) => item.member.id === owner.id
+  //   )[0];
+  //   if (iam.memberType === "LEFT_MEMBER") {
+  //     return "Bạn không còn là thành viên của nhóm này, bạn chỉ có thể đọc được tin nhắn trước đó.";
+  //   }
+  //   if (conversation?.status === "DISBANDED") {
+  //     return "Nhóm đã giải tán";
+  //   } else if (
+  //     conversation?.status === "READ_ONLY" &&
+  //     iam.memberType === "MEMBER"
+  //   ) {
+  //     return "Chỉ có trường nhóm và phó nhóm mới có thể gửi tin nhắn.";
+  //   }
+  // }
 
   function SearchMessageView({ list }) {
     if (conversation.conversationType !== "single") {
       console.log(conversation);
     }
     function getUserNameById(id) {
-      return conversation.members.filter((item) => item.member.id === id)[0]
+      return conversation.members?.filter((item) => item.member.id === id)[0]
         .member?.userName;
     }
     function getAVTById(id) {
-      return conversation.members.filter((item) => item.member.id === id)[0]
+      return conversation.members?.filter((item) => item.member.id === id)[0]
         .member?.avt;
     }
     return (
@@ -510,24 +549,41 @@ export default function ChatRoom({ idConversation, setIndex }) {
           <div
             key={index}
             className="flex flex-row bg-white h-[70px] items-center cursor-pointer blur-item-light"
-            onClick={
-              () =>
-                scrollContainerRef.current?.scrollToIndex({
-                  index: listIndexMessage[index],
-                  align: "start",
-                  behavior: "auto",
-                })
+            onClick={() =>
+              scrollContainerRef.current?.scrollToIndex({
+                index: listIndexMessage[index],
+                align: "start",
+                behavior: "auto",
+              })
             }
           >
-            <img className="w-10 h-10 m-2 rounded-full" src={item.sender.id === owner.id ? owner.avt : conversation.conversationType === "single" ? avtMember : getAVTById(item.sender.id)} alt="." />
+            <img
+              className="w-10 h-10 m-2 rounded-full"
+              src={
+                item.sender.id === owner.id
+                  ? owner.avt
+                  : conversation.conversationType === "single"
+                  ? avtMember
+                  : getAVTById(item.sender.id)
+              }
+              alt="."
+            />
             <div className="flex flex-col">
               <div className="flex flex-row">
                 <p className="w-[170px] text-base font-semibold overflow-hidden overflow-ellipsis whitespace-nowrap ">
                   {/* {item.sender.id === owner.id ? owner.userName : nameConversation} */}
-                  {item.sender.id === owner.id ? owner.userName : conversation.conversationType === "single" ? nameConversation : getUserNameById(item.sender.id)}
+                  {item.sender.id === owner.id
+                    ? owner.userName
+                    : conversation.conversationType === "single"
+                    ? nameConversation
+                    : getUserNameById(item.sender.id)}
                 </p>
                 <p className="text-sm text-gray-500">
-                  {new Date(item.senderDate).getDate() + "/" + (new Date(item.senderDate).getMonth() + 1) + "/" + new Date(item.senderDate).getFullYear()}
+                  {new Date(item.senderDate).getDate() +
+                    "/" +
+                    (new Date(item.senderDate).getMonth() + 1) +
+                    "/" +
+                    new Date(item.senderDate).getFullYear()}
                 </p>
               </div>
 
@@ -535,13 +591,10 @@ export default function ChatRoom({ idConversation, setIndex }) {
                 {item.content}
               </p>
             </div>
-
-
           </div>
         ))}
-
       </div>
-    )
+    );
   }
   useSubscription(
     "/user/" + idConversationVirtuoso + "/checkUserResult",
@@ -550,17 +603,150 @@ export default function ChatRoom({ idConversation, setIndex }) {
       console.log(result);
     }
   );
-  function handleSendCall() {
-    stompClient.send(
-      "/app/checkUser",
-      {},
-      JSON.stringify({
-        userId: owner.id,
-        addressReceiver: idConversationVirtuoso,
-      })
+  useSubscription(
+    "/user/" + conversation?.idGroup + "/updateMessage",
+    (data) => {
+      const mess = JSON.parse(data.body);
+      var arr = messages.slice();
+      const indexMess = arr.findIndex((item) => item.id === mess.id);
+      if (indexMess !== -1) {
+        arr[indexMess] = { ...mess };
+      }
+      setMessages([...arr]);
+    }
+  );
+  function handleSendCall(callType) {
+    console.log(ZegoCloudCall);
+    // stompClient.send(
+    //   "/app/checkUser",
+    //   {},
+    //   JSON.stringify({
+    //     userId: owner.id,
+    //     addressReceiver: idConversationVirtuoso,
+    //   })
+    // );
+    handleSendSingleCall(callType, conversation.user, owner);
+  }
+  function handleSendCallGroup(callType) {
+    handleSendGroupCall(
+      conversation.idGroup,
+      owner,
+      sendMessageCallGroup,
+      callType
     );
   }
+  var sendMessageGroup = async (idGroup, owner, url, roomID) => {
+    let mess = {
+      id: v4(),
+      messageType: "CALLGROUP",
+      sender: { id: owner.id },
+      seen: [
+        {
+          id: owner.id,
+        },
+      ],
+      size: undefined,
+      titleFile: "Bắt đầu cuộc gọi nhóm",
+      url: url,
+      idGroup: idGroup,
+      receiver: { id: `group_${idGroup}` },
+      react: [],
+      replyMessage: undefined,
+      reply: undefined,
+    };
+    console.log(mess);
+    const createCall = { userId: owner.id, idGroup: idGroup, roomID: roomID };
+    console.log(createCall);
+    await stompClient.send("/app/createCall", {}, JSON.stringify(createCall));
+    await stompClient.send(
+      "/app/private-single-message",
+      {},
+      JSON.stringify(mess)
+    );
+  };
+  var sendMessageCallGroup = useCallback(
+    async (idGroup, owner, url, roomID) => {
+      console.log("sendMessageCallGroup");
+      await sendMessageGroup(idGroup, owner, url, roomID);
+    },
+    // eslint-disable-next-line
+    []
+  );
+  var [seenIndexes, setSeenIndexes] = useState([]);
+  useEffect(() => {
+    if (conversation?.conversationType === "single") {
+      var arr = [];
+      var mess = messages.slice();
+      mess.reverse();
+      for (let index = 0; index < mess.length; index++) {
+        var user = { id: conversation.user.id, avt: conversation.user.avt };
+        var ownerVir = { id: owner.id, avt: owner.avt };
+        if (mess[index + 1]) {
+          if (
+            checkSeen(mess[index], user.id) &&
+            !checkSeen(mess[index + 1], user.id)
+          ) {
+            arr.push({ indexMessage: mess[index].id, user: user });
+          }
+          if (
+            checkSeen(mess[index], ownerVir.id) &&
+            !checkSeen(mess[index + 1], ownerVir.id)
+          ) {
+            arr.push({ indexMessage: mess[index].id, user: ownerVir });
+          }
+        } else {
+          if (checkSeen(mess[index], user.id)) {
+            arr.push({ indexMessage: mess[index].id, user: user });
+          }
+          if (checkSeen(mess[index], ownerVir.id)) {
+            arr.push({ indexMessage: mess[index].id, user: ownerVir });
+          }
+        }
+      }
+      setSeenIndexes(arr);
+    } else {
+      var arrSeenIndex = [];
+      var messSeenIndex = messages.slice();
+      messSeenIndex.reverse();
+      for (let i = 0; i < listMember.length; i++) {
+        var userGroup = {
+          id: listMember[i].member.id,
+          avt: listMember[i].member.avt,
+        };
+        for (let index = 0; index < messSeenIndex.length; index++) {
+          if (messSeenIndex[index + 1]) {
+            if (
+              checkSeen(messSeenIndex[index], userGroup.id) &&
+              !checkSeen(messSeenIndex[index + 1], userGroup.id)
+            ) {
+              arrSeenIndex.push({
+                indexMessage: messSeenIndex[index].id,
+                user: userGroup,
+              });
+            }
+          } else {
+            if (checkSeen(messSeenIndex[index], userGroup.id)) {
+              arrSeenIndex.push({
+                indexMessage: messSeenIndex[index].id,
+                user: userGroup,
+              });
+            }
+          }
+        }
+      }
+      setSeenIndexes(arrSeenIndex);
+    }
+    // eslint-disable-next-line
+  }, [messages, listMember]);
 
+  function checkSeen(message, idUser) {
+    for (let index = 0; index < message?.seen?.length; index++) {
+      if (message.seen[index].id === idUser) {
+        return true;
+      }
+    }
+    return false;
+  }
   return (
     <div className="h-full w-10/12 flex flex-row relative">
       {isOpenForwardMessage && (
@@ -578,26 +764,52 @@ export default function ChatRoom({ idConversation, setIndex }) {
       <div className={` h-full ${isExtent ? "w-9/12" : "w-full"} `}>
         <div className="border-b flex flex-row items-center justify-between px-4">
           <div className="flex flex-row w-2/5  py-2 ">
-            <img
-              className="rounded-full h-12 w-12 mr-1 border border-white "
-              alt="#"
-              src={avtMember}
-              onClick={() => {
-                if (conversation.conversationType === "single") {
-                  setIsOpenInforUser(true);
-                }
-              }}
-            ></img>
-            <div>
+            <div className="relative">
+              <img
+                className="rounded-full h-12 w-12 mr-1 border shadow-2xl border-white "
+                alt="#"
+                src={avtMember}
+                onClick={() => {
+                  if (conversation.conversationType === "single") {
+                    setIsOpenInforUser(true);
+                  }
+                }}
+              ></img>
+              {avtMember &&
+                conversation.conversationType === "single" &&
+                listUserOnline.includes(conversation.user.id) && (
+                  <div className="bg-green-500 rounded-full h-2 w-2 absolute right-2 bottom-[2px]"></div>
+                )}
+            </div>
+            <div className="flex flex-col justify-center">
               <h1 className="font-medium text-lg">{nameConversation}</h1>
               <div className="flex flex-row items-center">
-                <p className="text-xs border-r pr-2 mr-2 font-medium text-gray-400">
-                  Đang hoạt động
-                </p>
-                <div className="flex flex-row items-center">
-                  <PiTagSimpleFill className={`mr-1`} />
-                  <p className="text-sm">Bạn bè</p>
-                </div>
+                {conversation?.conversationType &&
+                  conversation?.conversationType === "single" && (
+                    <p className="text-xs border-r pr-2 mr-2 font-medium text-gray-400">
+                      {listUserOnline?.includes(conversation?.user?.id)
+                        ? "Đang hoạt động"
+                        : "Không hoạt động"}
+                    </p>
+                  )}
+                {conversation?.conversationType === "single" && (
+                  <div className="flex flex-row items-center">
+                    <PiTagSimpleFill className={`mr-1`} />
+
+                    <p className="text-sm">
+                      {owner.friendList?.filter(
+                        (item) => item.user.id === conversation.user.id
+                      )[0]
+                        ? "Bạn bè"
+                        : "Người lạ"}
+                    </p>
+                  </div>
+                )}
+                {conversation?.conversationType === "group" && (
+                  <p className="text-sm">
+                    {conversation.members.length} thành viên
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -633,12 +845,25 @@ export default function ChatRoom({ idConversation, setIndex }) {
             <div
               className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
               onClick={() => {
-                handleSendCall();
+                if (conversation.conversationType === "single") {
+                  handleSendCall(ZegoUIKitPrebuilt.InvitationTypeVoiceCall);
+                } else {
+                  handleSendCallGroup("vioce");
+                }
               }}
             >
               <IoCallOutline className="text-xl " />
             </div>
-            <div className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2">
+            <div
+              className=" h-9 w-9 rounded-md hover:bg-slate-100 flex flex-row items-center justify-center mr-2"
+              onClick={() => {
+                if (conversation.conversationType === "single") {
+                  handleSendCall(ZegoUIKitPrebuilt.InvitationTypeVideoCall);
+                } else {
+                  handleSendCallGroup("video");
+                }
+              }}
+            >
               <BsCameraVideo className="text-xl " />
             </div>
             <div
@@ -671,8 +896,9 @@ export default function ChatRoom({ idConversation, setIndex }) {
                 <div className="absolute bottom-0 max-h-[764px] w-full flex flex-col overflow-scroll justify-items-end overflow-y-auto overflow-x-hidden  py-2 my-2">
                   <Virtuoso
                     ref={scrollContainerRef}
-                    className={`w-full ${replyMessage ? "min-h-[700px]" : "min-h-[740px]"
-                      }  scrollbar-container rotate-180`}
+                    className={`w-full ${
+                      replyMessage ? "min-h-[700px]" : "min-h-[740px]"
+                    }  scrollbar-container rotate-180`}
                     totalCount={messages.length}
                     initialTopMostItemIndex={0}
                     itemContent={(index) => {
@@ -684,11 +910,13 @@ export default function ChatRoom({ idConversation, setIndex }) {
                           conversation={conversation}
                           item={messages[index]}
                           index={index}
+                          messageNext={messages[index + 1]}
                           setIsOpenForwardMessage={setIsOpenForwardMessageView}
                           setReplyMessage={setReplyMessageConversation}
                           forcusMessage={forcusMessage}
                           isOpenEmotion={isOpenEmotion}
                           updateMessage={updateMessage}
+                          seen={seenIndexes}
                         />
                       );
                     }}
@@ -782,4 +1010,3 @@ export default function ChatRoom({ idConversation, setIndex }) {
     </div>
   );
 }
-

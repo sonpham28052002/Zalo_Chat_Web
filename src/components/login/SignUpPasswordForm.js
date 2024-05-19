@@ -19,9 +19,10 @@ export default function SignUpPasswordForm() {
     var regrex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])([a-zA-Z0-9]{8,})$/;
     var res = regrex.test(tmpPassword);
     if (!res)
-      setNote("Mật khẩu phải từ 8 ký tự trở lên, gồm chữ thường, chữ hoa và số");
-    else  
-      setNote("");
+      setNote(
+        "Mật khẩu phải từ 8 ký tự trở lên, gồm chữ thường, chữ hoa và số"
+      );
+    else setNote("");
   };
 
   const handleRePassword = (rpw) => {
@@ -95,6 +96,15 @@ export default function SignUpPasswordForm() {
           className="bg-blue-500 text-white font-bold rounded-md h-10 w-full"
         >
           Xác nhận mật khẩu
+        </button>
+        <button
+          onClick={() => {
+            history("/");
+          }}
+          type="button"
+          className=" mt-2 min-h-10 w-full rounded-md mb-3 bg-slate-500 hover:bg-slate-700 text-white font-semibold"
+        >
+          Huỷ đăng ký
         </button>
       </div>
     </div>

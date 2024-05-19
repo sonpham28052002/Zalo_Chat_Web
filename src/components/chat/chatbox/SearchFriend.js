@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { useSelector, useDispatch } from "react-redux";
-import { stompClient } from "../../../socket/socket";
-import { v4 } from "uuid";
 import { useSubscription } from "react-stomp-hooks";
 import { getAPI } from "../../../redux_Toolkit/slices";
 
