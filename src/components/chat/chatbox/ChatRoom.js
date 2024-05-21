@@ -31,11 +31,12 @@ import {
 } from "../../../ZegoCloudCall/ZegoCloudCall";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { stompClient } from "../../../socket/socket";
+import LeaderOutGroup from "./LeaderOutGroup";
 
 export default function ChatRoom({ idConversation, setIndex }) {
   var owner = useSelector((state) => state.data);
   var listUserOnline = useSelector((state) => state.listUserOnline);
-
+  var [isLeaderOutGroup, setIsLeaderOutGroup] = useState(false);
   // eslint-disable-next-line
   var [idConversationVirtuoso, setIdConversationVirtuoso] = useState(v4());
   var [avtMember, setAvtMember] = useState("");
@@ -125,7 +126,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
     "/user/" + owner.id + "/ChangeRoleNotification",
     (message) => {
       let mess = JSON.parse(message.body);
-      setMessages([...mess,...messages, ]);
+      setMessages([...mess, ...messages]);
     }
   );
   useSubscription("/user/" + owner.id + "/retrieveMessage", (message) => {
@@ -144,7 +145,13 @@ export default function ChatRoom({ idConversation, setIndex }) {
     // eslint-disable-next-line
     [showGrantMember]
   );
-
+  var setLeaderOut = useCallback(
+    (value) => {
+      setIsLeaderOutGroup(value);
+    },
+    // eslint-disable-next-line
+    [isLeaderOutGroup]
+  );
   var isOpenEmotion = useCallback(
     (value, messageSelect) => {
       setMessageSelect(messageSelect);
@@ -477,7 +484,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
       const iam = conversation.members?.filter(
         (item) => item.member.id === owner.id
       )[0];
-      if (iam.memberType === "LEFT_MEMBER") {
+      if (iam?.memberType === "LEFT_MEMBER") {
         return false;
       }
       if (iam.memberType === "MEMBER" && conversation.status === "READ_ONLY") {
@@ -977,6 +984,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
           messages={messages}
           showGrantMemberView={showGrantMemberView}
           showAddMember={setShowAddMember}
+          setLeaderOutGroup={setLeaderOut}
         />
       )}
       {showGrantMember && (
@@ -1005,6 +1013,13 @@ export default function ChatRoom({ idConversation, setIndex }) {
           setIsOpen={setOpenEmotionModal}
           conversation={conversation}
           messageSelect={messageSelect}
+        />
+      )}
+      {conversation.conversationType === "group" && (
+        <LeaderOutGroup
+          conversation={conversation}
+          isOpen={isLeaderOutGroup}
+          setIsOpen={setIsLeaderOutGroup}
         />
       )}
     </div>

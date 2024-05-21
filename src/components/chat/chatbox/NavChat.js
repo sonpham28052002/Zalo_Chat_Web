@@ -42,6 +42,7 @@ export default function NavChat({ indexSelect, setIndex, showSearch }) {
   });
 
   useSubscription("/user/" + data.id + "/outGroup", (message) => {
+    console.log("outGroup");
     dispatch(getAPI(data.id));
   });
 
