@@ -24,7 +24,7 @@ function ViewListGroup() {
       <div className="flex flex-col">
         {list.map((item, index) => (
           <div
-            key={item.id}
+            key={index}
             className="flex flex-row w-full items-center blur-item-light cursor-pointer pl-3"
             onClick={() => {
               alert("light");
