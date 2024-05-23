@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/Zalo_Chat_Web/static/css/main.a669827d.css",
-    "main.js": "/Zalo_Chat_Web/static/js/main.5d413bbd.js",
+    "main.css": "/Zalo_Chat_Web/static/css/main.45ad794d.css",
+    "main.js": "/Zalo_Chat_Web/static/js/main.eb7823b1.js",
     "static/js/453.39422f23.chunk.js": "/Zalo_Chat_Web/static/js/453.39422f23.chunk.js",
     "static/media/ringtone-205162.mp3": "/Zalo_Chat_Web/static/media/ringtone-205162.43adc018cc489df7196a.mp3",
     "static/media/snapedit_1705786829845.png": "/Zalo_Chat_Web/static/media/snapedit_1705786829845.327b77fd195fd4c1c9b1.png",
@@ -20,12 +20,12 @@
     "static/media/2.png": "/Zalo_Chat_Web/static/media/2.95edcd15d875cae4d6d5.png",
     "static/media/3.jpg": "/Zalo_Chat_Web/static/media/3.260978bd849cdf1c1c84.jpg",
     "index.html": "/Zalo_Chat_Web/index.html",
-    "main.a669827d.css.map": "/Zalo_Chat_Web/static/css/main.a669827d.css.map",
-    "main.5d413bbd.js.map": "/Zalo_Chat_Web/static/js/main.5d413bbd.js.map",
+    "main.45ad794d.css.map": "/Zalo_Chat_Web/static/css/main.45ad794d.css.map",
+    "main.eb7823b1.js.map": "/Zalo_Chat_Web/static/js/main.eb7823b1.js.map",
     "453.39422f23.chunk.js.map": "/Zalo_Chat_Web/static/js/453.39422f23.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.a669827d.css",
-    "static/js/main.5d413bbd.js"
+    "static/css/main.45ad794d.css",
+    "static/js/main.eb7823b1.js"
   ]
 }
