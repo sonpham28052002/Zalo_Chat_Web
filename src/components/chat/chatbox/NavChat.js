@@ -33,6 +33,7 @@ export default function NavChat({ indexSelect, setIndex, showSearch }) {
   });
 
   useSubscription("/user/" + data.id + "/removeMemberInGroup", (messages) => {
+    
     dispatch(getAPI(data.id));
   });
 

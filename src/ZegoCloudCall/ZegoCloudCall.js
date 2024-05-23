@@ -213,6 +213,7 @@ function randomID(len) {
   }
   return result;
 }
+
 async function handleSendGroupCall(idGroup, owner, sendMessageCallGroup) {
   const roomID = randomID(25);
   try {

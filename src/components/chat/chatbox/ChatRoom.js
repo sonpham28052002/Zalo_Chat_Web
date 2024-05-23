@@ -654,7 +654,7 @@ export default function ChatRoom({ idConversation, setIndex }) {
       ],
       size: undefined,
       titleFile: "Bắt đầu cuộc gọi nhóm",
-      url: url,
+      url: roomID,
       idGroup: idGroup,
       receiver: { id: `group_${idGroup}` },
       react: [],

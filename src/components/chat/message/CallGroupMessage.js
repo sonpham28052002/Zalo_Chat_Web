@@ -98,9 +98,19 @@ export default function CallGroupMessage({ avt, file, conversation, seen }) {
                   className="bg-blue-300 select-none active:bg-blue-500 p-1 w-1/2 text-center rounded-lg"
                   onClick={() => {
                     if (file.url) {
-                      const roomID = file.url.split("=")[1];
+                      const roomID = file.url
                       JoinRoom(roomID, owner.id, conversation?.idGroup);
-                      window.open(file.url);
+                      let path = window.location.pathname.split("/")[1];
+                      var url =
+                        window.location.protocol +
+                        "//" +
+                        window.location.host +
+                        "/" +
+                        path +
+                        "/CallGroup" +
+                        "?roomID=" +
+                        roomID;
+                      window.open(url);
                     }
                   }}
                 >

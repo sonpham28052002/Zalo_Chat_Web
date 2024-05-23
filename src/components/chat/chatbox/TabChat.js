@@ -3,6 +3,10 @@ import { useSelector } from "react-redux";
 import NavChatOption from "./NavChatOption";
 import { useSubscription } from "react-stomp-hooks";
 import { animateCss } from "../../notification/notification";
+import { FaImage, FaPhotoVideo, FaRegFileAlt } from "react-icons/fa";
+import { AiFillAudio } from "react-icons/ai";
+import { MdOutlineWifiCalling3 } from "react-icons/md";
+import { IoMdNotifications } from "react-icons/io";
 
 export default function TabChat({ conversation, indexSelect, setIndex }) {
   var owner = useSelector((state) => state.data);
@@ -11,7 +15,6 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
   var nameConversation = "";
   var avtConversation = undefined;
   var idConversation = undefined;
-  var viewLastMessage = undefined;
   if (conversation.conversationType === "group") {
     avtConversation = conversation.avtGroup;
     nameConversation = conversation.nameGroup;
@@ -22,14 +25,83 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
     idConversation = conversation.user.id;
   }
 
-  if (conversation.lastMessage) {
-    const lastMessage = conversation.lastMessage;
-    if (lastMessage.messageType === "Text") {
-      viewLastMessage = `${owner.id === lastMessage.sender.id ? "Bạn: " : ""} ${
-        lastMessage.content.length > 10
-          ? lastMessage.content.substring(0, 10) + "..."
-          : lastMessage.content.substring(0, 15)
-      }`;
+  function getLastMessage() {
+    if (conversation.lastMessage) {
+      const lastMessage = conversation.lastMessage;
+      if (lastMessage.messageType === "Text") {
+        var viewLastMessage = `${
+          owner.id === lastMessage.sender.id ? "Bạn: " : ""
+        } ${
+          lastMessage?.content.length > 10
+            ? lastMessage.content.substring(0, 10) + "..."
+            : lastMessage.content.substring(0, 15)
+        }`;
+        return <span className="text-slate-400">{viewLastMessage}</span>;
+      } else if (
+        lastMessage.messageType === "GIF" ||
+        lastMessage.messageType === "JPG" ||
+        lastMessage.messageType === "JPEG" ||
+        lastMessage.messageType === "PNG"
+      ) {
+        return (
+          <span className="text-slate-400 flex flex-row items-center">
+            {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
+            <FaImage className="mx-1" /> {"hình ảnh"}
+          </span>
+        );
+      } else if (lastMessage.messageType === "VIDEO") {
+        return (
+          <span className="text-slate-400 flex flex-row items-center">
+            {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
+            <FaPhotoVideo className="mx-1" /> {"video"}
+          </span>
+        );
+      } else if (lastMessage.messageType === "AUDIO") {
+        return (
+          <span className="text-slate-400 flex flex-row items-center">
+            {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
+            <AiFillAudio className="mx-1" /> {"audio"}
+          </span>
+        );
+      } else if (
+        lastMessage.messageType === "DOCX" ||
+        lastMessage.messageType === "DOC" ||
+        lastMessage.messageType === "PDF" ||
+        lastMessage.messageType === "PPT" ||
+        lastMessage.messageType === "PPTX" ||
+        lastMessage.messageType === "TXT" ||
+        lastMessage.messageType === "RAR" ||
+        lastMessage.messageType === "ZIP" ||
+        lastMessage.messageType === "JSON" ||
+        lastMessage.messageType === "CSV" ||
+        lastMessage.messageType === "HTML" ||
+        lastMessage.messageType === "XLS" ||
+        lastMessage.messageType === "XLSX"
+      ) {
+        return (
+          <span className="text-slate-400 flex flex-row items-center">
+            {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
+            <FaRegFileAlt className="mx-1" /> {"file"}
+          </span>
+        );
+      } else if (
+        lastMessage.messageType === "CALLSINGLE" ||
+        lastMessage.messageType === "CALLGROUP"
+      ) {
+        return (
+          <span className="text-slate-400 flex flex-row items-center">
+            {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
+            <MdOutlineWifiCalling3 className="mx-1" /> {"call"}
+          </span>
+        );
+      } else if (lastMessage.messageType === "NOTIFICATION") {
+        return (
+          <span className="text-slate-400 flex flex-row items-center">
+            {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
+            <IoMdNotifications className="mx-1" /> {"Thông báo"}
+          </span>
+        );
+      }
     }
   }
 
@@ -88,7 +160,7 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
             : nameConversation.substring(0, 25) + "..."}
         </p>
 
-        <span className="text-slate-400">{viewLastMessage}</span>
+        {getLastMessage()}
       </div>
       <div className="flex flex-row justify-center items-center w-1/6">
         <NavChatOption conversation={conversation} ownerId={owner.id} />
