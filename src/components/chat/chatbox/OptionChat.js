@@ -31,6 +31,7 @@ export default function OptionChat({
   messages,
   showGrantMemberView,
   showAddMember,
+  setLeaderOutGroup,
 }) {
   var owner = useSelector((state) => state.data);
   var [showImageVideo, setShowImageVideo] = useState(false);
@@ -183,7 +184,9 @@ export default function OptionChat({
       JSON.stringify({ userId: owner.id, idGroup: conversation.idGroup })
     );
   }
-
+  function handleLeaderOutGroup() {
+    setLeaderOutGroup(true);
+  }
   var removeMemberInGroup = async (userId) => {
     if (
       conversation.members.filter((item) => item.memberType !== "LEFT_MEMBER")
@@ -556,7 +559,22 @@ export default function OptionChat({
                           await handleOutGroup();
                         }}
                       >
-                        <CiLogout /> rời nhóm
+                        <CiLogout className="font-medium mr-1" /> rời nhóm
+                      </div>
+                    </div>
+                  )}
+                {conversation.conversationType === "group" &&
+                  conversation?.members.filter(
+                    (item) => item.member.id === owner.id
+                  )[0].memberType === "GROUP_LEADER" && (
+                    <div className="h-10 w-full p-2">
+                      <div
+                        className="flex flex-row justify-center items-center w-full h-10 rounded-md bg-red-300"
+                        onClick={async () => {
+                          await handleLeaderOutGroup();
+                        }}
+                      >
+                        <CiLogout className="font-medium mr-1" /> rời nhóm
                       </div>
                     </div>
                   )}
