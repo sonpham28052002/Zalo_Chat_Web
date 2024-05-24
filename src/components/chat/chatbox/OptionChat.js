@@ -6,24 +6,27 @@ import {
 } from "react-icons/ai";
 import { BiEdit, BiSolidFilePdf, BiSolidFileTxt } from "react-icons/bi";
 import {
+  FaCameraRotate,
   FaFileCode,
   FaFileCsv,
   FaFileExcel,
   FaFileWord,
 } from "react-icons/fa6";
 import { HiUserGroup } from "react-icons/hi2";
-import { CiLogout } from "react-icons/ci";
+import { CiEdit, CiLogout } from "react-icons/ci";
 
 import {
   IoCaretDownOutline,
   IoChevronBack,
   IoLogoHtml5,
   IoPersonRemoveOutline,
+  IoSaveOutline,
 } from "react-icons/io5";
 import { LuFileJson } from "react-icons/lu";
 import { useSelector } from "react-redux";
 import { GrResources } from "react-icons/gr";
 import { stompClient } from "../../../socket/socket";
+import { uploadFile } from "../../../services/Azure_Service";
 export default function OptionChat({
   conversation,
   nameConversation,
@@ -39,9 +42,10 @@ export default function OptionChat({
   var [showTextLink, setTextLink] = useState(false);
   var [showManageGroup, setShowManageGroup] = useState(false);
   var [status, setStatus] = useState(conversation.status);
-
+  var [nameInputChange, setNameInputChange] = useState(nameConversation);
   var [showMember, setShowMember] = useState(false);
   var [isEdit, setIsEdit] = useState(false);
+  var [isEditName, setIsEditName] = useState(false);
 
   var sendMessRef = useRef(undefined);
   var changeRef = useRef(undefined);
@@ -182,6 +186,28 @@ export default function OptionChat({
       "/app/outGroup",
       {},
       JSON.stringify({ userId: owner.id, idGroup: conversation.idGroup })
+    );
+  }
+  function handleChangeImage(url) {
+    stompClient.send(
+      "/app/changeImageGroup",
+      {},
+      JSON.stringify({
+        userId: owner.id,
+        idGroup: conversation.idGroup,
+        url: url,
+      })
+    );
+  }
+  function handleChangeNameGroup() {
+    stompClient.send(
+      "/app/changeNameGroup",
+      {},
+      JSON.stringify({
+        userId: owner.id,
+        idGroup: conversation.idGroup,
+        name: nameInputChange,
+      })
     );
   }
   function handleLeaderOutGroup() {
@@ -361,8 +387,73 @@ export default function OptionChat({
           </div>
           <div className="max-h-[95%] h-[95%] overflow-y-auto overflow-x-hidden pb-20 scrollbar-container-v2 bg-white">
             <div className=" h-fit p-2 border-b border-gray-200 font-medium text-xl flex flex-col justify-center items-center bg-white">
-              <img src={avtMember} alt="." className="h-16 w-16 rounded-full" />
-              <p className="text-lg font-medium mt-2">{nameConversation}</p>
+              {conversation.conversationType === "single" ? (
+                <img
+                  src={avtMember}
+                  alt="."
+                  className="h-16 w-16 rounded-full"
+                />
+              ) : (
+                <label htmlFor="imagegroup" className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="imagegroup"
+                    onChange={async (e) => {
+                      console.log(e.target.files[0]);
+                      if (e.target.files[0]) {
+                        const url = await uploadFile(e.target.files[0]);
+                        console.log(url);
+                        await handleChangeImage(url);
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+                  <img
+                    src={avtMember}
+                    alt="."
+                    className="h-16 w-16 rounded-full"
+                  />
+                  <div className="absolute text-xl  right-0 bottom-0">
+                    <FaCameraRotate />
+                  </div>
+                </label>
+              )}
+              <div className="flex flex-row justify-center items-end mt-2">
+                {!isEditName ? (
+                  <p className="text-lg font-medium ">{nameConversation}</p>
+                ) : (
+                  <input
+                    type="text"
+                    className="border-b text-base max-w-48 ml-2 for"
+                    value={nameInputChange}
+                    onChange={(e) => {
+                      setNameInputChange(e.target.value);
+                    }}
+                  />
+                )}
+                {!isEditName ? (
+                  <CiEdit
+                    className="mb-1"
+                    onClick={() => {
+                      setIsEditName(true);
+                    }}
+                  />
+                ) : (
+                  <IoSaveOutline
+                    onClick={async() => {
+                      if (
+                        nameInputChange.trim() !== "" &&
+                        nameInputChange.trim() !== nameConversation
+                      ) {
+                        handleChangeNameGroup();
+                      }
+                      setIsEditName(false);
+                    }}
+                  />
+                )}
+              </div>
               {conversation.conversationType !== "single" && (
                 <div className="h-20 w-full flex pt-2 flex-row justify-evenly items-start">
                   <div className="h-full w-20 flex flex-col justify-start items-center">
