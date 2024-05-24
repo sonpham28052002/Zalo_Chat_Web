@@ -116,6 +116,7 @@ export default function VioceMessage({
             >
               {vioce.url && (
                 <video className="h-14 w-60" controls>
+                  <source src={vioce.url} type="audio/mp3" />
                   <source src={vioce.url} type="audio/mpeg" />
                   <source src={vioce.url} type="audio/3gp" />
                 </video>

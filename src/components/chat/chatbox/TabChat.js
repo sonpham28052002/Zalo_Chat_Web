@@ -1,5 +1,5 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import NavChatOption from "./NavChatOption";
 import { useSubscription } from "react-stomp-hooks";
 import { animateCss } from "../../notification/notification";
@@ -7,11 +7,13 @@ import { FaImage, FaPhotoVideo, FaRegFileAlt } from "react-icons/fa";
 import { AiFillAudio } from "react-icons/ai";
 import { MdOutlineWifiCalling3 } from "react-icons/md";
 import { IoMdNotifications } from "react-icons/io";
+import { getAPI } from "../../../redux_Toolkit/slices";
 
 export default function TabChat({ conversation, indexSelect, setIndex }) {
   var owner = useSelector((state) => state.data);
   var listUserOnline = useSelector((state) => state.listUserOnline);
-
+  var dispatch = useDispatch();
+  var [isSeen, setIsSeen] = useState(false);
   var nameConversation = "";
   var avtConversation = undefined;
   var idConversation = undefined;
@@ -24,7 +26,11 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
     nameConversation = conversation.user.userName;
     idConversation = conversation.user.id;
   }
-
+  useEffect(() => {
+    conversation?.lastMessage?.seen?.filter((item) => item.id === owner.id)[0]
+      ? setIsSeen(false)
+      : setIsSeen(true);
+  }, [conversation?.lastMessage?.seen, owner.id]);
   function getLastMessage() {
     if (conversation.lastMessage) {
       const lastMessage = conversation.lastMessage;
@@ -36,7 +42,15 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
             ? lastMessage.content.substring(0, 10) + "..."
             : lastMessage.content.substring(0, 15)
         }`;
-        return <span className="text-slate-400">{viewLastMessage}</span>;
+        return (
+          <span
+            className={` ${
+              isSeen ? "text-black font-medium" : "text-slate-400"
+            }`}
+          >
+            {viewLastMessage}
+          </span>
+        );
       } else if (
         lastMessage.messageType === "GIF" ||
         lastMessage.messageType === "JPG" ||
@@ -44,21 +58,33 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
         lastMessage.messageType === "PNG"
       ) {
         return (
-          <span className="text-slate-400 flex flex-row items-center">
+          <span
+            className={` flex flex-row items-center  ${
+              isSeen ? "text-black font-medium" : "text-slate-400"
+            }`}
+          >
             {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
             <FaImage className="mx-1" /> {"hình ảnh"}
           </span>
         );
       } else if (lastMessage.messageType === "VIDEO") {
         return (
-          <span className="text-slate-400 flex flex-row items-center">
+          <span
+            className={` flex flex-row items-center  ${
+              isSeen ? "text-black font-medium" : "text-slate-400"
+            }`}
+          >
             {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
             <FaPhotoVideo className="mx-1" /> {"video"}
           </span>
         );
       } else if (lastMessage.messageType === "AUDIO") {
         return (
-          <span className="text-slate-400 flex flex-row items-center">
+          <span
+            className={` flex flex-row items-center  ${
+              isSeen ? "text-black font-medium" : "text-slate-400"
+            }`}
+          >
             {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
             <AiFillAudio className="mx-1" /> {"audio"}
           </span>
@@ -79,7 +105,11 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
         lastMessage.messageType === "XLSX"
       ) {
         return (
-          <span className="text-slate-400 flex flex-row items-center">
+          <span
+            className={` flex flex-row items-center  ${
+              isSeen ? "text-black font-medium" : "text-slate-400"
+            }`}
+          >
             {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
             <FaRegFileAlt className="mx-1" /> {"file"}
           </span>
@@ -89,14 +119,22 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
         lastMessage.messageType === "CALLGROUP"
       ) {
         return (
-          <span className="text-slate-400 flex flex-row items-center">
+          <span
+            className={` flex flex-row items-center  ${
+              isSeen ? "text-black font-medium" : "text-slate-400"
+            }`}
+          >
             {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
             <MdOutlineWifiCalling3 className="mx-1" /> {"call"}
           </span>
         );
       } else if (lastMessage.messageType === "NOTIFICATION") {
         return (
-          <span className="text-slate-400 flex flex-row items-center">
+          <span
+            className={` flex flex-row items-center  ${
+              isSeen ? "text-black font-medium" : "text-slate-400"
+            }`}
+          >
             {`${owner.id === lastMessage.sender.id ? "Bạn: " : ""}`}
             <IoMdNotifications className="mx-1" /> {"Thông báo"}
           </span>
@@ -109,15 +147,29 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
     let mess = JSON.parse(messages.body);
     if (
       owner.id === mess.receiver.id &&
-      conversation.user.id === mess.sender.id
+      conversation.user.id === mess.sender.id &&
+      indexSelect !== conversation.user.id
     ) {
       animateCss({
         type: "MESSAGE_SINGLE",
         image: conversation.user.avt,
         userName: conversation.user.userName,
       });
+      setIsSeen(true);
     }
   });
+  useSubscription(
+    "/user/" + conversation?.idGroup + "/changeImageGroup",
+    (messages) => {
+      dispatch(getAPI(owner.id));
+    }
+  );
+  useSubscription(
+    "/user/" + conversation?.idGroup + "/changeNameGroup",
+    (messages) => {
+      dispatch(getAPI(owner.id));
+    }
+  );
   useSubscription("/user/" + owner.id + "/groupChat", (message) => {
     let mess = JSON.parse(message.body);
     if (
@@ -140,6 +192,7 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
       `}
       onClick={() => {
         setIndex(idConversation);
+        setIsSeen(false);
       }}
     >
       <div className="relative h-fit w-fit ">
@@ -162,7 +215,10 @@ export default function TabChat({ conversation, indexSelect, setIndex }) {
 
         {getLastMessage()}
       </div>
-      <div className="flex flex-row justify-center items-center w-1/6">
+      <div className="flex flex-row justify-center items-center w-1/6 relative">
+        {isSeen && (
+          <div className="h-2 w-2 bg-red-500 rounded-full absolute top-0 right-0"></div>
+        )}
         <NavChatOption conversation={conversation} ownerId={owner.id} />
       </div>
     </div>
