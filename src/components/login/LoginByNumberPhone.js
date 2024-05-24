@@ -28,7 +28,6 @@ export default function LoginByNumberPhone() {
         }else{
           alert("Sai tài khoản hoặc mật khẩu");
         }
-        
       },
       phone,
       password
