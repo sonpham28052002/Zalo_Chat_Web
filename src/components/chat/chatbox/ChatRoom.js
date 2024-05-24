@@ -137,7 +137,18 @@ export default function ChatRoom({ idConversation, setIndex }) {
       setMessages([...messages]);
     }
   });
-
+  useSubscription(
+    "/user/" + idConversation + "/changeImageGroup",
+    (messages) => {
+      setAvtMember(messages.body);
+    }
+  );
+  useSubscription(
+    "/user/" + idConversation + "/changeNameGroup",
+    (messages) => {
+      setNameConversation(messages.body);
+    }
+  );
   var showGrantMemberView = useCallback(
     (value) => {
       setShowGrantMember(value);
@@ -222,8 +233,20 @@ export default function ChatRoom({ idConversation, setIndex }) {
   useSubscription(
     "/user/" + owner.id + "/SeenMessageSingle",
     async (messages) => {
-      const mess = JSON.parse(messages.body);
-      setMessages([...mess.reverse()]);
+      if (conversation.conversationType === "single") {
+        const mess = JSON.parse(messages.body);
+        if (
+          mess[0].sender.id === idConversation ||
+          mess[0].receiver.id === idConversation
+        ) {
+          setMessages([...mess.reverse()]);
+        }
+      } else {
+        const mess = JSON.parse(messages.body);
+        if (mess[0].receiver.id === "group_" + idConversation) {
+          setMessages([...mess.reverse()]);
+        }
+      }
     }
   );
 
@@ -487,27 +510,27 @@ export default function ChatRoom({ idConversation, setIndex }) {
       if (iam?.memberType === "LEFT_MEMBER") {
         return false;
       }
-      if (iam.memberType === "MEMBER" && conversation.status === "READ_ONLY") {
+      if (iam?.memberType === "MEMBER" && conversation.status === "READ_ONLY") {
         return false;
       }
       if (
-        iam.memberType === "MEMBER" &&
+        iam?.memberType === "MEMBER" &&
         conversation.status === "CHANGE_IMAGE_AND_NAME_ONLY"
       ) {
         return false;
       }
       if (
-        iam.memberType === "GROUP_LEADER" &&
+        iam?.memberType === "GROUP_LEADER" &&
         conversation.status !== "DISBANDED"
       ) {
         return true;
       } else if (
-        iam.memberType === "DEPUTY_LEADER" &&
+        iam?.memberType === "DEPUTY_LEADER" &&
         conversation.status !== "DISBANDED"
       ) {
         return true;
       } else if (
-        (iam.memberType === "MEMBER" &&
+        (iam?.memberType === "MEMBER" &&
           conversation.status === "MESSAGE_ONLY") ||
         conversation.status === "ACTIVE"
       ) {

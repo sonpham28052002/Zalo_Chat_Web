@@ -59,7 +59,11 @@ export default function Notification({ notification, seen, conversation }) {
     } else if (notification.notificationType === "LEADER_OUT_GROUP") {
       return (
         <p className="bg-slate-300 px-3 w-fit text-sm rounded-full">
-          {<span className="font-medium">{getName(notification.sender.id)}</span>}
+          {
+            <span className="font-medium">
+              {getName(notification.sender.id)}
+            </span>
+          }
           {" " + notification.content + " "}
           <span className="font-medium">{getName(notification.user.id)}</span>
         </p>
@@ -85,6 +89,17 @@ export default function Notification({ notification, seen, conversation }) {
           }
           {" " + notification.content + " "}
           <span className="font-medium">{getName(notification.user.id)}</span>
+        </p>
+      );
+    } else if (notification.notificationType === "UPDATE_GROUP") {
+      return (
+        <p className="bg-slate-300 px-3 w-fit text-sm rounded-full">
+          {
+            <span className="font-medium">
+              {getName(notification.sender.id)}
+            </span>
+          }
+          {" " + notification.content}
         </p>
       );
     }

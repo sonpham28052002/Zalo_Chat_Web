@@ -6,14 +6,13 @@ import Loader from "../chat/custom/loader.js";
 import { Link, useNavigate } from "react-router-dom";
 import { getAccount } from "../../services/Account_Service.js";
 import { handleSetValueCookie } from "../../services/Cookie_Service.js";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getAPI } from "../../redux_Toolkit/slices.js";
 export default function LoginByNumberPhone() {
   const history = useNavigate();
   var [phone, setPhone] = useState("84898168640");
   var [password, setPassword] = useState("sonpham1234");
   var [isLoading, setIsLoading] = useState(false);
-  var isWaitting = useSelector((state) => state.isWaitting);
   var dispatch = useDispatch();
 
   var handleLoginWithPhoneAnhPassword = (phone, password) => {
@@ -26,9 +25,10 @@ export default function LoginByNumberPhone() {
         if (data) {
           await dispatch(getAPI(data.id));
           history("/home");
+        }else{
+          alert("Sai tài khoản hoặc mật khẩu");
         }
-        if (!isWaitting) {
-        }
+        
       },
       phone,
       password

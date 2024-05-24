@@ -76,7 +76,7 @@ export default function NavChat({ indexSelect, setIndex, showSearch }) {
           className="scrollbar-container-v2 h-full"
           totalCount={data.conversation.length}
           initialTopMostItemIndex={0}
-          data={data.conversation.slice().reverse()}
+          data={data.conversation.slice()}
           itemContent={(index, item) => {
             return (
               <TabChat
