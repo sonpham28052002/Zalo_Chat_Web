@@ -12,8 +12,8 @@ function updateZegoCloud(value) {
 async function initZegoCloudCall(owner) {
   const userID = owner.id;
   const userName = owner.userName;
-  const appID = 940263346;
-  const serverSecret = "a3807f37d7f0eb2f8b31a51d199262e0";
+  const appID = 492662668;
+  const serverSecret = "c83265c71f8a9156444bf7ddb74a9411";
   const TOKEN = await ZegoUIKitPrebuilt.generateKitTokenForTest(
     appID,
     serverSecret,
